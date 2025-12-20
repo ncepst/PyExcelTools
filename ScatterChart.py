@@ -23,7 +23,7 @@ def ScatterChart(ws,
     def cm_to_pt(cm):
         return cm * 72 / 2.54
     
-    color = RGB(color)
+    color = RGB(*color)
         
     # ----------------------------------------------------------
     # 散布図のエクセルグラフを作成する

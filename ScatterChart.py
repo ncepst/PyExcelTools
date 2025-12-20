@@ -175,7 +175,7 @@ def ScatterChart(ws,
                 series.MarkerStyle = constants.xlMarkerStyleNone
                 
             alpha = cfg.get("alpha") # 透明度は0~1
-            if alpha not in (None, "",):
+            if alpha not in (None, ""):
                 series.Format.Line.Transparency = cfg["alpha"]
                 
         except:

@@ -2,6 +2,7 @@
 import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
+import re
 
 def ScatterChart(ws,
                  start_range,    # "H3"など
@@ -158,20 +159,9 @@ def ScatterChart(ws,
     ch.ChartArea.Format.Line.Weight = 0.75                    # 枠線の太さ(pt)
     # ----------------------------------------------------------------------
 
-    # 凡例なし
-    if legend=="":
-        ch.HasLegend = False
-    else:
-        ch.HasLegend = True
-        if legend=="auto":
-            pass
-        if "U" in legend:
-            ch.Legend.Top = ch.PlotArea.InsideTop
-        if "R" in legend: 
-            ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width
-        if "10" in legend:
-            ch.Legend.Format.TextFrame2.TextRange.Font.Size = 10          
-        
+    # 凡例を一度無効にする
+    ch.HasLegend = False
+    
     # プロットエリアの調整
     p = ch.PlotArea
     p.InsideLeft   = p.InsideLeft
@@ -179,7 +169,7 @@ def ScatterChart(ws,
     p.InsideWidth  = p.InsideWidth
     p.InsideHeight = p.InsideHeight+15  #下側に広げる
 
-    # 1つ目の系列の色を青にする
+    # 1つ目の系列の色を指定
     series = ch.SeriesCollection(1)
     if not SeriesName == "":
         series.Name = SeriesName
@@ -202,5 +192,20 @@ def ScatterChart(ws,
             
     # グラフ外枠を黒に変更
     ch.ChartArea.Format.Line.ForeColor.RGB = RGB(0,0,0)
+    
+    # 凡例設定
+    if legend=="":
+        ch.HasLegend = False
+    else:
+        ch.HasLegend = True
+        if legend=="auto":
+            pass
+        if "U" in legend:
+            ch.Legend.Top = ch.PlotArea.InsideTop
+        if "R" in legend: 
+            ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width
+        m = re.search(r"\d+(?:\.\d+)?", legend)
+        if m:
+            ch.Legend.Format.TextFrame2.TextRange.Font.Size = float(m.group())    
     
     return ch

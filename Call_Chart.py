@@ -16,7 +16,7 @@ Title = name
 # ------------------------------------------------------------
 # path は適宜変更してください (Ctrl + Shift + C でパスのコピー)
 # ------------------------------------------------------------
-excel_path = r"C:\Users\*****\Desktop\test.xlsx"
+excel_path = r"C:\Users\ab708\Desktop\test.xlsx"
 Sheet = "Sheet1"
 
 # RGBのヘルパー関数
@@ -74,7 +74,7 @@ for n in range(data):
 from ScatterChart import ScatterChart
 ch1 = ScatterChart(ws = ws,
                  start_range="H3",
-                 row = 3,
+                 row = 2,
                  col = data +1,
                  paste_range="A1",
                  width_cm=12.54, 
@@ -83,7 +83,8 @@ ch1 = ScatterChart(ws = ws,
                  Title = "",
                  SeriesName = "",
                  RGBcolor=(68, 114, 196),
-                 x_title = "角度 (deg.)"
+                 x_title = "角度 (deg.)",
+                 legend=""
 )   
     
 # エクセルの画面更新を有効にする

@@ -1,0 +1,1152 @@
+PythonでExcel グラフ作成と体裁編集を自動化するサンプルコードを示します。
+Pythonのライブラリxlwingsを使います。
+# はじめに
+PythonでExcelグラフを作成するのにライブラリとしてopenpyxlが使われることが多いです。openpyxlはExcelファイルを閉じた状態で読み込み・書き込みできるため処理が高速ですが、**グラフの体裁編集に関しては一部制約**があります。
+一方でxlwingsを使えば、Excel を通常の操作と同様に開いた状態で COM 経由で操作できるため制約が少なく、**VBA に近い自由度でグラフの体裁編集が可能**です。本記事では、その方法をコード付きで紹介します。
+
+# サンプルコード (xlwings)
+エクセルシートにExcelグラフ(**散布図**)を貼り付け、体裁を整えるための調整を加えます。
+既にtest.xlsx がデスクトップにある場合には、既存ファイルの指定シートの最上段に13行の空白セルを挿入してから、空白部分にグラフを貼り付けます。
+
+スクリプトを実行する前にエクセルファイルを閉じる必要はないのですが、閉じていても自動で立ち上がります。
+私の環境での処理時間は、エクセルファイルを開いた状態で実行すると0.5 s、閉じた状態で実行するとエクセルの立ち上がりに余分な時間が必要となるため、3.0 s でした。
+
+    #ExcelGraph.py
+    import xlwings as xw
+    from xlwings.constants import AxisType
+    from win32com.client import constants
+    import numpy as np
+    import time
+    import os
+    
+    # 計測開始
+    t1 = time.time()
+    
+    name = "グラフ名"
+    SeriesName = "系列名"
+    Title = name
+    
+    # ------------------------------------------------------------
+    # path は適宜変更してください (Ctrl + Shift + C でパスのコピー)
+    # ------------------------------------------------------------
+    excel_path = r"C:\Users\*****\Desktop\test.xlsx"
+    Sheet = "Sheet1"
+    
+    # RGBのヘルパー関数
+    def RGB(r, g, b):
+        return r + g*256 + b*65536
+    
+    # cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
+    def cm_to_pt(cm):
+        return cm * 72 / 2.54
+        
+    # 指定のエクセルファイルがなければ作成する
+    if not os.path.exists(excel_path):
+        wb = xw.Book()           # 新規Excelを開く
+        wb.save(excel_path)
+    else:
+        wb = xw.Book(excel_path) # 既存のExcelを開く
+        
+    # 指定のワークシートがなければ作成する
+    if Sheet in [s.name for s in wb.sheets]:
+        ws = wb.sheets[Sheet]
+    else:
+        ws = wb.sheets.add(Sheet)
+    
+    # エクセルの画面更新を無効にする
+    wb.app.screen_updating = False
+    
+    # 上部に13行のセルを挿入する
+    ws.range("1:13").insert("down")
+    
+    # デモデータ作成
+    data = 19
+    cell0 = np.linspace(-90, 90, data)
+    cell1 = np.cos(np.deg2rad(cell0))
+    cell = [cell0, cell1]
+    
+    # データの貼り付け
+    ws.range(4,8).value = SeriesName
+    ws.range(2,8).value = Title
+    for n in range(2):
+        for i in range(data):
+            ws.range(n+3,i+9).value = cell[n][i]
+            
+    # 数値の表示桁数の変更
+    for i in range(data):
+        ws.range(3, i+9).number_format = "0"    # 小数0桁まで
+    for i in range(data):
+        ws.range(4, i+9).number_format = "0.00" # 小数2桁まで
+            
+    # cell1を数式に変更したい場合
+    for n in range(data):
+        col = 9 + n                          # 9=I列
+        col_letter = xw.utils.col_name(col)  # "I", "J", "K", ...
+        ws.range(4, col).value = f"=cos({col_letter}3/180*pi())"
+        
+    # ----------------------------------------------------------
+    # 散布図のエクセルグラフを作成する
+    # ----------------------------------------------------------
+    # (セル範囲入力) --------------------------------------------
+    start_range = "H3"
+    start = ws[start_range]
+    row = 2
+    col = data + 1
+    # (ターゲットセル計算) --------------------------------------
+    target_row = start.row + row - 1
+    target_col = xw.utils.col_name(start.column + col - 1)
+    target_range = f"{target_col}{target_row}"
+    
+    # xlwings によるグラフ作成 ----------------------------------
+    chart = ws.charts.add(left=ws.range("A1").left+1,  # leftとtopは貼り付け位置の指定 (必須)
+                          top=ws.range("A1").top+1,
+                          width=cm_to_pt(12.54),       # widthとheightは大きさ指定 (省略可)
+                          height=cm_to_pt(7.54)) 
+    chart.chart_type = 'xy_scatter_lines'
+    chart.set_source_data(ws.range(f'{start_range}:{target_range}'))
+    # ----------------------------------------------------------
+    
+    # グラフのチャート名 (エクセル画面左上の表示で確認できる)
+    chart.name = name
+    
+    # ChartObject(枠) → api[0]、Chart本体 → api[1]
+    ch = chart.api[1]
+    
+    # グラフタイトル
+    ch.HasTitle = True
+    if ch.HasTitle:
+        ch.ChartTitle.Text = Title
+    else:
+        ch.ChartTitle.Text = ""
+    
+    # 横軸のオプション
+    x_axis = ch.Axes(AxisType.xlCategory)
+    x_axis.MinimumScale = -90  # 最小値
+    x_axis.MaximumScale = 90   # 最大値  
+    x_axis.MajorUnit = 15      # 目盛間隔
+    x_axis.CrossesAt = -90     # 交差位置(縦軸との交点)
+    x_axis.TickLabels.NumberFormatLocal = "0_ "   # 小数0桁まで表示
+    
+    # 横軸のタイトル
+    x_axis.HasTitle = True
+    if x_axis.HasTitle:
+        x_axis.AxisTitle.Text = "角度 (deg.)"
+    
+    # 縦軸のオプション
+    y_axis = ch.Axes(AxisType.xlValue)
+    y_axis.TickLabels.NumberFormatLocal = "0.0_ " # 小数1桁まで表示
+    
+    # 縦軸のタイトル
+    y_axis.HasTitle = False
+    if y_axis.HasTitle:
+        y_axis.AxisTitle.Text = ""
+    
+    # Excel 2021 以降の標準スタイルを指定する ----------------------------------
+    # グラフタイトルの文字色をRGB(89,89,89)とし、フォントサイズを14にする
+    if ch.HasTitle:
+        ch.ChartTitle.Format.TextFrame2.TextRange.Font.Bold = False
+        ch.ChartTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(89,89,89)
+        ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = 14
+    
+    # グリッド線の設定（薄いグレー)
+    x_axis.HasMajorGridlines = True
+    x_axis.MajorGridlines.Format.Line.ForeColor.RGB = RGB(217, 217, 217)
+    x_axis.MajorGridlines.Format.Line.Weight = 0.75
+    x_axis.Format.Line.ForeColor.RGB = RGB(191, 191, 191)
+    x_axis.MajorTickMark = constants.xlTickMarkNone # 目盛の内向き/外向きなし
+    y_axis.HasMajorGridlines = True
+    y_axis.MajorGridlines.Format.Line.ForeColor.RGB = RGB(217, 217, 217)
+    y_axis.MajorGridlines.Format.Line.Weight = 0.75
+    y_axis.Format.Line.ForeColor.RGB = RGB(191, 191, 191)
+    y_axis.MajorTickMark = constants.xlTickMarkNone # 目盛の内向き/外向きなし
+    
+    for ax in ch.Axes():    
+        # 軸の設定
+        ax.TickLabels.Font.Color = RGB(89,89,89)
+        ax.TickLabels.Font.Size = 9
+        ax.TickLabels.Font.Name = "Aptos Narrow 本文"
+        # 軸タイトルがあるとき、軸タイトルを設定する
+        if ax.HasTitle:
+            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(89,89,89)
+            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Bold = False
+            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Size = 10
+    
+    # 外枠の設定
+    ch.ChartArea.Format.Line.ForeColor.RGB = RGB(217,217,217) # 薄いグレー
+    ch.ChartArea.Format.Line.Weight = 0.75                    # 枠線の太さ(pt)
+    # ----------------------------------------------------------------------
+    
+    # 凡例なし
+    ch.HasLegend = False
+        
+    # プロットエリアの調整
+    p = ch.PlotArea
+    p.InsideLeft   = p.InsideLeft
+    p.InsideTop    = p.InsideTop
+    p.InsideWidth  = p.InsideWidth
+    p.InsideHeight = p.InsideHeight+15  #下側に広げる
+    
+    # 1つ目の系列の色を青にする
+    series = ch.SeriesCollection(1) 
+    series.Format.Line.ForeColor.RGB = RGB(68, 114, 196) # 線の色
+    series.MarkerForegroundColor = RGB(68, 114, 196)     # マーカー枠線の色
+    series.MarkerBackgroundColor = RGB(68, 114, 196)     # マーカー内部の色
+    
+    # Excel 2021 以降の標準スタイルを指定する ---------------------------------
+    # 線とマーカーの設定
+    series.Format.Line.Weight = 1.5                     # 線の太さ(pt)
+    series.MarkerStyle = constants.xlMarkerStyleCircle  # マーカー: 丸
+    series.MarkerSize = 5                               # マーカーサイズ
+    # -----------------------------------------------------------------------
+    
+    # 軸タイトルと目盛りの数値の色を黒に変更する
+    for ax in ch.Axes():
+        ax.TickLabels.Font.Color = RGB(0,0,0)
+        if ax.HasTitle:
+            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0,0,0)
+            
+    # グラフ外枠を黒に変更
+    ch.ChartArea.Format.Line.ForeColor.RGB = RGB(0,0,0)
+        
+    # エクセルの画面更新を有効にする
+    wb.app.screen_updating = True
+    
+    # エクセルファイルを保存する
+    wb.save()
+    
+    # 計測終了
+    t2 = time.time()
+    elapsed_time = round(t2-t1,3)
+    print("処理時間:"+str(elapsed_time)+" s")
+    
+・ch = chart.api[1] など変数を置き換えています。
+
+・RGBは、Excelで 色 > その他の色 から確認できます。
+
+・PCによっては、古いバージョンのテンプレートのエクセルグラフが表示されたので、体裁が統一されるようにフォントサイズや色などを指定しました。
+
+・プロットエリアの調整では、凡例やタイトルの有無で基準位置が変わるため、凡例やタイトルを False にしてからプロットエリアを調整し、再度 True にするやり方があります。
+
+
+# グラフの書式設定
+■ 凡例を表示して、位置をプロットエリア内の右上にする
+
+    # 凡例の表示と位置の調整 (LeftとTopを指定する)
+    ch.HasLegend = True
+    ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width
+    ch.Legend.Top = ch.PlotArea.InsideTop  # 上に固定
+    
+    # 凡例のフォントサイズ変更
+    ch.Legend.Format.TextFrame2.TextRange.Font.Size = 10
+
+    # 凡例のフォントカラー変更
+    ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
+
+    # 凡例の枠線
+    ch.Legend.Format.Line.ForeColor.RGB = RGB(0, 0, 0)
+    ch.Legend.Format.Line.Weight = 0.75
+    ch.Legend.Format.Line.Visible = True
+
+    # 凡例の背景色(塗りつぶし)
+    ch.Legend.Format.Fill.ForeColor.RGB = RGB(255, 255, 255)
+    ch.Legend.Format.Fill.Visible = True
+
+    
+
+InsideLeft : プロット内部の左端位置
+InsideTop : プロット内部の上端位置
+InsideWidth : プロット内部の幅
+InsideHeight : プロット内部の高さ
+
+■ グラフの外枠を消す
+
+    # グラフの外枠を消す
+    ch.ChartArea.Border.LineStyle = 0
+
+■ 背景色の変更
+
+    # チャートエリアの色をグレーに変更
+    ch.ChartArea.Format.Fill.ForeColor.RGB = RGB(240,240,240)
+
+    # プロットエリアの色をグレーに変更
+    ch.PlotArea.Format.Fill.ForeColor.RGB = RGB(240,240,240)
+
+■ グラフの貼り付け位置 と サイズ (外枠含む全体) を指定する
+
+    # cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
+    def cm_to_pt(cm):
+        return cm * 72 / 2.54
+
+    # 貼り付け位置を数値(pt)で指定 (widthとheightは省略可)
+    chart = ws.charts.add(left=0, top=0, width=cm_to_pt(12.54), height=cm_to_pt(7.54))
+    
+    # グラフの左上がB2セルの左上になるように貼り付け 
+    chart2 = ws.charts.add(left=ws.range("B2").left,top=ws.range("B2").top,width=300,height=200)
+
+    # グラフ全体のサイズ変更
+    chart.width  = cm_to_pt(14.43)
+    chart.height = cm_to_pt(8.29)
+
+■ データ範囲の指定
+データが連続している部分までをデータ範囲にすることができます。
+
+    chart = ws.charts.add(left=ws.range("A1").left+1,  
+                          top=ws.range("A1").top+1,
+                          width=cm_to_pt(12.54),
+                          height=cm_to_pt(7.54)) 
+    chart.chart_type = 'xy_scatter_lines'
+
+    def last_cell_1(ws, start):
+        r, c = ws.range(start).row, ws.range(start).column
+        return ws.range(r, c).end('down').end('right').address.replace('$','')
+    
+    def last_cell_2(ws, start):
+        r, c = (ws.range(start).row, ws.range(start).column) if isinstance(start, str) else start
+        while ws[r+1,c].value not in (None,""): r+=1
+        while ws[r,c+1].value not in (None,""): c+=1
+        return ws[r,c].address.replace('$','')
+
+    start_range = "I3"
+    end_range = last_cell_1(ws, start_range)
+    chart.set_source_data(ws.range(f'{start_range}:{end_range}'))
+
+■ グラフタイトル
+グラフタイトルをなくすには、Text = "" (空白) にすればよいです。
+1行目だけでは、グラフタイトルは消えませんでした。
+
+    ch.HasTitle = False
+    if ch.HasTitle:
+        ch.ChartTitle.Text = "グラフタイトル"
+    else:
+        ch.ChartTitle.Text = ""
+
+
+■ 線の種類の変更 (データ系列の書式設定)
+
+    # n番目のデータ系列
+    ch = chart.api[1]
+    series = ch.SeriesCollection(n) 
+    
+    # 破線にする
+    series.Format.Line.DashStyle = 4
+
+    # 一点鎖線にする
+    series.Format.Line.DashStyle = 5
+
+    # 線なし
+    series.Format.Line.Visible = False
+
+    # 線の色
+    series.Format.Line.ForeColor.RGB = RGB(68, 114, 196)
+
+    # 線の太さ(pt)
+    series.Format.Line.Weight = 1.5
+
+    # 線の透明度の指定 (0 ~ 1)
+    series.Format.Line.Transparency = 0.3             # 30%透明
+
+    # マーカーなし
+    series.MarkerStyle = constants.xlMarkerStyleNone
+
+    # マーカー種類の指定
+    series.MarkerStyle = constants.xlMarkerStyleCircle
+    series.MarkerStyle = constants.xlMarkerStyleSquare
+    series.MarkerStyle = constants.xlMarkerStyleDiamond
+    series.MarkerStyle = constants.xlMarkerStyleTriangle
+    series.MarkerStyle = constants.xlMarkerStyleDot
+    series.MarkerStyle = constants.xlMarkerStyleDash
+    series.MarkerStyle = constants.xlMarkerStyleAutomatic
+
+    # マーカーサイズ
+    series.MarkerSize = 5
+
+    # マーカー内部の色
+    series.MarkerBackgroundColor = RGB(68, 114, 196)
+
+    # マーカー枠線の色
+    series.MarkerForegroundColor = RGB(68, 114, 196)
+
+■ グラフの種類
+
+    # グラフの種類
+    chart.chart_type = 'xy_scatter_lines'             # 散布図（点＋線）
+    chart.chart_type = 'xy_scatter'                   # 散布図（点のみ）
+    chart.chart_type = 'xy_scatter_smooth_no_markers' # 散布図（平滑線のみ）
+    chart.chart_type = 'line'                         # 折れ線グラフ
+    chart.chart_type = 'line_markers'                 # 折れ線＋マーカー
+    chart.chart_type = 'column_clustered'             # 棒グラフ
+    
+    # 系列のグラフ種類を変更
+    series.ChartType = constants.xlXYScatterLines     # 散布図
+    series.ChartType = constants.xlLine               # 折れ線
+    series.ChartType = constants.xlLineMarkers        # 折れ線＋マーカー
+    series.ChartType = constants.xlColumnClustered    # 棒グラフに変更
+
+■ 第二軸の追加
+
+    # 系列2を第二軸に割り当て
+    series2 = ch.SeriesCollection(2)
+    series2.AxisGroup = constants.xlSecondary
+
+    # 第二軸の設定
+    secondary_axis = ch.Axes(constants.xlValue, constants.xlSecondary)
+    secondary_axis.HasTitle = True
+    secondary_axis.AxisTitle.Text = "副軸タイトル"
+
+    # 主軸タイトルを設定する例
+    primary_y = ch.Axes(constants.xlValue, constants.xlPrimary)
+    primary_y.HasTitle = True
+    primary_y.AxisTitle.Text = "主軸のタイトル"
+
+■ データラベル
+
+    # 1ポイント(最大値)だけマーカーの色を変え、データラベルをつける
+    max = np.argmax(cell1)
+    pt = series.Points(max + 1)
+    pt.MarkerForegroundColor = RGB(255, 0, 0)                  # 1ポイントだけ色を変える
+    pt.MarkerBackgroundColor = RGB(255, 0, 0)
+    pt.ApplyDataLabels()                                       # データラベルをつける
+    pt.DataLabel.Text = f"{cell1[max]:.2f}@{cell0[max]:.0f}°"  # ラベルの内容を変更　
+    pt.DataLabel.Position = 0                                  # ラベルを上側に配置
+    
+    # データラベルを赤にする
+    pt.DataLabel.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(255,0,0)
+
+■ 近似曲線
+
+    # トレンドライン(線形)
+    trend = series.Trendlines().Add(Type=constants.xlLinear)
+    # 式を表示
+    trend.DisplayEquation = True
+    # 決定係数(R²)を表示
+    trend.DisplayRSquared = True
+
+    # Type一覧
+    constants.xlLinear        # 線形
+    constants.xlPolynomial    # 多項式
+    constants.xlExponential   # 指数(Y軸対数で直線)
+    constants.xlLogarithmic   # 対数(X軸対数で直線)
+    constants.xlPower         # 累乗(両対数で直線)
+    constants.xlMovingAvg     # 移動平均
+    
+    # 多項式の次数指定(省略可)
+    trend.Order = 2
+
+    # 式の位置の指定
+    trend.DataLabel.Left = 200
+    trend.DataLabel.Top  = 35
+
+■ 誤差範囲 (エラーバー)
+
+    ws.range("I5:AA6").value = 0.05
+    ws.range("H5").value = "上側エラー"
+    ws.range("H6").value = "下側エラー"
+
+    series.ErrorBar(
+        Direction=constants.xlY,
+        Include=constants.xlBoth,
+        Type=constants.xlCustom,
+        Amount=ws.range("I5:AA5").api,       # 上側エラー
+        MinusValues=ws.range("I6:AA6").api   # 下側エラー
+    )
+
+# 軸の書式設定
+openpyxl でも古いフォーマットのグラフが出力されることが多く、目盛線の色や線幅などの体裁を調整できず不便なケースがあります。また、軸の交点の設定もできないようです。xlwingsでは設定できます。
+
+■ 目盛線の間隔、色、線幅の設定
+
+    ch = chart.api[1]
+    x_axis = ch.Axes(AxisType.xlCategory)
+    y_axis = ch.Axes(AxisType.xlValue)
+
+    # 主目盛線の表示設定
+    x_axis.HasMajorGridlines = True
+    y_axis.HasMajorGridlines = True
+
+    # 補助目盛の表示設定
+    x_axis.HasMinorGridlines = True
+    y_axis.HasMinorGridlines = True
+    
+    # 主目盛の間隔 
+    x_axis.MajorUnit = 15
+    y_axis.MajorUnit = 0.2
+
+    # 交差位置(縦軸・横軸との交点)
+    x_axis.CrossesAt = -90
+    y_axis.CrossesAt = 0 
+
+    # 主目盛線の色を設定 (プロットエリアの上側と右側を含む)
+    x_axis.MajorGridlines.Format.Line.ForeColor.RGB = RGB(217, 217, 217)
+    y_axis.MajorGridlines.Format.Line.ForeColor.RGB = RGB(217, 217, 217)
+
+    # 主目盛線の線幅（pt）を設定
+    x_axis.MajorGridlines.Format.Line.Weight = 0.75
+    y_axis.MajorGridlines.Format.Line.Weight = 0.75
+
+    # 軸の線(プロットエリアの下側・左側の線)の色設定
+    x_axis.Format.Line.ForeColor.RGB = RGB(191, 191, 191)
+    y_axis.Format.Line.ForeColor.RGB = RGB(191, 191, 191)
+
+    # 軸の線を非表示
+    x_axis.Format.Line.Visible = False
+
+    # 内向き/外向き目盛の設定
+    x_axis.MajorTickMark = constants.xlTickMarkNone
+    y_axis.MajorTickMark = constants.xlTickMarkNone
+
+    # TickMarkの種類
+    xlTickMarkNone        # なし
+    xlTickMarkInside      # 内向き
+    xlTickMarkOutside     # 外向き
+    xlTickMarkCross       # 十字
+
+    # スケール設定
+    x_axis.MinimumScale         # 最小値
+    x_axis.MaximumScale         # 最大値
+    x_axis.MinimumScaleIsAuto   # 自動設定 (True/False)
+    x_axis.MaximumScaleIsAuto   # 自動設定 (True/False)
+
+    # 軸のタイトル
+    x_axis.HasTitle = True
+    if x_axis.HasTitle:
+        x_axis.AxisTitle.Text = "軸ラベル"
+
+    # 軸を反転させる (左が大きい値)
+    x_axis.ReversePlotOrder = True
+
+■ 軸の表示形式
+    
+    # 軸の表示形式
+    y_axis.TickLabels.NumberFormatLocal = "0.00"      # 小数の表示桁数を指定
+    y_axis.TickLabels.NumberFormatLocal = "0.0E+00"   # 指数表示
+    y_axis.TickLabels.NumberFormatLocal = "0%"        # パーセント表示
+    y_axis.TickLabels.NumberFormatLocal = "#,##0_ "   # 桁区切りを使用
+
+■ 対数軸に変更　(X軸・Y軸)
+
+    # Y軸を対数軸に変更 (CrossesAt < 0 ではエラー)
+    y_axis.ScaleType = 1                              # 0:線形軸, 1:対数軸
+    y_axis.TickLabels.NumberFormatLocal = "0.0E+00"
+    
+openpyxl で作ったエクセルグラフに xlwings 経由で高度な体裁設定を適用するハイブリッドコードが作れそうです。
+
+# セルの書式設定
+
+    # セルを赤にする
+    ws.range("H4").color = RGB(255, 0, 0)
+
+    # 文字を赤にする
+    ws.range("H4").font.color = RGB(255, 0, 0)
+
+    # フォント名
+    ws.range("H4").font.name = "Meiryo UI"
+
+    # フォントサイズ
+    ws.range("H4").font.size = 12
+    
+    # 太字
+    ws.range("H4").font.bold = True
+    
+    # 斜体
+    ws.range("H4").font.italic = True
+
+    # パーセント表示にする (小数1桁)
+    ws.range("I4:AA4").number_format = "0.0%"
+
+    # 左寄せ / 中央 / 右寄せ
+    ws.range("H4").api.HorizontalAlignment = -4131  # 左
+    ws.range("H4").api.HorizontalAlignment = -4108  # 中央
+    ws.range("H4").api.HorizontalAlignment = -4152  # 右
+    
+    # 罫線 (格子)
+    cell = ws.range("H3:AA4")
+    for i in [7, 8, 9, 10, 11, 12]:                 # [左、上、下、右、中縦、中横]
+        cell.api.Borders(i).LineStyle = 1           # 実線
+        cell.api.Borders(i).Weight = 2              # 太さ（2=中, 3=太）
+        cell.api.Borders(i).Color = RGB(0,0,0)      # 黒
+
+# 既存ファイルの編集
+openpyxlでは、matplotlibで作成したグラフ画像を貼り付けるのが一般的ですが、エクセルグラフも作成できます。
+xlwingsで作成したファイルのみならず、openpyxlで作成したエクセルグラフを編集するのにもxlwingsが使えそうです。openpyxlで作成したファイルは、保存してからxlwingsで編集する必要があります。
+
+■ Excel を閉じた状態 (非表示) でグラフの系列色を xlwings で変更する
+
+注) 元のエクセルファイルを閉じている必要があります。
+    
+    import xlwings as xw
+    
+    app = xw.App(visible=False)         # Excel を表示しない
+    wb = app.books.open(r"C:\Users\*****\Desktop\test.xlsx")
+
+    def RGB(r, g, b):
+        return r + (g << 8) + (b << 16)
+    
+    ws = wb.sheets[0]               # 1つ目のシートを指定
+    
+    # シート内のグラフ名を全部表示して確認
+    chart_count = ws.api.ChartObjects().Count
+    print("Chart count:", chart_count)
+    
+    for i in range(1, chart_count + 1):
+        obj = ws.api.ChartObjects(i)
+        print(i, obj.Name)
+    
+    # 1番目のグラフを取得（必要なら Name 指定も可）
+    obj = ws.api.ChartObjects(1)
+    chart = obj.Chart
+    
+    # --- 系列の色変更（RGB） ---
+    series = chart.SeriesCollection(1)                # 1つ目の系列
+    series.Format.Line.ForeColor.RGB = RGB(0, 255, 0) # 線の色
+    series.MarkerForegroundColor = RGB(0, 255, 0)     # マーカー枠線の色
+    series.MarkerBackgroundColor = RGB(0, 255, 0)     # マーカー内部の色
+    
+    wb.save()
+    wb.close()
+    app.quit()
+
+■ xlwings で非表示のまま新規ファイル作成し、シートをコピーする
+
+
+    app = xw.App(visible=False)
+    wb2 = app.books.add()
+
+    # シートの COM オブジェクトを取得してからコピー
+    ws1 = wb.sheets[0].api  
+    target = wb2.sheets[0].api
+    ws1.Copy(Before=target)
+    
+    # シート名を変更
+    ws2 = wb2.sheets[0]
+    ws2.name = "Copyファイル"
+    
+    # コピー元の保存先フォルダを取得
+    folder = os.path.dirname(wb.fullname)
+
+    wb2.save(os.path.join(folder, "test_v2.xlsx"))
+    wb2.close()
+    app.quit()
+
+app.quit() が実行されないと Excel プロセスが残ります。
+その場合は、タスクプロセスから Microsoft Excel のタスクを終了させます。
+
+chart.name でグラフ名を決めておけば、グラフ名の指定で編集することができます。
+
+# 選択中のグラフの書式設定
+
+chart.api[1] を使わず、 chart ＝ Excel の COM オブジェクトを直接使えば良いです。
+
+    import xlwings as xw
+    
+    app = xw.apps.active
+    chart = app.api.ActiveChart  
+    ch = chart  
+    
+    # RGBのヘルパー関数
+    def RGB(r, g, b):
+        return r + g*256 + b*65536
+
+# シート内のすべてのグラフを書式設定
+
+    import xlwings as xw
+    
+    wb = xw.books.active           # または xw.Book("xxx.xlsx")
+    sheet = wb.sheets.active       # 編集したいシートを指定
+    
+    def RGB(r, g, b):
+        return r + g*256 + b*256*256
+    
+    # ChartObjects をループ
+    for chart_obj in sheet.api.ChartObjects():
+        ch = chart_obj.Chart  # COM Chart オブジェクト取得
+
+すべてのシートをループする場合には、
+
+    # すべてのシートをループ
+    for sheet in wb.sheets:
+        # ChartObjects をループ
+        for chart_obj in sheet.api.ChartObjects():
+            ch = chart_obj.Chart  # COM Chart オブジェクト取得
+
+# openpyxlとxlwingsのハイブリットコード
+
+前半でサンプルコードに相当するグラフをopenpyxlで作成し、後半でxlwingsによるグラフの体裁調整をします。下記のコードは、openpyxl(3.1.2)ではでエラーが出ずに動いて、openpyxl(3.1.5)ではxlwingsによる体裁調整でエラーが発生し動きませんでした。
+
+    pip install openpyxl==3.1.2
+
+でダウングレードできます。
+
+バージョンの問題で、思い通りのグラフが出ない場合には、openpyxlではデータと画像(matplotlibのグラフなど)の貼り付けのみで保存し、エクセルグラフはxlwingsで作成して体裁調整するのも手だと思われます。
+
+    # save as excel_graph_openpyxl_xlwings.py
+    # 前半部 ----------------------------------------
+    from openpyxl import Workbook
+    from openpyxl.chart import ScatterChart, Reference, Series
+    from openpyxl.chart.axis import Scaling, ChartLines
+    import math
+    import os
+    
+    # ===== 保存先（デスクトップ） =====
+    desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+    filepath = os.path.join(desktop, "test.xlsx")
+    
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Sheet1"
+    
+    # ===== データ作成 =====
+    ws["H2"] = "グラフ名"
+    ws["H4"] = "系列名"
+    
+    n = 19
+    angles = [round(-90 + i * (180 / (n - 1)), 6) for i in range(n)]
+    values = [round(math.cos(math.radians(a)), 6) for a in angles]
+    
+    angle_row, angle_col = 3, 9  # I3
+    value_row, value_col = 4, 9  # I4
+    
+    # データ書き込み
+    for i in range(n):
+        ws.cell(row=angle_row, column=angle_col + i, value=angles[i])
+        ws.cell(row=value_row, column=value_col + i, value=values[i])
+    
+    # ===== グラフ作成 =====
+    chart = ScatterChart()
+    chart.title = ws["H2"].value
+    
+    chart.x_axis.title = "角度 (deg.)"
+    chart.y_axis.title = "cos"
+    
+    chart.x_axis.scaling = Scaling(min=-90, max=90)
+    chart.x_axis.majorUnit = 15
+    chart.y_axis.scaling = Scaling(min=-1, max=1)
+    chart.y_axis.majorUnit = 0.5
+    
+    chart.x_axis.majorGridlines = ChartLines()
+    chart.y_axis.majorGridlines = ChartLines()
+    
+    # 凡例を消す
+    chart.legend = None
+    
+    # ===== データ範囲 =====
+    min_col = angle_col
+    max_col = angle_col + (n - 1)
+    
+    xvalues = Reference(ws, min_col=min_col, max_col=max_col, min_row=angle_row)
+    yvalues = Reference(ws, min_col=min_col, max_col=max_col, min_row=value_row)
+    series = Series(yvalues, xvalues, title=None)
+    
+    # ---- 色を青に統一 ----
+    blue = "4472C4"
+    series.graphicalProperties.line.solidFill = blue
+    series.marker.symbol = "circle"
+    series.marker.size = 7
+    series.marker.graphicalProperties.line.solidFill = blue
+    series.marker.graphicalProperties.solidFill = blue
+    
+    chart.series.append(series)
+    
+    chart.width = 11.5
+    chart.height = 5.9
+    
+    # ===== A1 に貼り付ける =====
+    ws.add_chart(chart, "A1")
+    
+    wb.save(filepath)
+    print("Saved:", filepath)
+
+    # 後半部 ----------------------------------------
+    # modify.py
+    import xlwings as xw
+    from xlwings.constants import AxisType
+    from win32com.client import constants
+    
+    app = xw.App(visible=False)         # Excel を表示しない
+    wb = app.books.open(filepath)
+    
+    def RGB(r, g, b):
+        return r + (g << 8) + (b << 16)
+    
+    ws = wb.sheets[0]               # 1つ目のシートを指定
+    
+    # シート内のグラフ名を全部表示して確認
+    chart_count = ws.api.ChartObjects().Count
+    print("Chart count:", chart_count)
+    
+    for i in range(1, chart_count + 1):
+        obj = ws.api.ChartObjects(i)
+        print(i, obj.Name)
+    
+    # 1番目のグラフを取得（必要なら Name 指定も可）
+    obj = ws.api.ChartObjects(1)
+    chart = obj.Chart
+    ch=chart
+    
+    # 横軸のオプション
+    x_axis = ch.Axes(AxisType.xlCategory)
+    x_axis.MinimumScale = -90  # 最小値
+    x_axis.MaximumScale = 90   # 最大値
+    x_axis.MajorUnit = 15      # 目盛間隔
+    x_axis.CrossesAt = -90     # 交差位置(縦軸との交点)
+    x_axis.TickLabels.NumberFormatLocal = "0"   # 小数0桁まで表示
+    
+    # 横軸のタイトル
+    x_axis.HasTitle = True
+    if x_axis.HasTitle:
+        x_axis.AxisTitle.Text = "角度 (deg.)"
+    
+    # 縦軸のオプション
+    y_axis = ch.Axes(AxisType.xlValue)
+    y_axis.TickLabels.NumberFormatLocal = "0.0" # 小数1桁まで表示
+    
+    # 縦軸のタイトル
+    y_axis.HasTitle = False
+    if y_axis.HasTitle:
+        y_axis.AxisTitle.Text = ""
+    
+    y_axis.MinimumScale = 0
+    
+    # Excel 2021 以降の標準スタイルを指定する ----------------------------------
+    # グラフタイトルの文字色をRGB(89,89,89)とし、フォントサイズを14にする
+    if ch.HasTitle:
+        ch.ChartTitle.Format.TextFrame2.TextRange.Font.Bold = False
+        ch.ChartTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(89,89,89)
+        ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = 14
+    
+    # グリッド線の設定（薄いグレー)
+    x_axis.HasMajorGridlines = True
+    x_axis.MajorGridlines.Format.Line.ForeColor.RGB = RGB(217, 217, 217)
+    x_axis.MajorGridlines.Format.Line.Weight = 0.75
+    x_axis.Format.Line.ForeColor.RGB = RGB(191, 191, 191)
+    x_axis.MajorTickMark = constants.xlTickMarkNone # 目盛の内向き/外向きなし
+    y_axis.HasMajorGridlines = True
+    y_axis.MajorGridlines.Format.Line.ForeColor.RGB = RGB(217, 217, 217)
+    y_axis.MajorGridlines.Format.Line.Weight = 0.75
+    y_axis.Format.Line.ForeColor.RGB = RGB(191, 191, 191)
+    y_axis.MajorTickMark = constants.xlTickMarkNone # 目盛の内向き/外向きなし
+    
+    for ax in ch.Axes():    
+        # 軸の設定
+        ax.TickLabels.Font.Color = RGB(89,89,89)
+        ax.TickLabels.Font.Size = 9
+        ax.TickLabels.Font.Name = "Aptos Narrow 本文"
+        # 軸タイトルがあるとき、軸タイトルを設定する
+        if ax.HasTitle:
+            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(89,89,89)
+            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Bold = False
+            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Size = 10
+    
+    # 外枠の設定
+    ch.ChartArea.Format.Line.ForeColor.RGB = RGB(217,217,217) # 薄いグレー
+    ch.ChartArea.Format.Line.Weight = 0.75                    # 枠線の太さ(pt)
+    # ----------------------------------------------------------------------
+    
+    # 凡例なし
+    ch.HasLegend = False
+        
+    # プロットエリアの調整
+    p = ch.PlotArea
+    p.InsideLeft   = p.InsideLeft
+    p.InsideTop    = p.InsideTop
+    p.InsideWidth  = p.InsideWidth
+    p.InsideHeight = p.InsideHeight + 15
+    
+    # 1つ目の系列の色を青にする
+    series = ch.SeriesCollection(1) 
+    series.Format.Line.ForeColor.RGB = RGB(68, 114, 196) # 線の色
+    series.MarkerForegroundColor = RGB(68, 114, 196)     # マーカー枠線の色
+    series.MarkerBackgroundColor = RGB(68, 114, 196)     # マーカー内部の色
+    
+    # Excel 2021 以降の標準スタイルを指定する ---------------------------------
+    # 線とマーカーの設定
+    series.Format.Line.Weight = 1.5                     # 線の太さ(pt)
+    series.MarkerStyle = constants.xlMarkerStyleCircle  # マーカー: 丸
+    series.MarkerSize = 5                               # マーカーサイズ
+    # -----------------------------------------------------------------------
+    
+    # 軸タイトルと目盛りの数値の色を黒に変更する
+    for ax in ch.Axes():
+        ax.TickLabels.Font.Color = RGB(0,0,0)
+        if ax.HasTitle:
+            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0,0,0)
+            
+    # グラフ外枠を黒に変更
+    ch.ChartArea.Format.Line.ForeColor.RGB = RGB(0,0,0)
+    wb.save()
+    wb.close()
+    app.quit()
+
+
+# VBAコード
+
+xlwingsとVBAでは、同等なグラフとなりました。
+VBAに慣れている方からは、エクセル作業を自動化するわけだから、VBAを使わずにPythonでグラフを作る必要性はないと言われるかもしれません。しかし、大量のファイルを分析する場合や、Pythonで自動化したいという考えであれば、xlwingsでグラフ作成したくなります。
+サンプルコードはエクセル出力のみですが、実際にはcsvで取り込んだデータをPythonで分析し、新規のエクセルファイルに出力するコードをよく使うので、分析の計算負荷が小さいケースであっても、Pythonで体裁の整ったグラフを出力したいという思いがありました。
+
+    Option Explicit
+    
+    Sub CreateScatterGraph()
+        Dim ws As Worksheet
+        Dim wb As Workbook
+        Dim chartObj As ChartObject
+        Dim chart As chart
+        Dim seriesName As String
+        Dim titleName As String
+        Dim dataCount As Long
+        Dim i As Long
+        Dim cell0() As Double
+        Dim cell1() As Double
+        Dim piVal As Double
+        Dim lastCol As Long
+        Dim rng As Range
+        
+        piVal = WorksheetFunction.Pi()
+        
+        ' -------------------------------------------------
+        ' 設定
+        ' -------------------------------------------------
+        titleName = "グラフ名"
+        seriesName = "系列名"
+        dataCount = 19
+        
+        Set wb = ThisWorkbook
+        
+        ' Sheet1が存在するかチェック
+        On Error Resume Next
+        Set ws = wb.Sheets("Sheet1")
+        If ws Is Nothing Then
+            Set ws = wb.Sheets.Add
+            ws.Name = "Sheet1"
+        End If
+        On Error GoTo 0
+        
+        ' 上部に13行挿入
+        ws.Rows("1:13").Insert Shift:=xlDown
+        
+        ' データ作成
+        ReDim cell0(1 To dataCount)
+        ReDim cell1(1 To dataCount)
+        
+        For i = 1 To dataCount
+            cell0(i) = -90 + (i - 1) * (180 / (dataCount - 1))
+            cell1(i) = Cos(cell0(i) * piVal / 180)
+        Next i
+        
+        ' データ貼り付け
+        ws.Cells(2, 8).Value = titleName
+        ws.Cells(4, 8).Value = seriesName
+        
+        For i = 1 To dataCount
+            ws.Cells(3, 8 + i).Value = cell0(i)
+            ws.Cells(4, 8 + i).Formula = "=COS(" & ws.Cells(3, 8 + i).Address(False, False) & "/180*PI())"
+            ws.Cells(3, 8 + i).NumberFormat = "0"
+            ws.Cells(4, 8 + i).NumberFormat = "0.00"
+        Next i
+        
+        ' -------------------------------------------------
+        ' グラフ作成
+        ' -------------------------------------------------
+        Set chartObj = ws.ChartObjects.Add( _
+            Left:=ws.Range("A1").Left + 1, _
+            Top:=ws.Range("A1").Top + 1, _
+            Width:=cm_to_pt(12.54), _
+            Height:=cm_to_pt(7.54))
+            
+        Set chart = chartObj.chart
+        
+        ' データ範囲
+        lastCol = 8 + dataCount
+        Set rng = ws.Range(ws.Cells(3, 8), ws.Cells(4, lastCol))
+        chart.SetSourceData Source:=rng
+        chart.ChartType = xlXYScatterLines
+        
+        ' グラフタイトル
+        chart.HasTitle = True
+        chart.ChartTitle.Text = titleName
+        With chart.ChartTitle.Format.TextFrame2.TextRange.Font
+            .Bold = msoFalse
+            .Size = 14
+            .Fill.ForeColor.RGB = RGB(89, 89, 89)
+        End With
+        
+        ' 軸設定
+        With chart.Axes(xlCategory)
+            .MinimumScale = -90
+            .MaximumScale = 90
+            .MajorUnit = 15
+            .CrossesAt = -90
+            .HasTitle = True
+            .AxisTitle.Text = "角度 (deg.)"
+            .TickLabels.NumberFormat = "0"
+            .HasMajorGridlines = True
+            .MajorGridlines.Format.Line.ForeColor.RGB = RGB(217, 217, 217)
+            .MajorGridlines.Format.Line.Weight = 0.75
+            .Format.Line.ForeColor.RGB = RGB(191, 191, 191)
+            .MajorTickMark = xlTickMarkNone
+        End With
+        
+        With chart.Axes(xlValue)
+            .HasTitle = False
+            .TickLabels.NumberFormat = "0.0"
+            .HasMajorGridlines = True
+            .MajorGridlines.Format.Line.ForeColor.RGB = RGB(217, 217, 217)
+            .MajorGridlines.Format.Line.Weight = 0.75
+            .Format.Line.ForeColor.RGB = RGB(191, 191, 191)
+            .MajorTickMark = xlTickMarkNone
+        End With
+        
+        ' 系列設定
+        With chart.SeriesCollection(1)
+            .Format.Line.ForeColor.RGB = RGB(68, 114, 196)
+            .Format.Line.Weight = 1.5
+            .MarkerStyle = xlMarkerStyleCircle
+            .MarkerSize = 5
+            .MarkerForegroundColor = RGB(68, 114, 196)
+            .MarkerBackgroundColor = RGB(68, 114, 196)
+        End With
+        
+        ' 軸フォント設定
+        Dim ax As Axis
+        For Each ax In chart.Axes
+            ax.TickLabels.Font.Color = RGB(0, 0, 0)
+            ax.TickLabels.Font.Size = 9
+            ax.TickLabels.Font.Name = "MS PGothic" ' Aptos Narrowの代替
+            If ax.HasTitle Then
+                
+                ax.AxisTitle.Font.Color = RGB(0, 0, 0)
+                ax.AxisTitle.Font.Size = 10
+                ax.AxisTitle.Font.Bold = False
+            End If
+        Next ax
+        
+        ' グラフ外枠
+        chart.ChartArea.Format.Line.ForeColor.RGB = RGB(0, 0, 0)
+        chart.ChartArea.Format.Line.Weight = 0.75
+        
+        ' 凡例非表示
+        chart.HasLegend = False
+
+        ' プロットエリアの調整
+        Dim p As PlotArea
+        Set p = chart.PlotArea
+        
+        With p
+            .InsideLeft = .InsideLeft
+            .InsideTop = .InsideTop
+            .InsideWidth = .InsideWidth
+            .InsideHeight = .InsideHeight + 15   ' ← Pythonと同じく下に広げる
+        End With
+    
+        ' MsgBox "グラフ作成完了"
+        
+    End Sub
+    
+    ' -------------------------------------------------
+    ' cm → pt 換算
+    ' -------------------------------------------------
+    Function cm_to_pt(cm As Double) As Double
+        cm_to_pt = cm * 72 / 2.54
+    End Function
+
+# csvデータをメモリに読み込む
+csvデータをメモリに読み込むコードを掲載します。
+「ファイル番号 × 行 × 列」＝ data[file_idx][row_idx][col_idx]
+の3次元配列となります。
+
+■ Pyhon
+
+    import csv
+    import glob
+    
+    csv_files = sorted(glob.glob(r"C:\data\*.csv"))
+    
+    data = []
+    
+    for f in csv_files:
+        rows = []
+        with open(f, newline="", encoding="utf-8") as fp:
+            reader = csv.reader(fp)
+            for row in reader:
+                rows.append(row)
+        data.append(rows)
+
+■ VBA
+VBAには3次元配列はないので、2次元配列の要素を 2次元 Variant 配列（行×列）として実質的な3次元配列とします。csvを開かずにメモリに直読みします。
+data(file_idx)(row, col)
+
+VBAの配列は1から始まります。
+Python : data[f][r][c]
+VBA　: data(f+1)(r+1, c+1)
+
+    Option Explicit
+    
+    Sub ReadCSV_3D_ToMemory()
+    
+        Dim folderPath As String
+        Dim fileName As String
+        Dim fso As Object
+        Dim ts As Object
+    
+        Dim data As Collection          ' ← 3次元の外側
+        Dim rows As Collection
+        Dim line As String
+        Dim values() As String
+    
+        Dim r As Long, c As Long
+        Dim maxCol As Long
+    
+        folderPath = "C:\data\"
+        Set fso = CreateObject("Scripting.FileSystemObject")
+        Set data = New Collection
+    
+        fileName = Dir(folderPath & "*.csv")
+    
+        Do While fileName <> ""
+            Set ts = fso.OpenTextFile(folderPath & fileName)
+    
+            Set rows = New Collection
+            maxCol = 0
+    
+            ' --- 1ファイル分読み込み ---
+            Do While Not ts.AtEndOfStream
+                line = ts.ReadLine
+                values = Split(line, ",")
+                rows.Add values
+                If UBound(values) + 1 > maxCol Then maxCol = UBound(values) + 1
+            Loop
+    
+            ts.Close
+    
+            ' --- Collection → 2次元配列 ---
+            Dim arr() As Variant
+            ReDim arr(1 To rows.Count, 1 To maxCol)
+    
+            For r = 1 To rows.Count
+                For c = 0 To UBound(rows(r))
+                    arr(r, c + 1) = rows(r)(c)
+                Next c
+            Next r
+    
+            ' --- 1ファイル分を追加 ---
+            data.Add arr
+    
+            fileName = Dir()
+        Loop
+    
+        ' 確認
+        Debug.Print "files:", data.Count
+        Debug.Print "file0 rows:", UBound(data(1), 1)
+        Debug.Print "file0 cols:", UBound(data(1), 2)
+    
+    End Sub
+
+    ' アクセス方法
+    ' file 0 の 3行目 2列目
+    Dim value As Variant
+    value = data(1)(3, 2)
+
+# まとめ
+こちらのサンプルコードをベースにエクセルグラフの編集作業を自動化していきたいです。
+
+また、マクロの記録で頻出する .Selectや.Activate に対応する .select() や .activate() をPythonで使うことができますが、負荷が重くて処理が追い付かずエラー (pywintypes.com_error) が出やすくなります。
+そのため、.select()や .activate()を使わずにコードを作成する必要があります。

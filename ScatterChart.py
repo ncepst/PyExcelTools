@@ -254,7 +254,7 @@ def ScatterChart(ws,
         if legend == "auto":
             pass
         else:
-            if "U" in legend:
+            if "U" in legend: # 大文字のUを含む場合
                 ch.Legend.Top = ch.PlotArea.InsideTop
             if "R" in legend: # 大文字のRを含む場合
                 ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width

@@ -5,32 +5,34 @@ from win32com.client import constants
 import re
 
 def ScatterChart(ws,
-                 start_range="",
-                 row=2,
-                 col=2,
-                 paste_range="A1",
-                 width_cm=12.54,
-                 height_cm=7.54,
+                 start_range = "",
+                 row = 2,
+                 col = 2,
+                 paste_range = "A1",
+                 width_cm = 12.54,
+                 height_cm = 7.54,
                  name = "",
                  Title = "",
-                 series_list=[
-                    {"color_RGB": (68,114,196)}
-                 ],
+                 series_list = None,
                  x_title = "",
-                 x_min =-90,
-                 x_max =+90,
-                 x_major=15,
-                 x_cross=-90,
-                 x_format="0",
+                 x_min = -90,
+                 x_max = +90,
+                 x_major = 15,
+                 x_cross = -90,
+                 x_format = "0",
                  y_title = "",
-                 y_min ="",
-                 y_max ="",
-                 y_major="",
-                 y_cross="",
-                 y_format="0.0",
-                 legend="",
-                 chart_border_color=""   #黒=0
+                 y_min = "",
+                 y_max = "",
+                 y_major = "",
+                 y_cross = "",
+                 y_format = "0.0",
+                 legend = "",
+                 chart_border_color = None #黒=0
                 ):
+    
+    # list / dict はミュータブルのため、デフォルト引数を None にしている
+    if series_list is None:
+        series_list = [{"color_RGB": (68,114,196)}]
     
     # RGBのヘルパー関数
     def RGB(r, g, b):
@@ -129,7 +131,8 @@ def ScatterChart(ws,
     # 系列の設定 -----------------------------------------------------------------------------
     for i, cfg in enumerate(series_list, start=1):
         series = ch.SeriesCollection(i)
-        if cfg.get("name"):
+        name0 = cfg.get("name")
+        if name0 not in (None, ""):
             series.Name = cfg["name"]
         if cfg.get("XValues"):
             series.XValues = ws.range(cfg["XValues"] ).api
@@ -143,9 +146,18 @@ def ScatterChart(ws,
             series.MarkerBackgroundColor = color         # マーカー内部の色
         
         # デフォルト値は Excel 2021 以降の標準スタイル
-        series.Format.Line.Weight = cfg.get("weight", 1.5)                    # 線の太さ(pt)
-        series.MarkerStyle = cfg.get("marker",constants.xlMarkerStyleCircle)  # マーカー: 丸
-        series.MarkerSize = cfg.get("size",5)                                 # マーカーサイズ
+        style = cfg.get("style", "line+marker")
+        if style == "marker":
+            series.Format.Line.Visible = False
+        else:
+            series.Format.Line.Visible = True
+            series.Format.Line.Weight = cfg.get("weight", 1.5)  # 線の太さ(pt)
+        if style == "line":
+            series.MarkerStyle = constants.xlMarkerStyleNone
+        else:
+            series.MarkerStyle = cfg.get("marker",constants.xlMarkerStyleCircle)  # マーカー: 丸
+            series.MarkerSize = cfg.get("size",5)                                 # マーカーサイズ
+
     #-----------------------------------------------------------------------------------------
     
     # Excel 2021 以降の標準スタイルを指定する ----------------------------------
@@ -191,11 +203,9 @@ def ScatterChart(ws,
             ax.AxisTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0,0,0)
             
     # グラフ外枠の色を変更
-    if chart_border_color != "":
+    if chart_border_color not in (None, ""):
         if isinstance(chart_border_color, (tuple, list)):
             chart_border_color = RGB(*chart_border_color)
-        else:
-            chart_border_color = chart_border_color
         ch.ChartArea.Format.Line.ForeColor.RGB = chart_border_color
 
     # 凡例を一度無効にする

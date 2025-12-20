@@ -33,7 +33,13 @@ def ScatterChart(ws,
     # list / dict はミュータブルのため、デフォルト引数を None にしている
     if series_list is None:
         series_list = [{"color_RGB": (68,114,196)}]
-    
+    """
+    注意) series_listの系列数をデータ範囲以下にしないとエラーとなる
+    series_list = [{"name":"系列1", "color_RGB": (68,114,196)}, # 青
+                   {"name":"系列2", "color_RGB": (237,125,49)}, # オレンジ
+                   {"name":"系列3", "color_RGB": (112,173,71)}, # 緑
+                  ],
+    """                
     # RGBのヘルパー関数
     def RGB(r, g, b):
         return r + g*256 + b*65536

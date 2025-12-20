@@ -5,16 +5,17 @@ from win32com.client import constants
 import re
 
 def ScatterChart(ws,
-                 start_range,    # "H3"など
-                 row,
-                 col,
-                 paste_range,    # "A1"など
+                 start_range="",
+                 row=2,
+                 col=2,
+                 paste_range="A1",
                  width_cm=12.54,
                  height_cm=7.54,
-                 name = "グラフ名",
+                 name = "",
                  Title = "",
-                 SeriesName = "",
-                 RGBcolor=(68, 114, 196),
+                 series_list=[
+                    {"color_RGB": (68,114,196)}
+                 ],
                  x_title = "",
                  x_min =-90,
                  x_max =+90,
@@ -27,17 +28,17 @@ def ScatterChart(ws,
                  y_major="",
                  y_cross="",
                  y_format="0.0",
-                 legend=""):
+                 legend="",
+                 chart_border_color=""   #黒=0
+                ):
     
     # RGBのヘルパー関数
     def RGB(r, g, b):
         return r + g*256 + b*65536
-
+    
     # cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
     def cm_to_pt(cm):
         return cm * 72 / 2.54
-    
-    color = RGB(*RGBcolor)
         
     # ----------------------------------------------------------
     # 散布図のエクセルグラフを作成する
@@ -63,7 +64,8 @@ def ScatterChart(ws,
     # ----------------------------------------------------------
 
     # グラフのチャート名 (エクセル画面左上の表示で確認できる)
-    chart.name = name
+    if name!="":
+        chart.name = name
 
     # ChartObject(枠) → api[0]、Chart本体 → api[1]
     ch = chart.api[1]
@@ -123,7 +125,29 @@ def ScatterChart(ws,
     else:
         y_axis.HasTitle = True
         y_axis.AxisTitle.Text = y_title
-
+    
+    # 系列の設定 -----------------------------------------------------------------------------
+    for i, cfg in enumerate(series_list, start=1):
+        series = ch.SeriesCollection(i)
+        if cfg.get("name"):
+            series.Name = cfg["name"]
+        if cfg.get("XValues"):
+            series.XValues = ws.range(cfg["XValues"] ).api
+        if cfg.get("Values"):
+            series.Values  = ws.range(cfg["Values"]).api
+        color = cfg.get("color_RGB")
+        if color not in (None, ""):
+            color = RGB(*color)
+            series.Format.Line.ForeColor.RGB = color     # 線の色
+            series.MarkerForegroundColor = color         # マーカー枠線の色
+            series.MarkerBackgroundColor = color         # マーカー内部の色
+        
+        # デフォルト値は Excel 2021 以降の標準スタイル
+        series.Format.Line.Weight = cfg.get("weight", 1.5)                    # 線の太さ(pt)
+        series.MarkerStyle = cfg.get("marker",constants.xlMarkerStyleCircle)  # マーカー: 丸
+        series.MarkerSize = cfg.get("size",5)                                 # マーカーサイズ
+    #-----------------------------------------------------------------------------------------
+    
     # Excel 2021 以降の標準スタイルを指定する ----------------------------------
     # グラフタイトルの文字色をRGB(89,89,89)とし、フォントサイズを14にする
     if ch.HasTitle:
@@ -147,6 +171,7 @@ def ScatterChart(ws,
         # 軸の設定
         ax.TickLabels.Font.Color = RGB(89,89,89)
         ax.TickLabels.Font.Size = 9
+        # "Aptos Narrow 本文"は Excel 2021以降のみ
         ax.TickLabels.Font.Name = "Aptos Narrow 本文"
         # 軸タイトルがあるとき、軸タイトルを設定する
         if ax.HasTitle:
@@ -159,6 +184,20 @@ def ScatterChart(ws,
     ch.ChartArea.Format.Line.Weight = 0.75                    # 枠線の太さ(pt)
     # ----------------------------------------------------------------------
 
+    # 軸タイトルと目盛りの数値の色を黒に変更する
+    for ax in ch.Axes():
+        ax.TickLabels.Font.Color = RGB(0,0,0)
+        if ax.HasTitle:
+            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0,0,0)
+            
+    # グラフ外枠の色を変更
+    if chart_border_color != "":
+        if isinstance(chart_border_color, (tuple, list)):
+            chart_border_color = RGB(*chart_border_color)
+        else:
+            chart_border_color = chart_border_color
+        ch.ChartArea.Format.Line.ForeColor.RGB = chart_border_color
+
     # 凡例を一度無効にする
     ch.HasLegend = False
     
@@ -167,31 +206,7 @@ def ScatterChart(ws,
     p.InsideLeft   = p.InsideLeft
     p.InsideTop    = p.InsideTop
     p.InsideWidth  = p.InsideWidth
-    p.InsideHeight = p.InsideHeight+15  #下側に広げる
-
-    # 1つ目の系列の色を指定
-    series = ch.SeriesCollection(1)
-    if not SeriesName == "":
-        series.Name = SeriesName
-    series.Format.Line.ForeColor.RGB = color             # 線の色
-    series.MarkerForegroundColor = color                 # マーカー枠線の色
-    series.MarkerBackgroundColor = color                 # マーカー内部の色
-
-    # Excel 2021 以降の標準スタイルを指定する ---------------------------------
-    # 線とマーカーの設定
-    series.Format.Line.Weight = 1.5                     # 線の太さ(pt)
-    series.MarkerStyle = constants.xlMarkerStyleCircle  # マーカー: 丸
-    series.MarkerSize = 5                               # マーカーサイズ
-    # -----------------------------------------------------------------------
-
-    # 軸タイトルと目盛りの数値の色を黒に変更する
-    for ax in ch.Axes():
-        ax.TickLabels.Font.Color = RGB(0,0,0)
-        if ax.HasTitle:
-            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0,0,0)
-            
-    # グラフ外枠を黒に変更
-    ch.ChartArea.Format.Line.ForeColor.RGB = RGB(0,0,0)
+    p.InsideHeight = p.InsideHeight + 15  #下側に広げる
     
     # 凡例設定
     if legend=="":

@@ -9,23 +9,14 @@ import os
 # 計測開始
 t1 = time.time()
 
-name = "グラフ名"
 SeriesName = "系列名"
-Title = name
+Title = "タイトル"
 
 # ------------------------------------------------------------
 # path は適宜変更してください (Ctrl + Shift + C でパスのコピー)
 # ------------------------------------------------------------
-excel_path = r"C:\Users\ab708\Desktop\test.xlsx"
+excel_path = r"C:\Users\*****\Desktop\test.xlsx"
 Sheet = "Sheet1"
-
-# RGBのヘルパー関数
-def RGB(r, g, b):
-    return r + g*256 + b*65536
-
-# cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
-def cm_to_pt(cm):
-    return cm * 72 / 2.54
     
 # 指定のエクセルファイルがなければ作成する
 if not os.path.exists(excel_path):
@@ -72,6 +63,7 @@ for n in range(data):
     ws.range(4, col).value = f"=cos({col_letter}3/180*pi())"
     
 from ScatterChart import ScatterChart
+
 ch1 = ScatterChart(ws = ws,
                  start_range="H3",
                  row = 2,
@@ -79,12 +71,14 @@ ch1 = ScatterChart(ws = ws,
                  paste_range="A1",
                  width_cm=12.54, 
                  height_cm=7.54,
-                 name = "グラフ名",
+                 name = "",
                  Title = "",
-                 SeriesName = "",
-                 RGBcolor=(68, 114, 196),
+                 series_list=[
+                    {"color_RGB":(68,114,196)}
+                 ],
                  x_title = "角度 (deg.)",
-                 legend=""
+                 legend="",
+                 chart_border_color="" #黒=0
 )   
     
 # エクセルの画面更新を有効にする

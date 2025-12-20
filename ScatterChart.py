@@ -34,7 +34,7 @@ def ScatterChart(ws,
     if series_list is None:
         series_list = [{"color_RGB": (68,114,196)}]
     """
-    注意) series_listの系列数をデータ範囲以下にしないとエラーとなる
+    注意) series_listの系列数をデータ範囲以下にしないと例外発生となる
     series_list = [{"name":"系列1", "color_RGB": (68,114,196)}, # 青
                    {"name":"系列2", "color_RGB": (237,125,49)}, # オレンジ
                    {"name":"系列3", "color_RGB": (112,173,71)}, # 緑
@@ -136,34 +136,36 @@ def ScatterChart(ws,
     
     # 系列の設定 -----------------------------------------------------------------------------
     for i, cfg in enumerate(series_list, start=1):
-        series = ch.SeriesCollection(i)
-        name0 = cfg.get("name")
-        if name0 not in (None, ""):
-            series.Name = cfg["name"]
-        if cfg.get("XValues"):
-            series.XValues = ws.range(cfg["XValues"] ).api
-        if cfg.get("Values"):
-            series.Values  = ws.range(cfg["Values"]).api
-        color = cfg.get("color_RGB")
-        if color not in (None, ""):
-            color = RGB(*color)
-            series.Format.Line.ForeColor.RGB = color     # 線の色
-            series.MarkerForegroundColor = color         # マーカー枠線の色
-            series.MarkerBackgroundColor = color         # マーカー内部の色
-        
-        # デフォルト値は Excel 2021 以降の標準スタイル
-        style = cfg.get("style", "line+marker")
-        if style == "marker":
-            series.Format.Line.Visible = False
-        else:
-            series.Format.Line.Visible = True
-            series.Format.Line.Weight = cfg.get("weight", 1.5)  # 線の太さ(pt)
-        if style == "line":
-            series.MarkerStyle = constants.xlMarkerStyleNone
-        else:
-            series.MarkerStyle = cfg.get("marker",constants.xlMarkerStyleCircle)  # マーカー: 丸
-            series.MarkerSize = cfg.get("size",5)                                 # マーカーサイズ
-
+        try:
+            series = ch.SeriesCollection(i)
+            name0 = cfg.get("name")
+            if name0 not in (None, ""):
+                series.Name = cfg["name"]
+            if cfg.get("XValues"):
+                series.XValues = ws.range(cfg["XValues"] ).api
+            if cfg.get("Values"):
+                series.Values  = ws.range(cfg["Values"]).api
+            color = cfg.get("color_RGB")
+            if color not in (None, ""):
+                color = RGB(*color)
+                series.Format.Line.ForeColor.RGB = color     # 線の色
+                series.MarkerForegroundColor = color         # マーカー枠線の色
+                series.MarkerBackgroundColor = color         # マーカー内部の色
+            
+            # デフォルト値は Excel 2021 以降の標準スタイル
+            style = cfg.get("style", "line+marker")
+            if style == "marker":
+                series.Format.Line.Visible = False
+            else:
+                series.Format.Line.Visible = True
+                series.Format.Line.Weight = cfg.get("weight", 1.5)  # 線の太さ(pt)
+            if style == "line":
+                series.MarkerStyle = constants.xlMarkerStyleNone
+            else:
+                series.MarkerStyle = cfg.get("marker",constants.xlMarkerStyleCircle)  # マーカー: 丸
+                series.MarkerSize = cfg.get("size",5)                                 # マーカーサイズ
+        except:
+            print("例外発生")
     #-----------------------------------------------------------------------------------------
     
     # Excel 2021 以降の標準スタイルを指定する ----------------------------------

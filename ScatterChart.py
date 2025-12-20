@@ -152,6 +152,9 @@ def ScatterChart(ws,
                 series.MarkerForegroundColor = color         # マーカー枠線の色
                 series.MarkerBackgroundColor = color         # マーカー内部の色
             
+            smooth = cfg.get("smooth", True)
+            series.Smooth = bool(smooth)
+            
             # デフォルト値は Excel 2021 以降の標準スタイル
             style = cfg.get("style", "line+marker")
             if style == "marker":
@@ -164,6 +167,17 @@ def ScatterChart(ws,
             else:
                 series.MarkerStyle = cfg.get("marker",constants.xlMarkerStyleCircle)  # マーカー: 丸
                 series.MarkerSize = cfg.get("size",5)                                 # マーカーサイズ
+            if style == "dash":
+                series.Format.Line.DashStyle = 4
+                series.MarkerStyle = constants.xlMarkerStyleNone
+            elif style == "dash2":
+                series.Format.Line.DashStyle = 5
+                series.MarkerStyle = constants.xlMarkerStyleNone
+                
+            alpha = cfg.get("alpha") # 透明度は0~1
+            if alpha not in (None, "",):
+                series.Format.Line.Transparency = cfg["alpha"]
+                
         except:
             print("例外発生")
     #-----------------------------------------------------------------------------------------
@@ -215,9 +229,15 @@ def ScatterChart(ws,
         if isinstance(chart_border_color, (tuple, list)):
             chart_border_color = RGB(*chart_border_color)
         ch.ChartArea.Format.Line.ForeColor.RGB = chart_border_color
-
-    # 凡例を一度無効にする
-    ch.HasLegend = False
+    elif chart_border_color == False:
+        # グラフの外枠を消す
+        ch.ChartArea.Border.LineStyle = 0
+        
+    # 凡例を一度無効にする(例外あり)
+    if legend == "right":
+        ch.HasLegend = True
+    else:
+        ch.HasLegend = False
     
     # プロットエリアの調整
     p = ch.PlotArea
@@ -231,14 +251,24 @@ def ScatterChart(ws,
         ch.HasLegend = False
     else:
         ch.HasLegend = True
-        if legend=="auto":
+        if legend == "auto":
             pass
-        if "U" in legend:
-            ch.Legend.Top = ch.PlotArea.InsideTop
-        if "R" in legend: 
-            ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width
-        m = re.search(r"\d+(?:\.\d+)?", legend)
-        if m:
-            ch.Legend.Format.TextFrame2.TextRange.Font.Size = float(m.group())    
-    
+        else:
+            if "U" in legend:
+                ch.Legend.Top = ch.PlotArea.InsideTop
+            if "R" in legend: # 大文字のRを含む場合
+                ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width
+            m = re.search(r"\d+(?:\.\d+)?", legend)
+            if m:
+                ch.Legend.Format.TextFrame2.TextRange.Font.Size = float(m.group())
+            if "FW" in legend:
+                ch.Legend.Format.Fill.ForeColor.RGB = RGB(255, 255, 255)
+                ch.Legend.Format.Fill.Visible = True
+            if "BB" in legend:
+                ch.Legend.Format.Line.ForeColor.RGB = RGB(0, 0, 0)
+                ch.Legend.Format.Line.Weight = 0.75
+                ch.Legend.Format.Line.Visible = True
+            if "TB" in legend:
+                ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
+            
     return ch

@@ -1,0 +1,98 @@
+#ExcelGraph.py
+import xlwings as xw
+from xlwings.constants import AxisType
+from win32com.client import constants
+import numpy as np
+import time
+import os
+
+# 計測開始
+t1 = time.time()
+
+name = "グラフ名"
+SeriesName = "系列名"
+Title = name
+
+# ------------------------------------------------------------
+# path は適宜変更してください (Ctrl + Shift + C でパスのコピー)
+# ------------------------------------------------------------
+excel_path = r"C:\Users\*****\Desktop\test.xlsx"
+Sheet = "Sheet1"
+
+# RGBのヘルパー関数
+def RGB(r, g, b):
+    return r + g*256 + b*65536
+
+# cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
+def cm_to_pt(cm):
+    return cm * 72 / 2.54
+    
+# 指定のエクセルファイルがなければ作成する
+if not os.path.exists(excel_path):
+    wb = xw.Book()           # 新規Excelを開く
+    wb.save(excel_path)
+else:
+    wb = xw.Book(excel_path) # 既存のExcelを開く
+    
+# 指定のワークシートがなければ作成する
+if Sheet in [s.name for s in wb.sheets]:
+    ws = wb.sheets[Sheet]
+else:
+    ws = wb.sheets.add(Sheet)
+
+# エクセルの画面更新を無効にする
+wb.app.screen_updating = False
+
+# 上部に13行のセルを挿入する
+ws.range("1:13").insert("down")
+
+# デモデータ作成
+data = 19
+cell0 = np.linspace(-90, 90, data)
+cell1 = np.cos(np.deg2rad(cell0))
+cell = [cell0, cell1]
+
+# データの貼り付け
+ws.range(4,8).value = SeriesName
+ws.range(2,8).value = Title
+for n in range(2):
+    for i in range(data):
+        ws.range(n+3,i+9).value = cell[n][i]
+        
+# 数値の表示桁数の変更
+for i in range(data):
+    ws.range(3, i+9).number_format = "0"    # 小数0桁まで
+for i in range(data):
+    ws.range(4, i+9).number_format = "0.00" # 小数2桁まで
+        
+# cell1を数式に変更したい場合
+for n in range(data):
+    col = 9 + n                          # 9=I列
+    col_letter = xw.utils.col_name(col)  # "I", "J", "K", ...
+    ws.range(4, col).value = f"=cos({col_letter}3/180*pi())"
+    
+from ScatterChart import ScatterChart
+ch1 = ScatterChart(ws = ws,
+                 start_range="H3",
+                 row = 3,
+                 col = data +1,
+                 paste_range="A1",
+                 width_cm=12.54, 
+                 height_cm=7.54,
+                 name = "グラフ名",
+                 Title = "",
+                 SeriesName = "",
+                 RGBcolor=(68, 114, 196),
+                 x_title = "角度 (deg.)"
+)   
+    
+# エクセルの画面更新を有効にする
+wb.app.screen_updating = True
+
+# エクセルファイルを保存する
+wb.save()
+
+# 計測終了
+t2 = time.time()
+elapsed_time = round(t2-t1,3)
+print("処理時間:"+str(elapsed_time)+" s")

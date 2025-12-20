@@ -4,16 +4,29 @@ from xlwings.constants import AxisType
 from win32com.client import constants
 
 def ScatterChart(ws,
-                 start_range,    # H9など
+                 start_range,    # "H3"など
                  row,
                  col,
-                 paste_range,    # A1など
-                 color,          # (r,g,b)
+                 paste_range,    # "A1"など
+                 width_cm=12.54,
+                 height_cm=7.54,
                  name = "グラフ名",
-                 SeriesName = "系列名",
-                 Title = "グラフ名",
-                 width=12.54,    # cmで指定
-                 height=7.54):   # cmで指定
+                 Title = "",
+                 SeriesName = "",
+                 RGBcolor=(68, 114, 196),
+                 x_title = "",
+                 x_min =-90,
+                 x_max =+90,
+                 x_major=15,
+                 x_cross=-90,
+                 x_format="0",
+                 y_title = "",
+                 y_min ="",
+                 y_max ="",
+                 y_major="",
+                 y_cross="",
+                 y_format="0.0",
+                 legend=""):
     
     # RGBのヘルパー関数
     def RGB(r, g, b):
@@ -23,7 +36,7 @@ def ScatterChart(ws,
     def cm_to_pt(cm):
         return cm * 72 / 2.54
     
-    color = RGB(*color)
+    color = RGB(*RGBcolor)
         
     # ----------------------------------------------------------
     # 散布図のエクセルグラフを作成する
@@ -42,8 +55,8 @@ def ScatterChart(ws,
     paste_range = paste_range
     chart = ws.charts.add(left=ws.range(paste_range).left+1,  # leftとtopは貼り付け位置の指定 (必須)
                         top=ws.range(paste_range).top+1,
-                        width=cm_to_pt(width),       # widthとheightは大きさ指定 (省略可)
-                        height=cm_to_pt(height)) 
+                        width=cm_to_pt(width_cm),       # widthとheightは大きさ指定 (省略可)
+                        height=cm_to_pt(height_cm)) 
     chart.chart_type = 'xy_scatter_lines'
     chart.set_source_data(ws.range(f'{start_range}:{target_range}'))
     # ----------------------------------------------------------
@@ -55,33 +68,60 @@ def ScatterChart(ws,
     ch = chart.api[1]
 
     # グラフタイトル
-    ch.HasTitle = True
-    if ch.HasTitle:
-        ch.ChartTitle.Text = Title
-    else:
+    if Title =="":
+        ch.HasTitle = True
         ch.ChartTitle.Text = ""
+    else:
+        ch.HasTitle = True
+        ch.ChartTitle.Text = Title
 
     # 横軸のオプション
     x_axis = ch.Axes(AxisType.xlCategory)
-    x_axis.MinimumScale = -90  # 最小値
-    x_axis.MaximumScale = 90   # 最大値  
-    x_axis.MajorUnit = 15      # 目盛間隔
-    x_axis.CrossesAt = -90     # 交差位置(縦軸との交点)
-    x_axis.TickLabels.NumberFormatLocal = "0_ "   # 小数0桁まで表示
+    if x_min == "":     #最小値
+        x_axis.MinimumScaleIsAuto = True
+    else:
+        x_axis.MinimumScale = x_min
+    if x_max == "":     #最大値
+        x_axis.MaximumScaleIsAuto = True
+    else:
+        x_axis.MaximumScale = x_max
+    if x_major !="":     # 目盛間隔
+        x_axis.MajorUnit = x_major    
+    if x_cross !="":     # 交差位置(縦軸との交点)
+        x_axis.CrossesAt = x_cross
+    if x_format !="": 
+        x_axis.TickLabels.NumberFormatLocal = x_format
 
     # 横軸のタイトル
-    x_axis.HasTitle = True
-    if x_axis.HasTitle:
-        x_axis.AxisTitle.Text = "角度 (deg.)"
+    if x_title =="":
+        x_axis.HasTitle = False
+    else:
+        x_axis.HasTitle = True
+        x_axis.AxisTitle.Text = x_title
 
     # 縦軸のオプション
     y_axis = ch.Axes(AxisType.xlValue)
-    y_axis.TickLabels.NumberFormatLocal = "0.0_ " # 小数1桁まで表示
+    if y_min == "":     #最小値
+        y_axis.MinimumScaleIsAuto = True
+    else:
+        y_axis.MinimumScale = y_min
+    if y_max == "":     #最大値
+        y_axis.MaximumScaleIsAuto = True
+    else:
+        y_axis.MaximumScale = y_max
+    if y_major !="":     # 目盛間隔
+        y_axis.MajorUnit = y_major    
+    if y_cross !="":     # 交差位置(縦軸との交点)
+        y_axis.CrossesAt = y_cross
+    if y_format !="": 
+        y_axis.TickLabels.NumberFormatLocal = y_format
 
-    # 縦軸のタイトル
-    y_axis.HasTitle = False
-    if y_axis.HasTitle:
-        y_axis.AxisTitle.Text = ""
+    # 横軸のタイトル
+    if y_title =="":
+        y_axis.HasTitle = False
+    else:
+        y_axis.HasTitle = True
+        y_axis.AxisTitle.Text = y_title
 
     # Excel 2021 以降の標準スタイルを指定する ----------------------------------
     # グラフタイトルの文字色をRGB(89,89,89)とし、フォントサイズを14にする
@@ -119,7 +159,18 @@ def ScatterChart(ws,
     # ----------------------------------------------------------------------
 
     # 凡例なし
-    ch.HasLegend = False
+    if legend=="":
+        ch.HasLegend = False
+    else:
+        ch.HasLegend = True
+        if legend=="auto":
+            pass
+        if "U" in legend:
+            ch.Legend.Top = ch.PlotArea.InsideTop
+        if "R" in legend: 
+            ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width
+        if "10" in legend:
+            ch.Legend.Format.TextFrame2.TextRange.Font.Size = 10          
         
     # プロットエリアの調整
     p = ch.PlotArea
@@ -129,7 +180,9 @@ def ScatterChart(ws,
     p.InsideHeight = p.InsideHeight+15  #下側に広げる
 
     # 1つ目の系列の色を青にする
-    series = ch.SeriesCollection(1) 
+    series = ch.SeriesCollection(1)
+    if not SeriesName == "":
+        series.Name = SeriesName
     series.Format.Line.ForeColor.RGB = color             # 線の色
     series.MarkerForegroundColor = color                 # マーカー枠線の色
     series.MarkerBackgroundColor = color                 # マーカー内部の色
@@ -149,3 +202,5 @@ def ScatterChart(ws,
             
     # グラフ外枠を黒に変更
     ch.ChartArea.Format.Line.ForeColor.RGB = RGB(0,0,0)
+    
+    return ch

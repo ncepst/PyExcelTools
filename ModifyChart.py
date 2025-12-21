@@ -1,19 +1,16 @@
-#ScatterChart.py
+#ModifyChart.py
 import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
 import re
 
-# ScatterChart : 新規のグラフ作成
-# from ScatterChart import ScatterChart
+# MofifyChart : 既存グラフの変更
+# from ModifyChart import ModifyChart
 
-def ScatterChart(ws,
-                 start_range = "A1",
-                 row = 2,
-                 col = 2,
-                 paste_range = "A1",
-                 width_cm = 12.54,
-                 height_cm = 7.54,
+def ModifyChart( ws,
+                 chart,
+                 width_cm = "",
+                 height_cm = "",
                  name = "",
                  Title = "",
                  series_list = None,
@@ -51,29 +48,12 @@ def ScatterChart(ws,
     # cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
     def cm_to_pt(cm):
         return cm * 72 / 2.54
-        
-    # ----------------------------------------------------------
-    # 散布図のエクセルグラフを作成する
-    # ----------------------------------------------------------
-    # (セル範囲入力) --------------------------------------------
-    start_range = start_range
-    start = ws[start_range]
-    row = row
-    col = col
-    # (ターゲットセル計算) --------------------------------------
-    target_row = start.row + row - 1
-    target_col = xw.utils.col_name(start.column + col - 1)
-    target_range = f"{target_col}{target_row}"
-
-    # xlwings によるグラフ作成 ----------------------------------
-    paste_range = paste_range
-    chart = ws.charts.add(left=ws.range(paste_range).left+1,  # leftとtopは貼り付け位置の指定 (必須)
-                        top=ws.range(paste_range).top+1,
-                        width=cm_to_pt(width_cm),       # widthとheightは大きさ指定 (省略可)
-                        height=cm_to_pt(height_cm)) 
-    chart.chart_type = 'xy_scatter_lines'
-    chart.set_source_data(ws.range(f'{start_range}:{target_range}'))
-    # ----------------------------------------------------------
+    
+    # グラフ全体のサイズ変更
+    if width_cm not in ("", 0, None):
+        chart.width = cm_to_pt(width_cm)
+    if height_cm not in ("", 0, None):
+        chart.height = cm_to_pt(height_cm)  
 
     # グラフのチャート名 (エクセル画面左上の表示で確認できる)
     if name!="":

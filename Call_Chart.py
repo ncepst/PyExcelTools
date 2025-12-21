@@ -64,7 +64,7 @@ for n in range(data):
     
 from ScatterChart import ScatterChart
 
-ch1 = ScatterChart(ws = ws,
+chart1 = ScatterChart(ws = ws,
                  start_range="H3",
                  row = 2,
                  col = data +1,

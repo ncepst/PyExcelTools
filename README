@@ -19,7 +19,9 @@ ModifyChart関数の呼び出し例
 https://github.com/ncepst/Excel/blob/main/Call_ModifyChart.py
 
 
-系列の設定項目は以下があります。
+設定できる系列の項目は以下となり、
+設定がない場合はデフォルト値になります。
+
 series_list = [
     {
     "name":"系列1",                  # 系列名

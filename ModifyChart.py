@@ -7,8 +7,8 @@ import re
 # MofifyChart : 既存グラフの変更
 # from ModifyChart import ModifyChart
 
-def ModifyChart( ws,
-                 chart,
+def ModifyChart( chart,
+                 ws ="",
                  width_cm = "",
                  height_cm = "",
                  name = "",
@@ -27,7 +27,7 @@ def ModifyChart( ws,
                  y_cross = "",
                  y_format = "",
                  legend = "",
-                 chart_border_color = None  #None=dafault, 黒枠=0, 枠なし=False
+                 chart_border_color = None,  #None=dafault, 黒枠=0, 枠なし=False
                 ):
     
     # list / dict はミュータブルのため、デフォルト引数を None にしている
@@ -133,9 +133,15 @@ def ModifyChart( ws,
             if name0 not in (None, ""):
                 series.Name = cfg["name"]
             if cfg.get("XValues"):
-                series.XValues = ws.range(cfg["XValues"] ).api
+                try:
+                    series.XValues = ws.range(cfg["XValues"] ).api
+                except:
+                    print("wsの定義が必要です")
             if cfg.get("Values"):
-                series.Values  = ws.range(cfg["Values"]).api
+                try:
+                    series.Values  = ws.range(cfg["Values"]).api
+                except:
+                    print("wsの定義が必要です")
             color = cfg.get("color_RGB")
             if color not in (None, ""):
                 color_rgb = RGB(*color)

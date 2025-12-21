@@ -17,3 +17,16 @@ https://github.com/ncepst/Excel/blob/main/ModifyChart.py
 
 ModifyChart関数の呼び出し例
 https://github.com/ncepst/Excel/blob/main/Call_ModifyChart.py
+
+series_list = [
+    {
+    "name":"系列1", 
+    "color_RGB": (68,114,196),
+    "style":"line+marker",
+    "marker":"C",
+    "size":5,
+    "weight":1.5,
+    "smooth":True,
+    "alpha":0
+    }
+    ]

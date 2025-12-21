@@ -28,6 +28,11 @@ def ModifyChart(chart,
                 y_format = "",
                 legend = "",
                 chart_border_color = None,  #None=dafault, 黒枠=0, 枠なし=False
+                Title_space = +0,
+                x_title_space = +0,
+                y_title_space = +0,
+                Title_color = "",
+                Title_size = "",
                 ):
     
     # list / dict はミュータブルのため、デフォルト引数を None にしている
@@ -63,22 +68,22 @@ def ModifyChart(chart,
     ch = chart.api[1]
 
     # グラフタイトル
-    if Title =="":
+    if Title == False:
         ch.HasTitle = True
         ch.ChartTitle.Text = ""
-    else:
+    elif Title != "":
         ch.HasTitle = True
         ch.ChartTitle.Text = Title
 
     # 横軸のオプション
     x_axis = ch.Axes(AxisType.xlCategory)
-    if x_min == "":     #最小値
+    if x_min == "auto":     #最小値
         x_axis.MinimumScaleIsAuto = True
-    else:
+    elif x_min!="":
         x_axis.MinimumScale = x_min
-    if x_max == "":     #最大値
+    if x_max == "auto":     #最大値
         x_axis.MaximumScaleIsAuto = True
-    else:
+    elif x_max !="":
         x_axis.MaximumScale = x_max
     if x_major !="":     # 目盛間隔
         x_axis.MajorUnit = x_major    
@@ -88,21 +93,21 @@ def ModifyChart(chart,
         x_axis.TickLabels.NumberFormatLocal = x_format
 
     # 横軸のタイトル
-    if x_title =="":
+    if x_title == False:
         x_axis.HasTitle = False
-    else:
+    elif x_title != "":
         x_axis.HasTitle = True
-        x_axis.AxisTitle.Text = x_title
+        x_axis.AxisTitle.Text = y_title
 
     # 縦軸のオプション
     y_axis = ch.Axes(AxisType.xlValue)
-    if y_min == "":     #最小値
+    if y_min == "auto":     #最小値
         y_axis.MinimumScaleIsAuto = True
-    else:
+    elif y_min != "":
         y_axis.MinimumScale = y_min
-    if y_max == "":     #最大値
+    if y_max == "auto":     #最大値
         y_axis.MaximumScaleIsAuto = True
-    else:
+    elif y_max != "":
         y_axis.MaximumScale = y_max
     if y_major !="":     # 目盛間隔
         y_axis.MajorUnit = y_major    
@@ -112,9 +117,9 @@ def ModifyChart(chart,
         y_axis.TickLabels.NumberFormatLocal = y_format
 
     # 横軸のタイトル
-    if y_title =="":
+    if y_title == False:
         y_axis.HasTitle = False
-    else:
+    elif y_title != "":
         y_axis.HasTitle = True
         y_axis.AxisTitle.Text = y_title
     
@@ -234,22 +239,34 @@ def ModifyChart(chart,
     elif chart_border_color == False:
         # グラフの外枠を消す
         ch.ChartArea.Border.LineStyle = 0
+    
+    # タイトルの色を変更
+    if Title_color not in (None, ""):
+        if isinstance(chart_border_color, (tuple, list)):
+            Title_color = RGB(*Title_color)
+        ch.ChartArea.Format.Line.ForeColor.RGB = chart_border_color
+        
+    # タイトルのサイズを変更
+    if Title_size != "" and Title_size != 0:
+        ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = Title_size
         
     # 凡例を一度無効にする(例外あり)
     if legend == "right":
         ch.HasLegend = True
-    else:
+    elif legend != "":
         ch.HasLegend = False
     
     # プロットエリアの調整
     p = ch.PlotArea
-    p.InsideLeft   = p.InsideLeft
-    p.InsideTop    = p.InsideTop
-    p.InsideWidth  = p.InsideWidth
-    p.InsideHeight = p.InsideHeight + 15  #下側に広げる
+    p.InsideLeft   = p.InsideLeft + y_title_space
+    p.InsideTop    = p.InsideTop + Title_space
+    p.InsideWidth  = p.InsideWidth - y_title_space
+    p.InsideHeight = p.InsideHeight - Title_space - x_title_space 
     
     # 凡例設定
-    if legend=="":
+    if  legend == "":
+        pass
+    elif legend == False:
         ch.HasLegend = False
     else:
         ch.HasLegend = True

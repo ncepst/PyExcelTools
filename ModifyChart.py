@@ -7,27 +7,27 @@ import re
 # MofifyChart : 既存グラフの変更
 # from ModifyChart import ModifyChart
 
-def ModifyChart( chart,
-                 ws ="",
-                 width_cm = "",
-                 height_cm = "",
-                 name = "",
-                 Title = "",
-                 series_list = None,
-                 x_title = "",
-                 x_min = "",
-                 x_max = "",
-                 x_major = "",
-                 x_cross = "",
-                 x_format = "",
-                 y_title = "",
-                 y_min = "",
-                 y_max = "",
-                 y_major = "",
-                 y_cross = "",
-                 y_format = "",
-                 legend = "",
-                 chart_border_color = None,  #None=dafault, 黒枠=0, 枠なし=False
+def ModifyChart(chart,
+                ws ="",
+                width_cm = "",
+                height_cm = "",
+                name = "",
+                Title = "",
+                series_list = None,
+                x_title = "",
+                x_min = "",
+                x_max = "",
+                x_major = "",
+                x_cross = "",
+                x_format = "",
+                y_title = "",
+                y_min = "",
+                y_max = "",
+                y_major = "",
+                y_cross = "",
+                y_format = "",
+                legend = "",
+                chart_border_color = None,  #None=dafault, 黒枠=0, 枠なし=False
                 ):
     
     # list / dict はミュータブルのため、デフォルト引数を None にしている

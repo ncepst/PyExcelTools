@@ -18,15 +18,17 @@ https://github.com/ncepst/Excel/blob/main/ModifyChart.py
 ModifyChart関数の呼び出し例
 https://github.com/ncepst/Excel/blob/main/Call_ModifyChart.py
 
+
+系列のデフォルト設定は以下のようになっています。
 series_list = [
     {
-    "name":"系列1", 
-    "color_RGB": (68,114,196),
-    "style":"line+marker",
-    "marker":"C",
-    "size":5,
-    "weight":1.5,
-    "smooth":True,
-    "alpha":0
+    "name":"系列1",                  # 系列名
+    "color_RGB": (68,114,196),      # 色
+    "style":"line+marker",          # スタイル
+    "marker":"C",                   # マーカーはC, S, D, T
+    "size":5,                       # マーカーサイズ
+    "weight":1.5,                   # 線の幅(pt)
+    "smooth":True,                  # 曲線か折れ線か
+    "alpha":0                       # 線の透明度(0~1)
     }
-    ]
+    ],

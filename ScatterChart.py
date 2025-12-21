@@ -35,9 +35,9 @@ def ScatterChart(ws,
         series_list = [{"color_RGB": (68,114,196)}]
     """
     注意) series_listの系列数をデータ範囲以下にしないと例外発生となる
-    series_list = [{"name":"系列1", "color_RGB": (68,114,196)}, # 青
-                   {"name":"系列2", "color_RGB": (237,125,49)}, # オレンジ
-                   {"name":"系列3", "color_RGB": (112,173,71)}, # 緑
+    series_list = [{"name":"系列1", "color_RGB": (68,114,196)},  # 青
+                   {"name":"系列2", "color_RGB": (237,125,49)},  # オレンジ
+                   {"name":"系列3", "color_RGB": (112,173,71)},  # 緑
                    {"name":"系列4", "color_RGB": (165,165,165)}, # グレー
                   ],
     """                

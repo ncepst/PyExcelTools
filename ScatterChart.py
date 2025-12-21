@@ -30,7 +30,12 @@ def ScatterChart(ws,
                  y_cross = "",
                  y_format = "",
                  legend = "",
-                 chart_border_color = None  #None=dafault, 黒枠=0, 枠なし=False
+                 chart_border_color = None,  #None=dafault, 黒枠=0, 枠なし=False
+                 Title_space   = +0,
+                 x_title_space = -15, #下に広げる場合はマイナス
+                 y_title_space = +0,
+                 Title_color = "",
+                 Title_size = "",
                 ):
     
     # list / dict はミュータブルのため、デフォルト引数を None にしている
@@ -83,7 +88,7 @@ def ScatterChart(ws,
     ch = chart.api[1]
 
     # グラフタイトル
-    if Title =="":
+    if Title =="" or Title == False:
         ch.HasTitle = True
         ch.ChartTitle.Text = ""
     else:
@@ -108,7 +113,7 @@ def ScatterChart(ws,
         x_axis.TickLabels.NumberFormatLocal = x_format
 
     # 横軸のタイトル
-    if x_title =="":
+    if x_title == "" or x_title == False:
         x_axis.HasTitle = False
     else:
         x_axis.HasTitle = True
@@ -132,7 +137,7 @@ def ScatterChart(ws,
         y_axis.TickLabels.NumberFormatLocal = y_format
 
     # 横軸のタイトル
-    if y_title =="":
+    if y_title == "" or y_title == False:
         y_axis.HasTitle = False
     else:
         y_axis.HasTitle = True
@@ -248,6 +253,16 @@ def ScatterChart(ws,
     elif chart_border_color == False:
         # グラフの外枠を消す
         ch.ChartArea.Border.LineStyle = 0
+    
+    # タイトルの色を変更
+    if Title_color not in (None, ""):
+        if isinstance(Title_color, (tuple, list)):
+            Title_color = RGB(*Title_color)
+        ch.ChartArea.Format.Line.ForeColor.RGB = Title_color
+        
+    # タイトルのサイズを変更
+    if Title_size != "" and Title_size != 0:
+        ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = Title_size
         
     # 凡例を一度無効にする(例外あり)
     if legend == "right":
@@ -257,13 +272,13 @@ def ScatterChart(ws,
     
     # プロットエリアの調整
     p = ch.PlotArea
-    p.InsideLeft   = p.InsideLeft
-    p.InsideTop    = p.InsideTop
-    p.InsideWidth  = p.InsideWidth
-    p.InsideHeight = p.InsideHeight + 15  #下側に広げる
+    p.InsideLeft   = p.InsideLeft + y_title_space
+    p.InsideTop    = p.InsideTop + Title_space
+    p.InsideWidth  = p.InsideWidth - y_title_space
+    p.InsideHeight = p.InsideHeight - Title_space - x_title_space
     
     # 凡例設定
-    if legend=="":
+    if legend == "" or legend == False:
         ch.HasLegend = False
     else:
         ch.HasLegend = True

@@ -242,9 +242,9 @@ def ModifyChart(chart,
     
     # タイトルの色を変更
     if Title_color not in (None, ""):
-        if isinstance(chart_border_color, (tuple, list)):
+        if isinstance(Title_color, (tuple, list)):
             Title_color = RGB(*Title_color)
-        ch.ChartArea.Format.Line.ForeColor.RGB = chart_border_color
+        ch.ChartArea.Format.Line.ForeColor.RGB = Title_color
         
     # タイトルのサイズを変更
     if Title_size != "" and Title_size != 0:

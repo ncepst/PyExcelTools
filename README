@@ -20,7 +20,6 @@ https://github.com/ncepst/Excel/blob/main/Call_ModifyChart.py
 
 
 設定できる系列の項目と、設定がない場合のデフォルト値は以下のようになっています。
-
 series_list = [
     {
     "name":"系列1",                  # 系列名

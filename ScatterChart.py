@@ -27,7 +27,7 @@ def ScatterChart(ws,
                  y_cross = "",
                  y_format = "",
                  legend = "",
-                 chart_border_color = None  #黒枠=0, 枠なし=False
+                 chart_border_color = None  #None=dafault, 黒枠=0, 枠なし=False
                 ):
     
     # list / dict はミュータブルのため、デフォルト引数を None にしている
@@ -136,6 +136,13 @@ def ScatterChart(ws,
         y_axis.AxisTitle.Text = y_title
     
     # 系列の設定 -----------------------------------------------------------------------------
+    marker_map = {
+            "C":constants.xlMarkerStyleCircle,
+            "S":constants.xlMarkerStyleSquare,
+            "D":constants.xlMarkerStyleDiamond,
+            "T":constants.xlMarkerStyleTriangle
+            }
+    
     for i, cfg in enumerate(series_list, start=1):
         try:
             series = ch.SeriesCollection(i)
@@ -148,39 +155,44 @@ def ScatterChart(ws,
                 series.Values  = ws.range(cfg["Values"]).api
             color = cfg.get("color_RGB")
             if color not in (None, ""):
-                color = RGB(*color)
-                series.Format.Line.ForeColor.RGB = color     # 線の色
-                series.MarkerForegroundColor = color         # マーカー枠線の色
-                series.MarkerBackgroundColor = color         # マーカー内部の色
+                color_rgb = RGB(*color)
+                series.Format.Line.ForeColor.RGB = color_rgb    # 線の色
+                series.MarkerForegroundColor = color_rgb        # マーカー枠線の色
+                series.MarkerBackgroundColor = color_rgb        # マーカー内部の色
             
             smooth = cfg.get("smooth", True)
             series.Smooth = bool(smooth)
             
+            if cfg.get("marker"):
+                cfg["marker"] = marker_map.get(cfg["marker"], marker_map["C"])
+            
             # デフォルト値は Excel 2021 以降の標準スタイル
-            style = cfg.get("style", "line+marker")
-            if style == "marker":
-                series.Format.Line.Visible = False
+            style = cfg.get("style") or "line+marker"
+            if "marker" in style:
+                series.MarkerStyle = cfg.get("marker",marker_map["C"])  # マーカー: 丸
+                series.MarkerSize = cfg.get("size",5)                   # マーカーサイズ
             else:
+                series.MarkerStyle = constants.xlMarkerStyleNone
+            if "line" in style:
                 series.Format.Line.Visible = True
                 series.Format.Line.Weight = cfg.get("weight", 1.5)  # 線の太さ(pt)
-            if style == "line":
-                series.MarkerStyle = constants.xlMarkerStyleNone
-            else:
-                series.MarkerStyle = cfg.get("marker",constants.xlMarkerStyleCircle)  # マーカー: 丸
-                series.MarkerSize = cfg.get("size",5)                                 # マーカーサイズ
-            if style == "dash":
+            elif style.startswith("dash"):
+                series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 4
-                series.MarkerStyle = constants.xlMarkerStyleNone
-            elif style == "dash2":
+                series.Format.Line.Weight = cfg.get("weight", 1.5)
+            elif style.startswith("chain"):
+                series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 5
-                series.MarkerStyle = constants.xlMarkerStyleNone
+                series.Format.Line.Weight = cfg.get("weight", 1.5)
+            else:
+                series.Format.Line.Visible = False
                 
             alpha = cfg.get("alpha") # 透明度は0~1
             if alpha not in (None, ""):
-                series.Format.Line.Transparency = cfg["alpha"]
+                series.Format.Line.Transparency = float(alpha)
                 
-        except:
-            print("例外発生")
+        except Exception as e:
+            print(f"系列{i}で例外発生:{e}")
     #-----------------------------------------------------------------------------------------
     
     # Excel 2021 以降の標準スタイルを指定する ----------------------------------

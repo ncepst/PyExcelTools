@@ -8,7 +8,7 @@ import re
 # from ModifyChart import ModifyChart
 
 def ModifyChart(chart,
-                ws ="",
+                ws = "",
                 width_cm = "",
                 height_cm = "",
                 name = "",

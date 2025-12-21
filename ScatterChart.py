@@ -27,7 +27,7 @@ def ScatterChart(ws,
                  y_cross = "",
                  y_format = "",
                  legend = "",
-                 chart_border_color = None #黒=0
+                 chart_border_color = None  #黒枠=0, 枠なし=False
                 ):
     
     # list / dict はミュータブルのため、デフォルト引数を None にしている
@@ -38,6 +38,7 @@ def ScatterChart(ws,
     series_list = [{"name":"系列1", "color_RGB": (68,114,196)}, # 青
                    {"name":"系列2", "color_RGB": (237,125,49)}, # オレンジ
                    {"name":"系列3", "color_RGB": (112,173,71)}, # 緑
+                   {"name":"系列4", "color_RGB": (165,165,165)}, # グレー
                   ],
     """                
     # RGBのヘルパー関数

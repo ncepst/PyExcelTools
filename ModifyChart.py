@@ -97,7 +97,7 @@ def ModifyChart(chart,
         x_axis.HasTitle = False
     elif x_title != "":
         x_axis.HasTitle = True
-        x_axis.AxisTitle.Text = y_title
+        x_axis.AxisTitle.Text = x_title
 
     # 縦軸のオプション
     y_axis = ch.Axes(AxisType.xlValue)
@@ -157,27 +157,25 @@ def ModifyChart(chart,
             smooth = cfg.get("smooth", True)
             series.Smooth = bool(smooth)
             
-            if cfg.get("marker"):
-                cfg["marker"] = marker_map.get(cfg["marker"], marker_map["C"])
-            
             # デフォルト値は Excel 2021 以降の標準スタイル
+            marker = marker_map.get(cfg.get("marker"), marker_map["C"])  # マーカー: 丸
+            series.MarkerStyle = marker
+            series.MarkerSize = cfg.get("size",5)                        # マーカーサイズ
+            
+            series.Format.Line.Visible = True
+            series.Format.Line.Weight = cfg.get("weight", 1.5)  # 線の太さ(pt)
+
             style = cfg.get("style") or "line+marker"
             if "marker" in style:
-                series.MarkerStyle = cfg.get("marker",marker_map["C"])  # マーカー: 丸
-                series.MarkerSize = cfg.get("size",5)                   # マーカーサイズ
+                pass
             else:
                 series.MarkerStyle = constants.xlMarkerStyleNone
             if "line" in style:
-                series.Format.Line.Visible = True
-                series.Format.Line.Weight = cfg.get("weight", 1.5)  # 線の太さ(pt)
+                pass
             elif style.startswith("dash"):
-                series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 4
-                series.Format.Line.Weight = cfg.get("weight", 1.5)
             elif style.startswith("chain"):
-                series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 5
-                series.Format.Line.Weight = cfg.get("weight", 1.5)
             else:
                 series.Format.Line.Visible = False
                 

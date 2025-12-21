@@ -75,6 +75,12 @@ ch1 = ScatterChart(ws = ws,
                  Title = "",
                  series_list = [{"color_RGB": (68,114,196)}],
                  x_title = "角度 (deg.)",
+                 x_min = -90,
+                 x_max = +90,
+                 x_major = 15,
+                 x_cross = -90,
+                 x_format = "0",
+                 y_format = "0.0",
                  legend="",
                  chart_border_color="" #黒=0
 )   

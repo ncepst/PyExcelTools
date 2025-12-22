@@ -3,11 +3,10 @@ import xlwings as xw
 import time
 from ModifyChart import ModifyChart
 
-def main():
+def main(mode=3):
+
     # 計測開始
     t1 = time.time()
-
-    mode = 3
 
     # 既に開いている Excel に接続
     wb = xw.books.active

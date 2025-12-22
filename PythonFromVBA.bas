@@ -28,6 +28,40 @@ Attribute Python3.VB_ProcData.VB_Invoke_Func = "e\n14"
     RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
 End Sub
 
+' 便利マクロ6選
+Sub グラフ作成()
+Attribute グラフ作成.VB_ProcData.VB_Invoke_Func = "g\n14"
+    Dim ws As Worksheet
+    Dim rng As Range
+    Dim lastRow As Long, lastCol As Long
+    Dim chartObj As ChartObject
+    
+    Set ws = ActiveSheet
+    
+    ' 選択範囲の先頭セルを取得
+    Set rng = Selection.Cells(1, 1)
+    
+    ' 連続データの範囲を自動判定（右方向と下方向）
+    lastRow = rng.End(xlDown).Row
+    lastCol = rng.End(xlToRight).Column
+    Set rng = ws.Range(rng, ws.Cells(lastRow, lastCol))
+    
+    ' グラフ作成
+    Set chartObj = ws.ChartObjects.Add(Left:=100, Top:=50, Width:=400, Height:=300)
+    With chartObj.Chart
+        .ChartType = xlXYScatterLines
+        .SetSourceData Source:=rng
+        .ChartTitle.Text = "グラフ タイトル"
+        .HasTitle = True
+        '.Axes(xlCategory).HasTitle = True
+        '.Axes(xlCategory).AxisTitle.Text = "X軸"
+        '.Axes(xlValue).HasTitle = True
+        '.Axes(xlValue).AxisTitle.Text = "Y軸"
+        .HasLegend = False
+        
+    End With
+End Sub
+
 Sub 選択されているセル範囲内の図形を削除する()
 Attribute 選択されているセル範囲内の図形を削除する.VB_ProcData.VB_Invoke_Func = "m\n14"
 Dim shp As Shape
@@ -45,3 +79,25 @@ shp.Delete
 End If
 Next
 End Sub
+
+Sub 表示小数桁の変更()
+Attribute 表示小数桁の変更.VB_ProcData.VB_Invoke_Func = "M\n14"
+    Selection.NumberFormat = "0.000"
+End Sub
+
+Sub 選択範囲の値を一括コピーして数式を削除()
+    Selection.Value = Selection.Value
+End Sub
+
+Sub 新規エクセルにアクティブシートをコピー()
+    ActiveSheet.Copy
+End Sub
+
+Sub 高さ幅を自動調整()
+    Selection.Columns.AutoFit
+    Selection.Rows.AutoFit
+End Sub
+
+
+
+

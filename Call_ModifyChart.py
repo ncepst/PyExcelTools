@@ -28,14 +28,14 @@ def main(mode=3):
             full_name = chart.Name                      # 例: "Sheet1 グラフ 1"
             # 空白の位置を取得
             space_index = full_name.find(" ")
-            first_part = full_name[:space_index]        # 先頭から最初の空白まで
+            # first_part = full_name[:space_index]
             second_part = full_name[space_index+1:]     # 空白を除いた残り
             print ("chart:",second_part)
             chart = ws.charts(second_part)
         else:
             print("アクティブなグラフはありません")
 
-    ModifyChart(chart,Title="測定結果",width_cm=12,height_cm=8, Title_space=+20)
+    ModifyChart(chart,Title="測定結果",width_cm=12,height_cm=8, Title_space=+20,x_major=1)
 
     # 計測終了
     t2 = time.time()

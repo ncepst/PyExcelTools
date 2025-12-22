@@ -40,7 +40,6 @@ Attribute グラフ作成.VB_ProcData.VB_Invoke_Func = "g\n14"
     
     ' 選択範囲の先頭セルを取得
     Set rng = Selection.Cells(1, 1)
-    
     ' 連続データの範囲を自動判定（右方向と下方向）
     lastRow = rng.End(xlDown).Row
     lastCol = rng.End(xlToRight).Column
@@ -58,26 +57,25 @@ Attribute グラフ作成.VB_ProcData.VB_Invoke_Func = "g\n14"
         '.Axes(xlValue).HasTitle = True
         '.Axes(xlValue).AxisTitle.Text = "Y軸"
         .HasLegend = False
-        
     End With
 End Sub
 
 Sub 選択されているセル範囲内の図形を削除する()
 Attribute 選択されているセル範囲内の図形を削除する.VB_ProcData.VB_Invoke_Func = "m\n14"
-Dim shp As Shape
-Dim rng As Range
-
-If TypeName(Selection) <> "Range" Then Exit Sub
-
-For Each shp In ActiveSheet.Shapes
-'図形の配置されているセル範囲をオブジェクト変数にセット
-Set rng = Range(shp.TopLeftCell, shp.BottomRightCell)
-'図形の配置されているセル範囲と
-'選択されているセル範囲が重なっているときに図形を削除
-If Not (Intersect(rng, Selection) Is Nothing) Then
-shp.Delete
-End If
-Next
+    Dim shp As Shape
+    Dim rng As Range
+    
+    If TypeName(Selection) <> "Range" Then Exit Sub
+    
+    For Each shp In ActiveSheet.Shapes
+    '図形の配置されているセル範囲をオブジェクト変数にセット
+    Set rng = Range(shp.TopLeftCell, shp.BottomRightCell)
+    '図形の配置されているセル範囲と
+    '選択されているセル範囲が重なっているときに図形を削除
+    If Not (Intersect(rng, Selection) Is Nothing) Then
+    shp.Delete
+    End If
+    Next
 End Sub
 
 Sub 表示小数桁の変更()

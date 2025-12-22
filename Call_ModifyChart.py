@@ -11,7 +11,7 @@ def main(mode=3):
         wb = xw.books.active
         ws = wb.sheets.active
         wb.app.screen_updating = False
-        wb.app.calculation = 'manual'
+        # wb.app.calculation = 'manual'
 
         # 既存グラフをインデックスで指定する (0,1,2..)
         if mode == 1:
@@ -35,7 +35,6 @@ def main(mode=3):
             else:
                 print("アクティブなグラフはありません")
         
-    
         import random
         r = random.randint(0, 100)
         ModifyChart(chart,Title=f"タイトル{r}",width_cm=12,height_cm=8, Title_space=0,x_major=1)
@@ -44,7 +43,8 @@ def main(mode=3):
         print("Error:",e)
 
     finally:
-        wb.app.calculation = 'automatic'
+        # wb.app.calculate() 
+        # wb.app.calculation = 'automatic'
         wb.app.screen_updating = True
     
     # 計測終了

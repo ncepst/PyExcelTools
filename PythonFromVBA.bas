@@ -1,8 +1,8 @@
 Attribute VB_Name = "PythonFromVBA"
-' xlwings ƒAƒhƒCƒ“‚ªƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ä‚¢‚é•K—v‚ª‚ ‚è‚Ü‚·
-' VScodeƒ^[ƒ~ƒiƒ‹‚É xlwings addin install “ü—Í‚·‚é‚ÆƒCƒ“ƒXƒg[ƒ‹‚Å‚«‚Ü‚·B
-' ƒc[ƒ‹‚ÌŽQÆÝ’è‚Åxlwings‚Éƒ`ƒFƒbƒN‚ð“ü‚ê‚Ä‚­‚¾‚³‚¢B
-' ŠÂ‹«•Ï”‚É•Ï”–¼: PYTHONPATH  •Ï”’l:C:\Users\*****\Python‚ð’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢B
+' xlwings ã‚¢ãƒ‰ã‚¤ãƒ³ãŒã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã•ã‚Œã¦ã„ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™
+' VScodeã‚¿ãƒ¼ãƒŸãƒŠãƒ«ã« xlwings addin install ã‚’å…¥åŠ›ã™ã‚‹ã¨ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã§ãã¾ã™
+' ãƒ„ãƒ¼ãƒ«ã®å‚ç…§è¨­å®šã§xlwingsã«ãƒã‚§ãƒƒã‚¯ã‚’å…¥ã‚Œã¦ãã ã•ã„
+' ç’°å¢ƒå¤‰æ•°ã«å¤‰æ•°å: PYTHONPATH  å¤‰æ•°å€¤:C:\Users\*****\Python ã‚’è¿½åŠ ã—ã¦ãã ã•ã„
 
 Sub Run_CallModifyChart()
 Attribute Run_CallModifyChart.VB_ProcData.VB_Invoke_Func = "q\n14"
@@ -11,3 +11,4 @@ Attribute Run_CallModifyChart.VB_ProcData.VB_Invoke_Func = "q\n14"
 '
     RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
 End Sub
+

@@ -1,8 +1,8 @@
 Attribute VB_Name = "PythonFromVBA"
-' PythonÀs‚É‚Í xlwings ƒAƒhƒCƒ“‚ªƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ä‚¢‚é•K—v‚ª‚ ‚è‚Ü‚·
-' VScodeƒ^[ƒ~ƒiƒ‹‚É xlwings addin install ‚ğ“ü—Í‚·‚é‚ÆƒCƒ“ƒXƒg[ƒ‹‚Å‚«‚Ü‚·
-' ƒc[ƒ‹‚ÌQÆİ’è‚Åxlwings‚Éƒ`ƒFƒbƒN‚ğ“ü‚ê‚Ä‚­‚¾‚³‚¢
-' ŠÂ‹«•Ï”‚É•Ï”–¼: PYTHONPATH  •Ï”’l:C:\Users\*****\Python‚ğ’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢
+' Pythonå®Ÿè¡Œã«ã¯ xlwings ã‚¢ãƒ‰ã‚¤ãƒ³ãŒã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã•ã‚Œã¦ã„ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™
+' VScodeã‚¿ãƒ¼ãƒŸãƒŠãƒ«ã« xlwings addin install ã‚’å…¥åŠ›ã™ã‚‹ã¨ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã§ãã¾ã™
+' ãƒ„ãƒ¼ãƒ«ã®å‚ç…§è¨­å®šã§xlwingsã«ãƒã‚§ãƒƒã‚¯ã‚’å…¥ã‚Œã¦ãã ã•ã„
+' ç’°å¢ƒå¤‰æ•°ã«å¤‰æ•°å: PYTHONPATH  å¤‰æ•°å€¤:C:\Users\*****\Pythonã‚’è¿½åŠ ã—ã¦ãã ã•ã„
 
 Sub Run_CallModifyChart()
 Attribute Run_CallModifyChart.VB_ProcData.VB_Invoke_Func = "q\n14"
@@ -28,9 +28,9 @@ Attribute Python3.VB_ProcData.VB_Invoke_Func = "e\n14"
     RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
 End Sub
 
-' •Ö—˜ƒ}ƒNƒ6‘I
-Sub ƒOƒ‰ƒtì¬()
-Attribute ƒOƒ‰ƒtì¬.VB_ProcData.VB_Invoke_Func = "g\n14"
+' ä¾¿åˆ©ãƒã‚¯ãƒ­6é¸
+Sub ã‚°ãƒ©ãƒ•ä½œæˆ()
+Attribute ã‚°ãƒ©ãƒ•ä½œæˆ.VB_ProcData.VB_Invoke_Func = "g\n14"
     Dim ws As Worksheet
     Dim rng As Range
     Dim lastRow As Long, lastCol As Long
@@ -38,64 +38,60 @@ Attribute ƒOƒ‰ƒtì¬.VB_ProcData.VB_Invoke_Func = "g\n14"
     
     Set ws = ActiveSheet
     
-    ' ‘I‘ğ”ÍˆÍ‚Ìæ“ªƒZƒ‹‚ğæ“¾
+    ' é¸æŠç¯„å›²ã®å…ˆé ­ã‚»ãƒ«ã‚’å–å¾—
     Set rng = Selection.Cells(1, 1)
-    ' ˜A‘±ƒf[ƒ^‚Ì”ÍˆÍ‚ğ©“®”»’èi‰E•ûŒü‚Æ‰º•ûŒüj
+    ' é€£ç¶šãƒ‡ãƒ¼ã‚¿ã®ç¯„å›²ã‚’è‡ªå‹•åˆ¤å®šï¼ˆå³æ–¹å‘ã¨ä¸‹æ–¹å‘ï¼‰
     lastRow = rng.End(xlDown).Row
     lastCol = rng.End(xlToRight).Column
     Set rng = ws.Range(rng, ws.Cells(lastRow, lastCol))
     
-    ' ƒOƒ‰ƒtì¬
+    ' ã‚°ãƒ©ãƒ•ä½œæˆ
     Set chartObj = ws.ChartObjects.Add(Left:=100, Top:=50, Width:=400, Height:=300)
     With chartObj.Chart
         .ChartType = xlXYScatterLines
         .SetSourceData Source:=rng
-        .ChartTitle.Text = "ƒOƒ‰ƒt ƒ^ƒCƒgƒ‹"
+        .ChartTitle.Text = "ã‚°ãƒ©ãƒ• ã‚¿ã‚¤ãƒˆãƒ«"
         .HasTitle = True
         '.Axes(xlCategory).HasTitle = True
-        '.Axes(xlCategory).AxisTitle.Text = "X²"
+        '.Axes(xlCategory).AxisTitle.Text = "Xè»¸"
         '.Axes(xlValue).HasTitle = True
-        '.Axes(xlValue).AxisTitle.Text = "Y²"
+        '.Axes(xlValue).AxisTitle.Text = "Yè»¸"
         .HasLegend = False
     End With
 End Sub
 
-Sub ‘I‘ğ‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ“à‚Ì}Œ`‚ğíœ‚·‚é()
-Attribute ‘I‘ğ‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ“à‚Ì}Œ`‚ğíœ‚·‚é.VB_ProcData.VB_Invoke_Func = "m\n14"
+Sub é¸æŠã•ã‚Œã¦ã„ã‚‹ã‚»ãƒ«ç¯„å›²å†…ã®å›³å½¢ã‚’å‰Šé™¤ã™ã‚‹()
+Attribute é¸æŠã•ã‚Œã¦ã„ã‚‹ã‚»ãƒ«ç¯„å›²å†…ã®å›³å½¢ã‚’å‰Šé™¤ã™ã‚‹.VB_ProcData.VB_Invoke_Func = "m\n14"
     Dim shp As Shape
     Dim rng As Range
     
     If TypeName(Selection) <> "Range" Then Exit Sub
     
     For Each shp In ActiveSheet.Shapes
-    '}Œ`‚Ì”z’u‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ‚ğƒIƒuƒWƒFƒNƒg•Ï”‚ÉƒZƒbƒg
+    'å›³å½¢ã®é…ç½®ã•ã‚Œã¦ã„ã‚‹ã‚»ãƒ«ç¯„å›²ã‚’ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå¤‰æ•°ã«ã‚»ãƒƒãƒˆ
     Set rng = Range(shp.TopLeftCell, shp.BottomRightCell)
-    '}Œ`‚Ì”z’u‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ‚Æ
-    '‘I‘ğ‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ‚ªd‚È‚Á‚Ä‚¢‚é‚Æ‚«‚É}Œ`‚ğíœ
+    'å›³å½¢ã®é…ç½®ã•ã‚Œã¦ã„ã‚‹ã‚»ãƒ«ç¯„å›²ã¨
+    'é¸æŠã•ã‚Œã¦ã„ã‚‹ã‚»ãƒ«ç¯„å›²ãŒé‡ãªã£ã¦ã„ã‚‹ã¨ãã«å›³å½¢ã‚’å‰Šé™¤
     If Not (Intersect(rng, Selection) Is Nothing) Then
     shp.Delete
     End If
     Next
 End Sub
 
-Sub •\¦¬”Œ…‚Ì•ÏX()
-Attribute •\¦¬”Œ…‚Ì•ÏX.VB_ProcData.VB_Invoke_Func = "M\n14"
+Sub è¡¨ç¤ºå°æ•°æ¡ã®å¤‰æ›´()
+Attribute è¡¨ç¤ºå°æ•°æ¡ã®å¤‰æ›´.VB_ProcData.VB_Invoke_Func = "M\n14"
     Selection.NumberFormat = "0.000"
 End Sub
 
-Sub ‘I‘ğ”ÍˆÍ‚Ì’l‚ğˆêŠ‡ƒRƒs[‚µ‚Ä”®‚ğíœ()
+Sub é¸æŠç¯„å›²ã®å€¤ã‚’ä¸€æ‹¬ã‚³ãƒ”ãƒ¼ã—ã¦æ•°å¼ã‚’å‰Šé™¤()
     Selection.Value = Selection.Value
 End Sub
 
-Sub V‹KƒGƒNƒZƒ‹‚ÉƒAƒNƒeƒBƒuƒV[ƒg‚ğƒRƒs[()
+Sub æ–°è¦ã‚¨ã‚¯ã‚»ãƒ«ã«ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‚·ãƒ¼ãƒˆã‚’ã‚³ãƒ”ãƒ¼()
     ActiveSheet.Copy
 End Sub
 
-Sub ‚‚³•‚ğ©“®’²®()
+Sub é«˜ã•å¹…ã‚’è‡ªå‹•èª¿æ•´()
     Selection.Columns.AutoFit
     Selection.Rows.AutoFit
 End Sub
-
-
-
-

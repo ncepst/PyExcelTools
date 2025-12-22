@@ -11,6 +11,7 @@ def main(mode=3):
         wb = xw.books.active
         ws = wb.sheets.active
         wb.app.screen_updating = False
+        wb.app.calculation = 'manual'
 
         # 既存グラフをインデックスで指定する (0,1,2..)
         if mode == 1:
@@ -34,12 +35,17 @@ def main(mode=3):
             else:
                 print("アクティブなグラフはありません")
         
-        ModifyChart(chart,Title="zy",width_cm=12,height_cm=8, Title_space=0,x_major=1)
+    
+        import random
+        r = random.randint(0, 100)
+        ModifyChart(chart,Title=f"タイトル{r}",width_cm=12,height_cm=8, Title_space=0,x_major=1)
 
-    except :
-        print("Error")
+    except Exception as e:
+        print("Error:",e)
 
-    wb.app.screen_updating = True
+    finally:
+        wb.app.calculation = 'automatic'
+        wb.app.screen_updating = True
     
     # 計測終了
     t2 = time.time()

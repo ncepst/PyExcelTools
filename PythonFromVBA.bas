@@ -1,8 +1,8 @@
 Attribute VB_Name = "PythonFromVBA"
-' xlwings ã‚¢ãƒ‰ã‚¤ãƒ³ãŒã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã•ã‚Œã¦ã„ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™
-' VScodeã‚¿ãƒ¼ãƒŸãƒŠãƒ«ã« xlwings addin install ã‚’å…¥åŠ›ã™ã‚‹ã¨ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã§ãã¾ã™
-' ãƒ„ãƒ¼ãƒ«ã®å‚ç…§è¨­å®šã§xlwingsã«ãƒã‚§ãƒƒã‚¯ã‚’å…¥ã‚Œã¦ãã ã•ã„
-' ç’°å¢ƒå¤‰æ•°ã«å¤‰æ•°å: PYTHONPATH  å¤‰æ•°å€¤:C:\Users\*****\Python ã‚’è¿½åŠ ã—ã¦ãã ã•ã„
+' xlwings ƒAƒhƒCƒ“‚ªƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ä‚¢‚é•K—v‚ª‚ ‚è‚Ü‚·
+' VScodeƒ^[ƒ~ƒiƒ‹‚É xlwings addin install “ü—Í‚·‚é‚ÆƒCƒ“ƒXƒg[ƒ‹‚Å‚«‚Ü‚·B
+' ƒc[ƒ‹‚ÌQÆİ’è‚Åxlwings‚Éƒ`ƒFƒbƒN‚ğ“ü‚ê‚Ä‚­‚¾‚³‚¢B
+' ŠÂ‹«•Ï”‚É•Ï”–¼: PYTHONPATH  •Ï”’l:C:\Users\*****\Python‚ğ’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢B
 
 Sub Run_CallModifyChart()
 Attribute Run_CallModifyChart.VB_ProcData.VB_Invoke_Func = "q\n14"
@@ -12,3 +12,36 @@ Attribute Run_CallModifyChart.VB_ProcData.VB_Invoke_Func = "q\n14"
     RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
 End Sub
 
+Sub Python2()
+Attribute Python2.VB_ProcData.VB_Invoke_Func = "w\n14"
+'
+' Keyboard Shortcut: Ctrl+W
+'
+    RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
+End Sub
+
+Sub Python3()
+Attribute Python3.VB_ProcData.VB_Invoke_Func = "e\n14"
+'
+' Keyboard Shortcut: Ctrl+E
+'
+    RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
+End Sub
+
+Sub ‘I‘ğ‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ“à‚Ì}Œ`‚ğíœ‚·‚é()
+Attribute ‘I‘ğ‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ“à‚Ì}Œ`‚ğíœ‚·‚é.VB_ProcData.VB_Invoke_Func = "m\n14"
+Dim shp As Shape
+Dim rng As Range
+
+If TypeName(Selection) <> "Range" Then Exit Sub
+
+For Each shp In ActiveSheet.Shapes
+'}Œ`‚Ì”z’u‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ‚ğƒIƒuƒWƒFƒNƒg•Ï”‚ÉƒZƒbƒg
+Set rng = Range(shp.TopLeftCell, shp.BottomRightCell)
+'}Œ`‚Ì”z’u‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ‚Æ
+'‘I‘ğ‚³‚ê‚Ä‚¢‚éƒZƒ‹”ÍˆÍ‚ªd‚È‚Á‚Ä‚¢‚é‚Æ‚«‚É}Œ`‚ğíœ
+If Not (Intersect(rng, Selection) Is Nothing) Then
+shp.Delete
+End If
+Next
+End Sub

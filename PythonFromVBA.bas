@@ -6,5 +6,8 @@ Attribute VB_Name = "PythonFromVBA"
 
 Sub Run_CallModifyChart()
 Attribute Run_CallModifyChart.VB_ProcData.VB_Invoke_Func = "q\n14"
+'
+' Keyboard Shortcut: Ctrl+Q
+'
     RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
 End Sub

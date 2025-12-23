@@ -112,7 +112,7 @@ x_axis.MinimumScale = -90  # 最小値
 x_axis.MaximumScale = 90   # 最大値  
 x_axis.MajorUnit = 15      # 目盛間隔
 x_axis.CrossesAt = -90     # 交差位置(縦軸との交点)
-x_axis.TickLabels.NumberFormatLocal = "0_ "   # 小数0桁まで表示
+x_axis.TickLabels.NumberFormatLocal = "0"   # 小数0桁まで表示
 
 # 横軸のタイトル
 x_axis.HasTitle = True
@@ -121,7 +121,7 @@ if x_axis.HasTitle:
 
 # 縦軸のオプション
 y_axis = ch.Axes(AxisType.xlValue)
-y_axis.TickLabels.NumberFormatLocal = "0.0_ " # 小数1桁まで表示
+y_axis.TickLabels.NumberFormatLocal = "0.0" # 小数1桁まで表示
 
 # 縦軸のタイトル
 y_axis.HasTitle = False
@@ -204,4 +204,5 @@ wb.save()
 # 計測終了
 t2 = time.time()
 elapsed_time = round(t2-t1,3)
+
 print("処理時間:"+str(elapsed_time)+" s")

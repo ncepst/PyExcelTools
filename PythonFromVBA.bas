@@ -171,3 +171,45 @@ Sub 高さ幅を自動調整()
     Selection.Columns.AutoFit
     Selection.Rows.AutoFit
 End Sub
+
+Sub CopyChartsWithFormattingAndNewData()
+    Dim srcSheet As Worksheet, dstSheet As Worksheet
+    Dim cht As ChartObject, newCht As ChartObject
+    Dim srs As Series
+    Dim srcValues As Range, srcXValues As Range
+    Dim dstValues As Range, dstXValues As Range
+    
+    Set srcSheet = ThisWorkbook.Sheets("Sheet1")
+    Set dstSheet = ThisWorkbook.Sheets("Sheet2")
+    
+    For Each cht In srcSheet.ChartObjects
+        ' 新しいChartObjectをSheet2に作成（元の位置・サイズをコピー）
+        Set newCht = dstSheet.ChartObjects.Add( _
+            Left:=cht.Left, Top:=cht.Top, _
+            Width:=cht.Width, Height:=cht.Height)
+        
+        ' 元グラフの書式をコピー
+        cht.Chart.ChartArea.Copy
+        newCht.Chart.Paste
+        
+        ' データ系列ごとに Sheet2 の対応セルに置き換え
+        For Each srs In newCht.Chart.SeriesCollection
+            ' 元の系列のValues/XValuesを取得
+            On Error Resume Next ' データが無い系列をスキップ
+            Set srcValues = srs.Values
+            Set srcXValues = srs.XValues
+            On Error GoTo 0
+            
+            ' Sheet2 の同じアドレスの範囲を参照するように変更
+            If Not srcValues Is Nothing Then
+                Set dstValues = dstSheet.Range(srcValues.Address)
+                srs.Values = dstValues
+            End If
+            
+            If Not srcXValues Is Nothing Then
+                Set dstXValues = dstSheet.Range(srcXValues.Address)
+                srs.XValues = dstXValues
+            End If
+        Next srs
+    Next cht
+End Sub

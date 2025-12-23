@@ -28,7 +28,7 @@ Sub Python3()
 End Sub
 
 ' 便利マクロ
-Sub グラフ作成()
+Sub グラフ作成_自動判定()
 '
 ' Keyboard Shortcut: Ctrl+G
 '
@@ -57,6 +57,31 @@ Sub グラフ作成()
         '.Axes(xlCategory).AxisTitle.Text = "X軸"
         '.Axes(xlValue).HasTitle = True
         '.Axes(xlValue).AxisTitle.Text = "Y軸"
+        .HasLegend = False
+    End With
+End Sub
+
+Sub グラフ作成_選択範囲()
+'
+' Keyboard Shortcut: Ctrl+Shift＋G
+'
+    Dim ws As Worksheet
+    Dim rng As Range
+    Dim chartObj As ChartObject
+    
+    Set ws = ActiveSheet
+    
+    ' 選択範囲をそのまま使用
+    If TypeName(Selection) <> "Range" Then Exit Sub
+    Set rng = Selection
+    
+    ' グラフ作成
+    Set chartObj = ws.ChartObjects.Add(Left:=100, Top:=50, Width:=400, Height:=300)
+    With chartObj.Chart
+        .ChartType = xlXYScatterLines
+        .SetSourceData Source:=rng
+        .HasTitle = True
+        .ChartTitle.Text = "グラフ タイトル"
         .HasLegend = False
     End With
 End Sub
@@ -106,3 +131,4 @@ Sub 高さ幅を自動調整()
     Selection.Columns.AutoFit
     Selection.Rows.AutoFit
 End Sub
+

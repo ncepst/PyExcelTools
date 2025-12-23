@@ -113,13 +113,6 @@ Sub 選択範囲の値を一括コピーして数式を削除()
     Selection.Value = Selection.Value
 End Sub
 
-Sub 新規エクセルにアクティブシートをコピー()
-'
-' Keyboard Shortcut:
-'
-    ActiveSheet.Copy
-End Sub
-
 Sub 表示小数桁の変更()
 '
 ' Keyboard Shortcut:
@@ -127,8 +120,14 @@ Sub 表示小数桁の変更()
     Selection.NumberFormat = "0.000"
 End Sub
 
+Sub 新規エクセルにアクティブシートをコピー()
+'
+' Keyboard Shortcut:
+'
+    ActiveSheet.Copy
+End Sub
+
 Sub 高さ幅を自動調整()
     Selection.Columns.AutoFit
     Selection.Rows.AutoFit
 End Sub
-

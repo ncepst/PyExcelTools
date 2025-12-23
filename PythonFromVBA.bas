@@ -86,7 +86,7 @@ Sub グラフ作成_選択範囲()
     End With
 End Sub
 
-Sub 選択されているセル範囲内の図形を削除する()
+Sub 選択されているセル範囲内の図形を削除()
 '
 ' Keyboard Shortcut: Ctrl+M
 '
@@ -106,6 +106,48 @@ Sub 選択されているセル範囲内の図形を削除する()
     Next
 End Sub
 
+Sub  選択されているセル範囲内の図形をグループ化()
+'
+' Keyboard Shortcut:
+'
+    Dim ws As Worksheet
+    Set ws = ActiveSheet
+    
+    Dim selRange As Range
+    Set selRange = Selection
+    
+    Dim selLeft As Double, selTop As Double, selRight As Double, selBottom As Double
+    selLeft = selRange.Left
+    selTop = selRange.Top
+    selRight = selRange.Left + selRange.Width
+    selBottom = selRange.Top + selRange.Height
+    
+    Dim shp As Shape
+    Dim shpNames() As String
+    Dim count As Long
+    count = 0
+    
+    ' 選択セルに重なる図形を配列に追加
+    For Each shp In ws.Shapes
+        Dim shpLeft As Double, shpTop As Double, shpRight As Double, shpBottom As Double
+        shpLeft = shp.Left
+        shpTop = shp.Top
+        shpRight = shp.Left + shp.Width
+        shpBottom = shp.Top + shp.Height
+        
+        If Not (shpRight < selLeft Or shpLeft > selRight Or shpBottom < selTop Or shpTop > selBottom) Then
+            count = count + 1
+            ReDim Preserve shpNames(1 To count)
+            shpNames(count) = shp.Name
+        End If
+    Next shp
+    
+    ' 2つ以上あればグループ化
+    If count >= 2 Then
+        ws.Shapes.Range(shpNames).Group
+    End If
+End Sub
+
 Sub 選択範囲の値を一括コピーして数式を削除()
 '
 ' Keyboard Shortcut: Ctrl+Shift+M
@@ -113,7 +155,7 @@ Sub 選択範囲の値を一括コピーして数式を削除()
     Selection.Value = Selection.Value
 End Sub
 
-Sub 表示小数桁の変更()
+Sub 表示小数桁の設定()
 '
 ' Keyboard Shortcut:
 '

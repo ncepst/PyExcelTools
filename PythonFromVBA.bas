@@ -27,7 +27,7 @@ Sub Python3()
     RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
 End Sub
 
-' 便利マクロ6選
+' 便利マクロ
 Sub グラフ作成()
 '
 ' Keyboard Shortcut: Ctrl+G
@@ -81,13 +81,6 @@ Sub 選択されているセル範囲内の図形を削除する()
     Next
 End Sub
 
-Sub 表示小数桁の変更()
-'
-' Keyboard Shortcut:
-'
-    Selection.NumberFormat = "0.000"
-End Sub
-
 Sub 選択範囲の値を一括コピーして数式を削除()
 '
 ' Keyboard Shortcut: Ctrl+Shift+M
@@ -102,9 +95,14 @@ Sub 新規エクセルにアクティブシートをコピー()
     ActiveSheet.Copy
 End Sub
 
+Sub 表示小数桁の変更()
+'
+' Keyboard Shortcut:
+'
+    Selection.NumberFormat = "0.000"
+End Sub
+
 Sub 高さ幅を自動調整()
     Selection.Columns.AutoFit
     Selection.Rows.AutoFit
 End Sub
-
-

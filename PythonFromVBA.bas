@@ -178,36 +178,44 @@ Sub CopyChartsWithFormattingAndNewData()
     Dim srs As Series
     Dim srcValues As Range, srcXValues As Range
     Dim dstValues As Range, dstXValues As Range
+    Dim lastRow As Long, lastCol As Long
     
     Set srcSheet = ThisWorkbook.Sheets("Sheet1")
     Set dstSheet = ThisWorkbook.Sheets("Sheet2")
     
     For Each cht In srcSheet.ChartObjects
-        ' 新しいChartObjectをSheet2に作成（元の位置・サイズをコピー）
+        ' 新しいChartObjectを作成
         Set newCht = dstSheet.ChartObjects.Add( _
             Left:=cht.Left, Top:=cht.Top, _
             Width:=cht.Width, Height:=cht.Height)
         
-        ' 元グラフの書式をコピー
+        ' 書式をコピー
         cht.Chart.ChartArea.Copy
         newCht.Chart.Paste
         
-        ' データ系列ごとに Sheet2 の対応セルに置き換え
+        ' 系列ごとにデータを置き換え
         For Each srs In newCht.Chart.SeriesCollection
-            ' 元の系列のValues/XValuesを取得
-            On Error Resume Next ' データが無い系列をスキップ
+            On Error Resume Next
             Set srcValues = srs.Values
             Set srcXValues = srs.XValues
             On Error GoTo 0
             
-            ' Sheet2 の同じアドレスの範囲を参照するように変更
+            ' Values
             If Not srcValues Is Nothing Then
-                Set dstValues = dstSheet.Range(srcValues.Address)
+                ' コピー先シートの最終行/列を考慮して範囲を調整
+                lastRow = WorksheetFunction.Min(dstSheet.Rows.Count, srcValues.Rows.Count + srcValues.Row - 1)
+                lastCol = WorksheetFunction.Min(dstSheet.Columns.Count, srcValues.Columns.Count + srcValues.Column - 1)
+                Set dstValues = dstSheet.Range(dstSheet.Cells(srcValues.Row, srcValues.Column), _
+                                               dstSheet.Cells(lastRow, lastCol))
                 srs.Values = dstValues
             End If
             
+            ' XValues
             If Not srcXValues Is Nothing Then
-                Set dstXValues = dstSheet.Range(srcXValues.Address)
+                lastRow = WorksheetFunction.Min(dstSheet.Rows.Count, srcXValues.Rows.Count + srcXValues.Row - 1)
+                lastCol = WorksheetFunction.Min(dstSheet.Columns.Count, srcXValues.Columns.Count + srcXValues.Column - 1)
+                Set dstXValues = dstSheet.Range(dstSheet.Cells(srcXValues.Row, srcXValues.Column), _
+                                               dstSheet.Cells(lastRow, lastCol))
                 srs.XValues = dstXValues
             End If
         Next srs

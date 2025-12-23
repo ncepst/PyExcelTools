@@ -166,8 +166,3 @@ End Sub
 Sub 新規エクセルにアクティブシートをコピー()
     ActiveSheet.Copy
 End Sub
-
-Sub 高さ幅を自動調整()
-    Selection.Columns.AutoFit
-    Selection.Rows.AutoFit
-End Sub

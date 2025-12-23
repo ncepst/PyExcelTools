@@ -12,14 +12,19 @@ https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py
 ScatterChart関数の呼び出し例です。
 https://github.com/ncepst/PyExcelTools/blob/main/Call_Chart.py
 
-さらに派生して、グラフ変更を関数化したコードです。
+ScatterChart.pyの派生で、既存グラフの変更を関数化したコードを作成しました。
 https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py
 
 ModifyChart関数の呼び出し例です。
 https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py
 
+Call_ModifyChart.pyを呼び出すExcelマクロで、ショートカットキーを割り当てると便利そうです。
+https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas
 
-設定できる系列の項目と、設定がない場合のデフォルト値は以下のようになっています。
+グラフの書式設定の項目は関数の引数にリスト化されています。
+引数のなかで、系列の書式設定についてはdict形式となっており、以下のkeyが設定できます。
+設定を行わない場合のkeyに対するデフォルト値は以下のようになり、任意のkeyのみ設定可能です。
+
 series_list = [
     {
     "name":"系列1",                  # 系列名

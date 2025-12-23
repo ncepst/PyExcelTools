@@ -148,7 +148,7 @@ Sub  選択されているセル範囲内の図形をグループ化()
     End If
 End Sub
 
-Sub 選択範囲の値を一括コピーして数式を削除()
+Sub 選択範囲の数式を値として貼り付け()
 '
 ' Keyboard Shortcut: Ctrl+Shift+M
 '
@@ -163,9 +163,6 @@ Sub 表示小数桁の設定()
 End Sub
 
 Sub 新規エクセルにアクティブシートをコピー()
-'
-' Keyboard Shortcut:
-'
     ActiveSheet.Copy
 End Sub
 

@@ -144,8 +144,8 @@ Sub  選択されているセル範囲内の図形をグループ化()
     
     ' 2つ以上あればグループ化
     If count >= 2 Then
+        ' グループ化は.Group  選択は.Select
         ws.Shapes.Range(shpNames).Group
-        ' グループ化せずに選択の場合には.Selectに変更
     End If
 End Sub
 
@@ -171,4 +171,5 @@ Sub 高さ幅を自動調整()
     Selection.Columns.AutoFit
     Selection.Rows.AutoFit
 End Sub
+
 

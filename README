@@ -1,22 +1,22 @@
 Excel 2021 の標準スタイルに寄せて、
-研究資料・技術資料向けの体裁を素早く整えることを目的としています。
+研究資料・技術資料向けのグラフの体裁を素早く整えることを目的としています。
 
 Windows + Excel 2021 以降での使用を前提としています。
 
 サンプルコード(ExcelGraph.py)に関して、xlwingsによるエクセルグラフ作成自動化の記事を書いています。
 https://qiita.com/Bencepst/items/54c63974242bb9e18c23
 
-グラフ作成を関数化したコード
-https://github.com/ncepst/Excel/blob/main/ScatterChart.py
+記事を元にグラフ作成を関数化したコードを作成しました。
+https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py
 
-ScatterChart関数の呼び出し例
-https://github.com/ncepst/Excel/blob/main/Call_Chart.py
+ScatterChart関数の呼び出し例です。
+https://github.com/ncepst/PyExcelTools/blob/main/Call_Chart.py
 
-グラフ変更を関数化したコード
-https://github.com/ncepst/Excel/blob/main/ModifyChart.py
+さらに派生して、グラフ変更を関数化したコードです。
+https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py
 
-ModifyChart関数の呼び出し例
-https://github.com/ncepst/Excel/blob/main/Call_ModifyChart.py
+ModifyChart関数の呼び出し例です。
+https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py
 
 
 設定できる系列の項目と、設定がない場合のデフォルト値は以下のようになっています。

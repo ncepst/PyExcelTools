@@ -162,7 +162,3 @@ Sub 表示小数桁の設定()
 '
     Selection.NumberFormat = "0.000"
 End Sub
-
-Sub 新規エクセルにアクティブシートをコピー()
-    ActiveSheet.Copy
-End Sub

@@ -3,7 +3,7 @@ Excel 2021 の標準スタイルに寄せて、
 
 Windows + Excel 2021 以降での使用を前提としています。
 
-サンプルコード(ExcelGraph.py)に関して、xlwingsによるエクセルグラフ作成自動化の記事を書いています。
+サンプルコード(ExcelGraph.py)に関して、xlwingsによるエクセルグラフ作成自動化の記事を書きました。
 https://qiita.com/Bencepst/items/54c63974242bb9e18c23
 
 記事を元にグラフ作成を関数化したコードを作成しました。

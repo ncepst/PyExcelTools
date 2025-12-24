@@ -29,35 +29,79 @@ End Sub
 
 ' 便利マクロ
 Sub グラフ作成_自動判定()
-'
-' Keyboard Shortcut: Ctrl+G
+
+' Keyboard Shortcut: Ctrl＋G
 '
     Dim ws As Worksheet
+    Dim rngStart As Range
     Dim rng As Range
     Dim lastRow As Long, lastCol As Long
     Dim chartObj As ChartObject
+    Dim i As Long
+    Dim rowCount As Long, colCount As Long
+    Dim seriesByRow As Boolean
     
     Set ws = ActiveSheet
-    
-    ' 選択範囲の先頭セルを取得
-    Set rng = Selection.Cells(1, 1)
-    ' 連続データの範囲を自動判定（右方向と下方向）
-    lastRow = rng.End(xlDown).Row
-    lastCol = rng.End(xlToRight).Column
-    Set rng = ws.Range(rng, ws.Cells(lastRow, lastCol))
-    
+    Set rngStart = Selection.Cells(1, 1)
+
+    ' 連続データ範囲を自動判定
+    lastRow = rngStart.End(xlDown).Row
+    lastCol = rngStart.End(xlToRight).Column
+    Set rng = ws.Range(rngStart, ws.Cells(lastRow, lastCol))
+
+    rowCount = rng.Rows.count
+    colCount = rng.Columns.count
+
+    ' ---- 系列方向の自動判定 ----
+    ' 横が長ければ「系列は横」
+    seriesByRow = (colCount > rowCount)
+
     ' グラフ作成
     Set chartObj = ws.ChartObjects.Add(Left:=100, Top:=50, Width:=400, Height:=300)
+
     With chartObj.Chart
         .ChartType = xlXYScatterLines
-        .SetSourceData Source:=rng
-        .ChartTitle.Text = "グラフ タイトル"
+
+        ' 既存系列削除
+        Do While .SeriesCollection.count > 0
+            .SeriesCollection(1).Delete
+        Loop
+
+        If Not seriesByRow Then
+            ' ===== 系列：縦（通常）=====
+            ' 1列目：X、2列目以降：Y
+            For i = rngStart.Column + 1 To lastCol
+                With .SeriesCollection.NewSeries
+                    .Name = ws.Cells(rngStart.Row, i).Value
+                    .XValues = ws.Range(ws.Cells(rngStart.Row + 1, rngStart.Column), _
+                                        ws.Cells(lastRow, rngStart.Column))
+                    .Values = ws.Range(ws.Cells(rngStart.Row + 1, i), _
+                                       ws.Cells(lastRow, i))
+                End With
+            Next i
+
+        Else
+            ' ===== 系列：横 =====
+            ' 1行目：X、2行目以降：Y
+            For i = rngStart.Row + 1 To lastRow
+                With .SeriesCollection.NewSeries
+                    .Name = ws.Cells(i, rngStart.Column).Value
+                    .XValues = ws.Range(ws.Cells(rngStart.Row, rngStart.Column + 1), _
+                                        ws.Cells(rngStart.Row, lastCol))
+                    .Values = ws.Range(ws.Cells(i, rngStart.Column + 1), _
+                                       ws.Cells(i, lastCol))
+                End With
+            Next i
+        End If
+
         .HasTitle = True
+        .ChartTitle.Text = "グラフ タイトル"
+        .HasLegend = False
+        
         '.Axes(xlCategory).HasTitle = True
         '.Axes(xlCategory).AxisTitle.Text = "X軸"
         '.Axes(xlValue).HasTitle = True
         '.Axes(xlValue).AxisTitle.Text = "Y軸"
-        .HasLegend = False
     End With
 End Sub
 
@@ -68,18 +112,51 @@ Sub グラフ作成_選択範囲()
     Dim ws As Worksheet
     Dim rng As Range
     Dim chartObj As ChartObject
-    
+    Dim i As Long
+    Dim rowCount As Long, colCount As Long
+    Dim seriesByRow As Boolean
+
     Set ws = ActiveSheet
-    
-    ' 選択範囲をそのまま使用
+
     If TypeName(Selection) <> "Range" Then Exit Sub
     Set rng = Selection
-    
-    ' グラフ作成
+
+    rowCount = rng.Rows.count
+    colCount = rng.Columns.count
+
+    ' 横が長ければ「系列は横」
+    seriesByRow = (colCount > rowCount)
+
     Set chartObj = ws.ChartObjects.Add(Left:=100, Top:=50, Width:=400, Height:=300)
+
     With chartObj.Chart
         .ChartType = xlXYScatterLines
-        .SetSourceData Source:=rng
+
+        ' 既存系列削除
+        Do While .SeriesCollection.count > 0
+            .SeriesCollection(1).Delete
+        Loop
+
+        If Not seriesByRow Then
+            ' ===== 系列：縦 =====
+            For i = 2 To colCount
+                With .SeriesCollection.NewSeries
+                    .Name = rng.Cells(1, i).Value
+                    .XValues = rng.Columns(1).Offset(1).Resize(rowCount - 1)
+                    .Values = rng.Columns(i).Offset(1).Resize(rowCount - 1)
+                End With
+            Next i
+        Else
+            ' ===== 系列：横 =====
+            For i = 2 To rowCount
+                With .SeriesCollection.NewSeries
+                    .Name = rng.Cells(i, 1).Value
+                    .XValues = rng.Rows(1).Offset(, 1).Resize(, colCount - 1)
+                    .Values = rng.Rows(i).Offset(, 1).Resize(, colCount - 1)
+                End With
+            Next i
+        End If
+
         .HasTitle = True
         .ChartTitle.Text = "グラフ タイトル"
         .HasLegend = False
@@ -162,4 +239,5 @@ Sub 表示する小数桁の設定()
 '
     Selection.NumberFormat = "0.000"
 End Sub
+
 

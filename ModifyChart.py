@@ -12,8 +12,9 @@ def ModifyChart(chart,
                 width_cm = "",
                 height_cm = "",
                 name = "",
-                Title = "",
+                Title = False,
                 series_list = None,
+                style="",
                 x_title = "",
                 x_min = "",
                 x_max = "",
@@ -33,6 +34,12 @@ def ModifyChart(chart,
                 y_title_space = +0,
                 Title_color = "",
                 Title_size = "",
+                smooth = "",
+                marker = "",
+                wigth_inc = 0,
+                legend_width_inc = 0,
+                legend_r_space = 0,
+                NS = 1
                 ):
     
     # list / dict はミュータブルのため、デフォルト引数を None にしている
@@ -131,10 +138,18 @@ def ModifyChart(chart,
             "T":constants.xlMarkerStyleTriangle
             }
     
-    for i, cfg in enumerate(series_list, start=1):
+    style_all  = style
+    smooth_all = smooth
+    marker_all  = marker
+
+    for i in range(1, max(len(series_list)+1,NS + 1)):
+        if i <= len(series_list):
+            cfg = series_list[i - 1]
+        else:
+            cfg = {}
         try:
             series = ch.SeriesCollection(i)
-            name0 = cfg.get("name")
+            name0 = cfg.get("name","")
             if name0 not in (None, ""):
                 series.Name = cfg["name"]
             if cfg.get("XValues"):
@@ -154,18 +169,21 @@ def ModifyChart(chart,
                 series.MarkerForegroundColor = color_rgb        # マーカー枠線の色
                 series.MarkerBackgroundColor = color_rgb        # マーカー内部の色
             
-            smooth = cfg.get("smooth", True)
+            if smooth_all=="":
+                smooth = cfg.get("smooth", True)
             series.Smooth = bool(smooth)
             
             # デフォルト値は Excel 2021 以降の標準スタイル
-            marker = marker_map.get(cfg.get("marker"), marker_map["C"])  # マーカー: 丸
+            if marker_all=="":
+                marker = marker_map.get(cfg.get("marker"), marker_map["C"])  # マーカー: 丸
             series.MarkerStyle = marker
             series.MarkerSize = cfg.get("size",5)                        # マーカーサイズ
             
             series.Format.Line.Visible = True
             series.Format.Line.Weight = cfg.get("weight", 1.5)  # 線の太さ(pt)
 
-            style = cfg.get("style") or "line+marker"
+            if style_all=="":
+                style = cfg.get("style") or "line+marker"
             if "marker" in style:
                 pass
             else:
@@ -258,7 +276,7 @@ def ModifyChart(chart,
     p = ch.PlotArea
     p.InsideLeft   = p.InsideLeft + y_title_space
     p.InsideTop    = p.InsideTop + Title_space
-    p.InsideWidth  = p.InsideWidth - y_title_space
+    p.InsideWidth  = p.InsideWidth - y_title_space + wigth_inc
     p.InsideHeight = p.InsideHeight - Title_space - x_title_space 
     
     # 凡例設定
@@ -271,10 +289,11 @@ def ModifyChart(chart,
         if legend == "auto":
             pass
         else:
+            ch.Legend.Width+=legend_width_inc
             if "U" in legend: # 大文字のUを含む場合
                 ch.Legend.Top = ch.PlotArea.InsideTop
             if "R" in legend: # 大文字のRを含む場合
-                ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width
+                ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width - legend_r_space
             m = re.search(r"\d+(?:\.\d+)?", legend)
             if m:
                 ch.Legend.Format.TextFrame2.TextRange.Font.Size = float(m.group())
@@ -285,7 +304,7 @@ def ModifyChart(chart,
                 ch.Legend.Format.Line.ForeColor.RGB = RGB(0, 0, 0)
                 ch.Legend.Format.Line.Weight = 0.75
                 ch.Legend.Format.Line.Visible = True
-            if "TB" in legend:
+            if "FB" in legend:
                 ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
-            
+                
     return chart

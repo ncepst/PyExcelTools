@@ -17,14 +17,14 @@ Sub Python2()
 '
 ' Keyboard Shortcut: Ctrl+W
 '
-    RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
+    RunPython ("import Call_ModifyChart2; Call_ModifyChart2.main()")
 End Sub
 
 Sub Python3()
 '
 ' Keyboard Shortcut: Ctrl+E
 '
-    RunPython ("import Call_ModifyChart; Call_ModifyChart.main()")
+    RunPython ("import Call_ModifyChart3; Call_ModifyChart3.main()")
 End Sub
 
 ' 便利マクロ
@@ -108,7 +108,7 @@ End Sub
 
 Sub  選択されているセル範囲内の図形をグループ化()
 '
-' Keyboard Shortcut:
+' Keyboard Shortcut: Ctrl＋U
 '
     Dim ws As Worksheet
     Set ws = ActiveSheet
@@ -156,9 +156,10 @@ Sub 選択範囲の数式を値として貼り付け()
     Selection.Value = Selection.Value
 End Sub
 
-Sub 表示小数桁の設定()
+Sub 表示する小数桁の設定()
 '
 ' Keyboard Shortcut:
 '
     Selection.NumberFormat = "0.000"
 End Sub
+

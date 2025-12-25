@@ -40,7 +40,12 @@ Sub グラフ作成_自動判定()
     Dim i As Long
     Dim rowCount As Long, colCount As Long
     Dim seriesByRow As Boolean
-    
+    Dim n As Long
+    Dim xStartRow As Long
+    Dim xStartColumn As Long
+    Dim headline As Boolean
+    headline = False
+
     Set ws = ActiveSheet
     Set rngStart = Selection.Cells(1, 1)
 
@@ -70,25 +75,41 @@ Sub グラフ作成_自動判定()
         If Not seriesByRow Then
             ' ===== 系列：縦（通常）=====
             ' 1列目：X、2列目以降：Y
+            
+            ' 見出し or 非数値なら +1
+            If headline = True Or Not IsNumeric(ws.Cells(rngStart.Row, rngStart.Column).Value) Then
+                xStartRow = rngStart.Row + 1
+            Else
+                xStartRow = rngStart.Row
+            End If
+            
             For i = rngStart.Column + 1 To lastCol
                 With .SeriesCollection.NewSeries
                     .Name = ws.Cells(rngStart.Row, i).Value
-                    .XValues = ws.Range(ws.Cells(rngStart.Row + 1, rngStart.Column), _
+                    .XValues = ws.Range(ws.Cells(xStartRow, rngStart.Column), _
                                         ws.Cells(lastRow, rngStart.Column))
-                    .Values = ws.Range(ws.Cells(rngStart.Row + 1, i), _
-                                       ws.Cells(lastRow, i))
+                    .Values = ws.Range(ws.Cells(xStartRow, i), _
+                                        ws.Cells(lastRow, i))
                 End With
             Next i
 
         Else
             ' ===== 系列：横 =====
             ' 1行目：X、2行目以降：Y
+            
+            ' 見出し or 非数値なら +1
+            If headline = True Or Not IsNumeric(ws.Cells(rngStart.Row, rngStart.Column).Value) Then
+                xStartColumn = rngStart.Column + 1
+            Else
+                xStartColumn = rngStart.Column
+            End If
+            
             For i = rngStart.Row + 1 To lastRow
                 With .SeriesCollection.NewSeries
                     .Name = ws.Cells(i, rngStart.Column).Value
-                    .XValues = ws.Range(ws.Cells(rngStart.Row, rngStart.Column + 1), _
+                    .XValues = ws.Range(ws.Cells(rngStart.Row, xStartColumn), _
                                         ws.Cells(rngStart.Row, lastCol))
-                    .Values = ws.Range(ws.Cells(i, rngStart.Column + 1), _
+                    .Values = ws.Range(ws.Cells(i, xStartColumn), _
                                        ws.Cells(i, lastCol))
                 End With
             Next i
@@ -102,6 +123,8 @@ Sub グラフ作成_自動判定()
         '.Axes(xlCategory).AxisTitle.Text = "X軸"
         '.Axes(xlValue).HasTitle = True
         '.Axes(xlValue).AxisTitle.Text = "Y軸"
+        .Axes(xlCategory).MinimumScaleIsAuto = True
+        .Axes(xlCategory).MaximumScaleIsAuto = True
     End With
 End Sub
 
@@ -109,12 +132,15 @@ Sub グラフ作成_選択範囲()
 '
 ' Keyboard Shortcut: Ctrl+Shift＋G
 '
-    Dim ws As Worksheet
+   Dim ws As Worksheet
     Dim rng As Range
     Dim chartObj As ChartObject
     Dim i As Long
     Dim rowCount As Long, colCount As Long
     Dim seriesByRow As Boolean
+    Dim offset As Long
+    Dim headline As Boolean
+    headline = False
 
     Set ws = ActiveSheet
 
@@ -136,14 +162,21 @@ Sub グラフ作成_選択範囲()
         Do While .SeriesCollection.count > 0
             .SeriesCollection(1).Delete
         Loop
+        
+        ' 見出し or 非数値なら +1
+        If headline = True Or Not IsNumeric(ws.Cells(rng.Row, rng.Column).Value) Then
+            offset = 1
+        Else
+            offset = 0
+        End If
 
         If Not seriesByRow Then
             ' ===== 系列：縦 =====
             For i = 2 To colCount
                 With .SeriesCollection.NewSeries
                     .Name = rng.Cells(1, i).Value
-                    .XValues = rng.Columns(1).Offset(1).Resize(rowCount - 1)
-                    .Values = rng.Columns(i).Offset(1).Resize(rowCount - 1)
+                    .XValues = rng.Columns(1).offset(offset).Resize(rowCount - offset)
+                    .Values = rng.Columns(i).offset(offset).Resize(rowCount - offset)
                 End With
             Next i
         Else
@@ -151,8 +184,8 @@ Sub グラフ作成_選択範囲()
             For i = 2 To rowCount
                 With .SeriesCollection.NewSeries
                     .Name = rng.Cells(i, 1).Value
-                    .XValues = rng.Rows(1).Offset(, 1).Resize(, colCount - 1)
-                    .Values = rng.Rows(i).Offset(, 1).Resize(, colCount - 1)
+                    .XValues = rng.Rows(1).offset(, offset).Resize(, colCount - offset)
+                    .Values = rng.Rows(i).offset(, offset).Resize(, colCount - offset)
                 End With
             Next i
         End If
@@ -160,6 +193,8 @@ Sub グラフ作成_選択範囲()
         .HasTitle = True
         .ChartTitle.Text = "グラフ タイトル"
         .HasLegend = False
+        .Axes(xlCategory).MinimumScaleIsAuto = True
+        .Axes(xlCategory).MaximumScaleIsAuto = True
     End With
 End Sub
 
@@ -239,5 +274,6 @@ Sub 表示する小数桁の設定()
 '
     Selection.NumberFormat = "0.000"
 End Sub
+
 
 

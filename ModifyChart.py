@@ -14,7 +14,9 @@ PRESET = {
         "title_font_size":14,
         "title_font_color":RGB(89,89,89),
         "title_font_bold":False,
+        "title_font_name":"Aptos Narrow 本文",
         "axis_title_font_size":10,
+        "axis_title_font_name":"Aptos Narrow 本文",
         "axis_title_font_color":RGB(89,89,89),
         "axis_title_font_bold":False,
         "axis_tick_font_color": RGB(89, 89, 89),
@@ -23,7 +25,7 @@ PRESET = {
         "axis_line_color":RGB(191, 191, 191),        
         "major_grid": True,
         "major_grid_color": RGB(217, 217, 217),
-        "major_grid_wight":0.75,
+        "major_grid_weight":0.75,
         "major_tickmark":constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
         "frame_color":RGB(217,217,217),             # False:枠なし
         "frame_weight":0.75,
@@ -34,29 +36,12 @@ PRESET = {
         "marker_size":5,
     },
     "std": {
-        "title_font_size":14,
-        "title_font_color":RGB(89,89,89),
-        "title_font_bold":False,
-        "axis_title_font_size":10,
         "axis_title_font_color":RGB(0,0,0), # 黒に変更
-        "axis_title_font_bold":False,
         "axis_tick_font_color": RGB(0,0,0), # 黒に変更
-        "axis_tick_font_size": 9,
-        "axis_tick_font_name":"Aptos Narrow 本文",
-        "axis_line_color":RGB(191,191,191),        
-        "major_grid": True,
-        "major_grid_color": RGB(217,217,217),
-        "major_grid_wight":0.75,
-        "major_tickmark":constants.xlTickMarkNone,  # 目盛の内向き/外向きなし 
-        "frame_color":RGB(217,217,217),             # False:枠なし
-        "frame_weight":0.75,
-        "style":"line+marker",
-        "smooth":True,
-        "line_weight":1.5,
-        "marker": "C",
-        "marker_size":5,
     },
 }
+# std を excel2021 ベースで展開
+PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 
 # False:無効化, None: 変更なし もしくは デフォルト値
 def ModifyChart(chart,
@@ -103,6 +88,7 @@ def ModifyChart(chart,
                 legend_width_inc = 0,
                 legend_height_inc = 0,
                 legend_right_space = 0,
+                chart_type = None,
                 ):
 
     p = PRESET.get(preset, PRESET["std"]) or {}
@@ -190,6 +176,9 @@ def ModifyChart(chart,
     elif y_title not in (None, ""):
         y_axis.HasTitle = True
         y_axis.AxisTitle.Text = y_title
+        
+    if chart_type not in (None,""):
+        chart.chart_type = chart_type
     
     # 系列の設定 -----------------------------------------------------------------------------
     marker_map = {
@@ -217,7 +206,7 @@ def ModifyChart(chart,
                 series.Name = cfg["name"]
             if cfg.get("XValues"):
                 try:
-                    series.XValues = ws.range(cfg["XValues"] ).api
+                    series.XValues = ws.range(cfg["XValues"]).api
                 except:
                     print("wsの定義が必要です")
             if cfg.get("Values"):
@@ -266,76 +255,83 @@ def ModifyChart(chart,
                 use_secondary = True
             else:
                 series.AxisGroup = constants.xlPrimary
+            if cfg.get("chart_type") == "bar":
+                series.ChartType = constants.xlColumnClustered
                 
         except Exception as e:
             print(f"系列{i}で例外発生:{e}")
     
     # デフォルトはExcel 2021 以降の標準スタイル -------------------------------------------------
-    if ch.HasTitle:
-        ch.ChartTitle.Format.TextFrame2.TextRange.Font.Bold = p.get("title_font_bold", False)
-        if title_font_color not in (None, ""):
-            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = title_font_color
-        else:
-            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = p.get("title_font_color", RGB(89,89,89))
-        if title_font_size not in (None, ""):
-            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = title_font_size
-        else:
-            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = p.get("title_font_size", 14)
+    try:
+        if ch.HasTitle:
+            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Bold = p.get("title_font_bold", False)
+            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Name = p.get("title_font_name", "Aptos Narrow 本文")
+            if title_font_color not in (None, ""):
+                ch.ChartTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = title_font_color
+            else:
+                ch.ChartTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = p.get("title_font_color", RGB(89,89,89))
+            if title_font_size not in (None, ""):
+                ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = title_font_size
+            else:
+                ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = p.get("title_font_size", 14)
+        # グリッド線の設定（デフォルト: 薄いグレー)
+        x_axis.HasMajorGridlines = p.get("major_grid", True)
+        if x_axis.HasMajorGridlines:
+            x_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
+            x_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
+        x_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
+        x_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
+        y_axis.HasMajorGridlines = p.get("major_grid", True)
+        if y_axis.HasMajorGridlines:
+            y_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
+            y_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
+        y_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
+        y_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
 
-    # グリッド線の設定（デフォルト: 薄いグレー)
-    x_axis.HasMajorGridlines = p.get("major_grid", True)
-    if x_axis.HasMajorGridlines:
-        x_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
-        x_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_wight", 0.75)
-    x_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
-    x_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
-    y_axis.HasMajorGridlines = p.get("major_grid", True)
-    if y_axis.HasMajorGridlines:
-        y_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
-        y_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_wight", 0.75)
-    y_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
-    y_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
-
-    for ax in ch.Axes():    
-        # 軸の設定
-        ax.TickLabels.Font.Color = p.get("axis_tick_font_color", RGB(89,89,89))
-        ax.TickLabels.Font.Size = p.get("axis_tick_font_size", 9)
-        ax.TickLabels.Font.Name = p.get("axis_tick_font_name","Aptos Narrow 本文")
-        # 軸タイトルがあるとき、軸タイトルを設定する
-        if ax.HasTitle:
-            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = p.get("axis_title_font_color", RGB(89,89,89))
-            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Bold = p.get("axis_title_font_bold", False)
-            ax.AxisTitle.Format.TextFrame2.TextRange.Font.Size = p.get("axis_title_font_size", 10)
-            
-    # 副軸の設定
-    if use_secondary:
-        y2 = ch.Axes(AxisType.xlValue, constants.xlSecondary)
-        y2.HasMajorGridlines = bool(y2_grid) or False
-        if y2_min not in (None, ""):
-            y2.MinimumScale = y2_min
-        if y2_max not in (None, ""):
-            y2.MaximumScale = y2_max
-        if y2_major not in (None, ""):
-            y2.MajorUnit = y2_major
-        if y2_format not in (None, ""):
-            y2.TickLabels.NumberFormatLocal = y2_format
-        if y2_title == False:
-            y2.HasTitle = False
-        elif y2_title not in (None, ""):
-            y2.HasTitle = True
-            y2.AxisTitle.Text = y2_title
-            
-    # 外枠の設定
-    if frame_color == False:
-        ch.ChartArea.Border.LineStyle = 0     # 枠なし
-    elif frame_color not in (None, ""):
-        ch.ChartArea.Format.Line.ForeColor.RGB = frame_color
-        ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)  # 枠線の太さ(pt)
-    else:
-        ch.ChartArea.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
-        ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)                     # 枠線の太さ(pt)                  
-    # ----------------------------------------------------------------------
-    
+        for ax in ch.Axes():    
+            # 軸の設定
+            tl_font = ax.TickLabels.Font
+            tl_font.Color = p.get("axis_tick_font_color", RGB(89,89,89))
+            tl_font.Size = p.get("axis_tick_font_size", 9)
+            tl_font.Name = p.get("axis_tick_font_name","Aptos Narrow 本文")
+            # 軸タイトルがあるとき、軸タイトルを設定する
+            if ax.HasTitle:
+                ax_font = ax.AxisTitle.Format.TextFrame2.TextRange.Font
+                ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color", RGB(89,89,89))
+                ax_font.TextFrame2.TextRange.Font.Bold = p.get("axis_title_font_bold", False)
+                ax_font.Size = p.get("axis_title_font_size", 10)
+                ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
+                
+        # 副軸の設定
+        if use_secondary:
+            y2 = ch.Axes(AxisType.xlValue, constants.xlSecondary)
+            y2.HasMajorGridlines = bool(y2_grid) or False
+            if y2_min not in (None, ""):
+                y2.MinimumScale = y2_min
+            if y2_max not in (None, ""):
+                y2.MaximumScale = y2_max
+            if y2_major not in (None, ""):
+                y2.MajorUnit = y2_major
+            if y2_format not in (None, ""):
+                y2.TickLabels.NumberFormatLocal = y2_format
+            if y2_title == False:
+                y2.HasTitle = False
+            elif y2_title not in (None, ""):
+                y2.HasTitle = True
+                y2.AxisTitle.Text = y2_title
+                
+        # 外枠の設定
+        if frame_color == False:
+            ch.ChartArea.Border.LineStyle = 0     # 枠なし
+        elif frame_color not in (None, ""):
+            ch.ChartArea.Format.Line.ForeColor.RGB = frame_color
+            ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)  # 枠線の太さ(pt)
+        else:
+            ch.ChartArea.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
+            ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)                     # 枠線の太さ(pt)                  
+        # ----------------------------------------------------------------------
+    except Exception as e:
+        print("フォーマットの設定でエラー:",e)
     try: 
         # 凡例を一度無効にする(例外あり)
         if legend == "right":
@@ -379,7 +375,7 @@ def ModifyChart(chart,
                     ch.Legend.Format.Line.Visible = True
                 if "tb" in legend: # text black
                     ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
-    except:
-        print("凡例かプロットエリアの調整でエラー")
+    except Exception as e:
+        print("凡例かプロットエリアの調整でエラー:",e)
         
     return chart

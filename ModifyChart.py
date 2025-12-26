@@ -19,7 +19,7 @@ PRESET = {
         "axis_title_font_bold":False,
         "axis_tick_font_color": RGB(89, 89, 89),
         "axis_tick_font_size": 9,
-        "axis_tick_font_name":"Aptos Narrow 本文",
+        "axis_tick_font_name":"Aptos Narrow 本文", # "Aptos Narrow 本文"は Excel 2021以降のみ
         "axis_line_color":RGB(191, 191, 191),        
         "major_grid": True,
         "major_grid_color": RGB(217, 217, 217),
@@ -300,7 +300,6 @@ def ModifyChart(chart,
         # 軸の設定
         ax.TickLabels.Font.Color = p.get("axis_tick_font_color", RGB(89,89,89))
         ax.TickLabels.Font.Size = p.get("axis_tick_font_size", 9)
-        # "Aptos Narrow 本文"は Excel 2021以降のみ
         ax.TickLabels.Font.Name = p.get("axis_tick_font_name","Aptos Narrow 本文")
         # 軸タイトルがあるとき、軸タイトルを設定する
         if ax.HasTitle:
@@ -379,7 +378,7 @@ def ModifyChart(chart,
                     ch.Legend.Format.Line.Weight = 0.75
                     ch.Legend.Format.Line.Visible = True
                 if "tb" in legend: # text black
-                    ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)    
+                    ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
     except:
         print("凡例かプロットエリアの調整でエラー")
         

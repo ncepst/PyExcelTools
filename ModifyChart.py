@@ -379,8 +379,7 @@ def ModifyChart(chart,
                     ch.Legend.Format.Line.Weight = 0.75
                     ch.Legend.Format.Line.Visible = True
                 if "tb" in legend: # text black
-                    ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
-        
+                    ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)    
     except:
         print("凡例かプロットエリアの調整でエラー")
         

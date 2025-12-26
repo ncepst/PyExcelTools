@@ -1,7 +1,7 @@
 #Call_ModifyChart
 import xlwings as xw
 import time
-from ModifyChart import ModifyChart
+from ModifyChart import ModifyChart, RGB
 
 def main(mode=3):
     # 計測開始
@@ -37,7 +37,7 @@ def main(mode=3):
         
         import random
         r = random.randint(0, 100)
-        ModifyChart(chart,Title=f"タイトル{r}",width_cm=12,height_cm=8, Title_space=0,x_major=1)
+        ModifyChart(chart, title=f"タイトル{r}", width_cm=12, height_cm=8, title_space=0, x_major=1)
 
     except Exception as e:
         print("Error:",e)

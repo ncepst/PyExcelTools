@@ -96,7 +96,7 @@ def ModifyChart(chart,
                 y2_grid = False,   # 副軸はグリッド無し
                 frame_color = None,
                 y_title_space = +0,
-                wigth_inc = 0,
+                width_inc = 0,
                 legend = None,   # 無効化:False
                 legend_font_size = None,
                 legend_width_inc = 0,
@@ -342,11 +342,11 @@ def ModifyChart(chart,
         ch.HasLegend = False
     
     # プロットエリアの調整
-    p = ch.PlotArea
-    p.InsideLeft   = p.InsideLeft + y_title_space
-    p.InsideTop    = p.InsideTop + title_space
-    p.InsideWidth  = p.InsideWidth - y_title_space + wigth_inc
-    p.InsideHeight = p.InsideHeight - title_space - x_title_space 
+    pa = ch.PlotArea
+    pa.InsideLeft   = pa.InsideLeft + y_title_space
+    pa.InsideTop    = pa.InsideTop + title_space
+    pa.InsideWidth  = pa.InsideWidth - y_title_space + width_inc
+    pa.InsideHeight = pa.InsideHeight - title_space - x_title_space 
     
     # 凡例設定
     if  legend == "":
@@ -365,14 +365,14 @@ def ModifyChart(chart,
                 ch.Legend.Top = ch.PlotArea.InsideTop
             if "R" in legend: # 大文字のRを含む場合
                 ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width - legend_r_space
-            if "FW" in legend:
+            if "bw" in legend: # background white
                 ch.Legend.Format.Fill.ForeColor.RGB = RGB(255, 255, 255)
                 ch.Legend.Format.Fill.Visible = True
-            if "BB" in legend:
+            if "fb" in legend: # frame black
                 ch.Legend.Format.Line.ForeColor.RGB = RGB(0, 0, 0)
                 ch.Legend.Format.Line.Weight = 0.75
                 ch.Legend.Format.Line.Visible = True
-            if "FB" in legend:
+            if "tb" in legend: # text black
                 ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
                 
     return chart

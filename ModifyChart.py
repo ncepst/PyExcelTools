@@ -97,10 +97,11 @@ def ModifyChart(chart,
                 frame_color = None,
                 y_title_space = +0,
                 width_inc = 0,
-                legend = None,   # 無効化:False
+                height_inc = 0,
+                legend = None,     # 無効化:False
                 legend_font_size = None,
                 legend_width_inc = 0,
-                legend_r_space = 0,
+                legend_right_space = 0,
                 ):
 
     p = PRESET.get(preset, PRESET["std"]) or {}
@@ -346,7 +347,7 @@ def ModifyChart(chart,
     pa.InsideLeft   = pa.InsideLeft + y_title_space
     pa.InsideTop    = pa.InsideTop + title_space
     pa.InsideWidth  = pa.InsideWidth - y_title_space + width_inc
-    pa.InsideHeight = pa.InsideHeight - title_space - x_title_space 
+    pa.InsideHeight = pa.InsideHeight - title_space - x_title_space + height_inc
     
     # 凡例設定
     if  legend == "":
@@ -364,7 +365,7 @@ def ModifyChart(chart,
             if "U" in legend: # 大文字のUを含む場合
                 ch.Legend.Top = ch.PlotArea.InsideTop
             if "R" in legend: # 大文字のRを含む場合
-                ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width - legend_r_space
+                ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width - legend_right_space
             if "bw" in legend: # background white
                 ch.Legend.Format.Fill.ForeColor.RGB = RGB(255, 255, 255)
                 ch.Legend.Format.Fill.Visible = True

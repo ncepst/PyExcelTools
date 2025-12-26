@@ -101,6 +101,7 @@ def ModifyChart(chart,
                 legend = None,     # 無効化:False
                 legend_font_size = None,
                 legend_width_inc = 0,
+                legend_height_inc = 0,
                 legend_right_space = 0,
                 ):
 
@@ -335,45 +336,52 @@ def ModifyChart(chart,
         ch.ChartArea.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
         ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)                     # 枠線の太さ(pt)                  
     # ----------------------------------------------------------------------
+    
+    try: 
+        # 凡例を一度無効にする(例外あり)
+        if legend == "right":
+            ch.HasLegend = True
+        elif legend not in (None, ""):
+            ch.HasLegend = False
         
-    # 凡例を一度無効にする(例外あり)
-    if legend == "right":
-        ch.HasLegend = True
-    elif legend not in (None, ""):
-        ch.HasLegend = False
-    
-    # プロットエリアの調整
-    pa = ch.PlotArea
-    pa.InsideLeft   = pa.InsideLeft + y_title_space
-    pa.InsideTop    = pa.InsideTop + title_space
-    pa.InsideWidth  = pa.InsideWidth - y_title_space + width_inc
-    pa.InsideHeight = pa.InsideHeight - title_space - x_title_space + height_inc
-    
-    # 凡例設定
-    if  legend == "":
-        pass
-    elif legend == False:
-        ch.HasLegend = False
-    else:
-        ch.HasLegend = True
-        if legend == "auto":
+        # プロットエリアの調整
+        pa = ch.PlotArea
+        pa.InsideLeft   = pa.InsideLeft + y_title_space
+        pa.InsideTop    = pa.InsideTop + title_space
+        pa.InsideWidth  = pa.InsideWidth - y_title_space + width_inc
+        pa.InsideHeight = pa.InsideHeight - title_space - x_title_space + height_inc
+        
+        # 凡例設定
+        if  legend in (None, ""):
             pass
+        elif legend is False:
+            ch.HasLegend = False
         else:
-            if legend_font_size not in (None, ""):
-                ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
-            ch.Legend.Width+=legend_width_inc
-            if "U" in legend: # 大文字のUを含む場合
-                ch.Legend.Top = ch.PlotArea.InsideTop
-            if "R" in legend: # 大文字のRを含む場合
-                ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width - legend_right_space
-            if "bw" in legend: # background white
-                ch.Legend.Format.Fill.ForeColor.RGB = RGB(255, 255, 255)
-                ch.Legend.Format.Fill.Visible = True
-            if "fb" in legend: # frame black
-                ch.Legend.Format.Line.ForeColor.RGB = RGB(0, 0, 0)
-                ch.Legend.Format.Line.Weight = 0.75
-                ch.Legend.Format.Line.Visible = True
-            if "tb" in legend: # text black
-                ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
-                
+            ch.HasLegend = True
+            if legend == "auto":
+                pass
+            else:
+                if legend_font_size not in (None, ""):
+                    ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
+                if legend_width_inc!=0:
+                    ch.Legend.Width  += legend_width_inc
+                if legend_height_inc!=0:
+                    ch.Legend.Height += legend_height_inc
+                if "U" in legend: # 大文字のUを含む場合
+                    ch.Legend.Top = ch.PlotArea.InsideTop
+                if "R" in legend: # 大文字のRを含む場合
+                    ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width - legend_right_space
+                if "bw" in legend: # background white
+                    ch.Legend.Format.Fill.ForeColor.RGB = RGB(255, 255, 255)
+                    ch.Legend.Format.Fill.Visible = True
+                if "fb" in legend: # frame black
+                    ch.Legend.Format.Line.ForeColor.RGB = RGB(0, 0, 0)
+                    ch.Legend.Format.Line.Weight = 0.75
+                    ch.Legend.Format.Line.Visible = True
+                if "tb" in legend: # text black
+                    ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
+        
+    except:
+        print("凡例かプロットエリアの調整でエラー")
+        
     return chart

@@ -10,7 +10,7 @@ import os
 t1 = time.time()
 
 SeriesName = "系列名"
-Title = "タイトル"
+title = "タイトル"
 
 # ------------------------------------------------------------
 # path は適宜変更してください (Ctrl + Shift + C でパスのコピー)
@@ -45,7 +45,7 @@ cell = [cell0, cell1]
 
 # データの貼り付け
 ws.range(4,8).value = SeriesName
-ws.range(2,8).value = Title
+ws.range(2,8).value = title
 for n in range(2):
     for i in range(data):
         ws.range(n+3,i+9).value = cell[n][i]
@@ -61,29 +61,30 @@ for n in range(data):
     col = 9 + n                          # 9=I列
     col_letter = xw.utils.col_name(col)  # "I", "J", "K", ...
     ws.range(4, col).value = f"=cos({col_letter}3/180*pi())"
+    ws.range(5, col).value = f"=cos({col_letter}3/180*pi())*1.01"
     
-from ScatterChart import ScatterChart
+from ScatterChart import ScatterChart, RGB
 
 chart1 = ScatterChart(ws = ws,
-                 start_range="H3",
-                 row = 2,
-                 col = data +1,
-                 paste_range="A1",
-                 width_cm=12.54, 
-                 height_cm=7.54,
-                 name = "",
-                 Title = "",
-                 series_list = [{"color_RGB": (68,114,196)}],
-                 x_title = "角度 (deg.)",
-                 x_min = -90,
-                 x_max = +90,
-                 x_major = 15,
-                 x_cross = -90,
-                 x_format = "0",
-                 y_format = "0.0",
-                 legend="",
-                 chart_border_color="" #黒=0
-)   
+                      start_range="H3",
+                      row = 3,
+                      col = data +1,
+                      paste_range="A1",
+                      width_cm=12.54, 
+                      height_cm=7.54,
+                      name = "",
+                      title = "",
+                      series_list = [{"color_RGB": (68,114,196)}],
+                      x_title = "角度 (deg.)",
+                      x_min = -90,
+                      x_max = +90,
+                      x_major = 15,
+                      x_cross = -90,
+                      x_format = "0",
+                      y_format = "0.0",
+                      legend="",
+                      frame_color="", #黒=0
+                      )  
     
 # エクセルの画面更新を有効にする
 wb.app.screen_updating = True

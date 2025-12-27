@@ -109,7 +109,7 @@ def ScatterChart(ws,
                  frame_color = None,  # 枠なし:False, 黒枠:0
                  width_inc = 0,
                  height_inc = 0,
-                 legend = None,       # 無効化:False
+                 legend = False,      # 無効化:False
                  legend_font_size = None,
                  legend_width_inc = 0,
                  legend_height_inc = 0,
@@ -368,11 +368,11 @@ def ScatterChart(ws,
                     if ttype is not None:
                         trend = series.Trendlines().Add(Type=ttype)
                 t_option = cfg.get("trendline_option", "")
-                if t_option in "eq": 
+                if "eq" in t_option: 
                     trend.DisplayEquation = True # 式の表示
                     # trend.DataLabel.Left
                     # trend.DataLabel.Top
-                if t_option in "r2": 
+                if "r2" in t_option: 
                     trend.DisplayRSquared = True # 決定係数(R²)を表示
 
         except Exception as e:

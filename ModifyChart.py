@@ -336,11 +336,11 @@ def ModifyChart(chart,
                     if ttype is not None:
                         trend = series.Trendlines().Add(Type=ttype)
                 t_option = cfg.get("trendline_option", "")
-                if t_option in "eq": 
+                if "eq" in t_option: 
                     trend.DisplayEquation = True # 式の表示
                     # trend.DataLabel.Left
                     # trend.DataLabel.Top
-                if t_option in "r2": 
+                if "r2" in t_option: 
                     trend.DisplayRSquared = True # 決定係数(R²)を表示
 
         except Exception as e:

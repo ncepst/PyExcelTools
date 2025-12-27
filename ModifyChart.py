@@ -8,7 +8,7 @@ from win32com.client import constants
 # ModifyChart() で呼び出し
 
 def RGB(r, g, b):
-    return r + g*256 + b*65536
+    return r | (g << 8) | (b << 16)
 
 # cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
 def cm_to_pt(cm):

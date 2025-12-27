@@ -3,14 +3,14 @@ Excel 2021 の標準スタイルに寄せて、
 
 Windows + Excel 2021 以降での使用を前提としています。
 
-サンプルコード(ExcelGraph.py)に関して、xlwingsによるエクセルグラフ作成自動化の記事を書きました。
+サンプルコード(excel_graph_sample.py)に関して、xlwingsによるエクセルグラフ作成自動化の記事を書きました。
 https://qiita.com/Bencepst/items/54c63974242bb9e18c23
 
 記事を元にグラフ作成を関数化したコードを作成しました。
 https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py
 
 ScatterChart関数の呼び出し例です。
-https://github.com/ncepst/PyExcelTools/blob/main/Call_Chart.py
+https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py
 
 ScatterChart.pyの派生で、既存グラフの変更を関数化したコードを作成しました。
 https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py

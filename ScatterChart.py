@@ -1,14 +1,19 @@
-#ScatterChart.py
+# ScatterChart.py
 import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
 
-# 新規のグラフ作成
+# 新規グラフを作成します
 # from ScatterChart import ScatterChart, RGB
+# chart = ScatterChart() で呼び出し
 
 # RGBのヘルパー関数
 def RGB(r, g, b): 
     return r + g*256 + b*65536
+
+# cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
+def cm_to_pt(cm):
+    return cm * 72 / 2.54
 
 PRESET = {
     # "Aptos Narrow 本文"は Excel 2021以降のみ
@@ -28,6 +33,7 @@ PRESET = {
         "major_grid": True,
         "major_grid_color": RGB(217, 217, 217),
         "major_grid_weight":0.75,
+        # TickMark: None, Inside, Outside, Cross
         "major_tickmark":constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
         "frame_color":RGB(217,217,217),             # False:枠なし
         "frame_weight":0.75,
@@ -46,6 +52,16 @@ PRESET = {
 # std を excel2021 ベースで上書き
 PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 
+marker_map = {
+        "C":constants.xlMarkerStyleCircle,
+        "S":constants.xlMarkerStyleSquare,
+        "D":constants.xlMarkerStyleDiamond,
+        "T":constants.xlMarkerStyleTriangle,
+        "N":constants.xlMarkerStyleNone
+        }
+
+# titleやframe_colorには、False(無効化)もしくは文字・値を入力します
+# 優先順位 series cfg > 引数 > preset
 def ScatterChart(ws,
                  start_range = "A1",
                  row = 2,
@@ -115,10 +131,6 @@ def ScatterChart(ws,
                    {"name":"系列4", "color": RGB(165,165,165)}, # グレー
                   ],
     """                
-    
-    # cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
-    def cm_to_pt(cm):
-        return cm * 72 / 2.54
         
     # ----------------------------------------------------------
     # 散布図のエクセルグラフを作成する
@@ -231,18 +243,10 @@ def ScatterChart(ws,
         chart.chart_type = chart_type
     
     # 系列の設定 -----------------------------------------------------------------------------
-    marker_map = {
-            "C":constants.xlMarkerStyleCircle,
-            "S":constants.xlMarkerStyleSquare,
-            "D":constants.xlMarkerStyleDiamond,
-            "T":constants.xlMarkerStyleTriangle,
-            "N":constants.xlMarkerStyleNone
-            }
-    
     use_secondary = False
     NS = min(row, col)-1
     NS = max(len(series_list), NS)
-    print("系列数:", NS)
+    # print("系列数:", NS)
     for i in range(1, NS + 1):
         if i <= len(series_list):
             cfg = series_list[i - 1]
@@ -363,6 +367,13 @@ def ScatterChart(ws,
                     ttype = tl_map.get(tl.lower())
                     if ttype is not None:
                         trend = series.Trendlines().Add(Type=ttype)
+                t_option = cfg.get("trendline_option", "")
+                if t_option in "eq": 
+                    trend.DisplayEquation = True # 式の表示
+                    # trend.DataLabel.Left
+                    # trend.DataLabel.Top
+                if t_option in "r2": 
+                    trend.DisplayRSquared = True # 決定係数(R²)を表示
 
         except Exception as e:
             print(f"系列{i}で例外発生:{e}")
@@ -380,6 +391,7 @@ def ScatterChart(ws,
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = title_font_size
             else:
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = p.get("title_font_size", 14)
+        
         # グリッド線の設定（デフォルト: 薄いグレー)
         x_axis.HasMajorGridlines = p.get("major_grid", True)
         if x_axis.HasMajorGridlines:
@@ -393,24 +405,12 @@ def ScatterChart(ws,
             y_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
         y_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
         y_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
-
-        for ax in ch.Axes():    
-            # 軸の設定
-            tl_font = ax.TickLabels.Font
-            tl_font.Color = p.get("axis_tick_font_color", RGB(89,89,89))
-            tl_font.Size = p.get("axis_tick_font_size", 9)
-            tl_font.Name = p.get("axis_tick_font_name","Aptos Narrow 本文")
-            # 軸タイトルがあるとき、軸タイトルを設定する
-            if ax.HasTitle:
-                ax_font = ax.AxisTitle.Format.TextFrame2.TextRange.Font
-                ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color", RGB(89,89,89))
-                ax_font.Bold = p.get("axis_title_font_bold", False)
-                ax_font.Size = p.get("axis_title_font_size", 10)
-                ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
+        axes = [x_axis, y_axis]
                 
         # 副軸の設定
         if use_secondary:
             y2 = ch.Axes(AxisType.xlValue, constants.xlSecondary)
+            axes.append(y2)
             y2.HasMajorGridlines = bool(y2_grid) or False
             if y2_min not in (None, ""):
                 y2.MinimumScale = y2_min
@@ -433,6 +433,20 @@ def ScatterChart(ws,
                     y2.AxisTitle.Text = "副軸タイトル"
                 else:
                     y2.AxisTitle.Text = y2_title
+                    
+        for ax in axes:                
+            # 軸の設定
+            tl_font = ax.TickLabels.Font
+            tl_font.Color = p.get("axis_tick_font_color", RGB(89,89,89))
+            tl_font.Size = p.get("axis_tick_font_size", 9)
+            tl_font.Name = p.get("axis_tick_font_name","Aptos Narrow 本文")
+            # 軸タイトルがあるとき、軸タイトルを設定する
+            if ax.HasTitle:
+                ax_font = ax.AxisTitle.Format.TextFrame2.TextRange.Font
+                ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color", RGB(89,89,89))
+                ax_font.Bold = p.get("axis_title_font_bold", False)
+                ax_font.Size = p.get("axis_title_font_size", 10)
+                ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
                 
         # 外枠の設定
         if frame_color is False:  # False:枠なし、0:黒枠
@@ -451,6 +465,8 @@ def ScatterChart(ws,
         elif transparent_bg is False:
             ch.ChartArea.Format.Fill.Visible = True
             ch.PlotArea.Format.Fill.Visible = True
+            ch.ChartArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
+            ch.PlotArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
         # ----------------------------------------------------------------------
     except Exception as e:
         print("フォーマットの設定でエラー:",e)
@@ -500,5 +516,5 @@ def ScatterChart(ws,
                     ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
     except Exception as e:
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
-        
+           
     return chart

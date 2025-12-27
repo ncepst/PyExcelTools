@@ -1,13 +1,18 @@
-#ModifyChart.py
-import xlwings as xw
+# ModifyChart.py
+# import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
 
-# 既存グラフの変更
+# 既存グラフを変更します
 # from ModifyChart import ModifyChart, RGB
+# ModifyChart() で呼び出し
 
 def RGB(r, g, b):
     return r + g*256 + b*65536
+
+# cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
+def cm_to_pt(cm):
+    return cm * 72 / 2.54
 
 PRESET = {
     # "Aptos Narrow 本文"は Excel 2021以降のみ
@@ -27,6 +32,7 @@ PRESET = {
         "major_grid": True,
         "major_grid_color": RGB(217, 217, 217),
         "major_grid_weight":0.75,
+        # TickMark: None, Inside, Outside, Cross
         "major_tickmark":constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
         "frame_color":RGB(217,217,217),             # False:枠なし
         "frame_weight":0.75,
@@ -44,6 +50,14 @@ PRESET = {
 }
 # std を excel2021 ベースで上書き
 PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
+
+marker_map = {
+        "C":constants.xlMarkerStyleCircle,
+        "S":constants.xlMarkerStyleSquare,
+        "D":constants.xlMarkerStyleDiamond,
+        "T":constants.xlMarkerStyleTriangle,
+        "N":constants.xlMarkerStyleNone
+        }
 
 # False:無効化, None: 変更なし もしくは デフォルト値
 # 優先順位 series cfg > 引数 > preset
@@ -114,9 +128,6 @@ def ModifyChart(chart,
                    {"name":"系列4", "color": RGB(165,165,165)}, # グレー
                   ],
     """                
-    # cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
-    def cm_to_pt(cm):
-        return cm * 72 / 2.54
     
     # グラフ全体のサイズ変更
     if width_cm not in (None, "", 0):
@@ -195,22 +206,13 @@ def ModifyChart(chart,
         y_axis.HasTitle = False
     elif y_title not in (None, ""):
         y_axis.HasTitle = True
-        y_axis.AxisTitle.Text = y_title
-        
+        y_axis.AxisTitle.Text = y_title   
     if chart_type not in (None,""):
         if chart_type == "bar":
             chart_type = "column_clustered"
         chart.chart_type = chart_type
     
-    # 系列の設定 -----------------------------------------------------------------------------
-    marker_map = {
-            "C":constants.xlMarkerStyleCircle,
-            "S":constants.xlMarkerStyleSquare,
-            "D":constants.xlMarkerStyleDiamond,
-            "T":constants.xlMarkerStyleTriangle,
-            "N":constants.xlMarkerStyleNone
-            }
-    
+    # 系列の設定 ----------------------------------------------------------------------------- 
     use_secondary = False
     NS = max(len(series_list), NS)
     for i in range(1, NS + 1):
@@ -333,6 +335,13 @@ def ModifyChart(chart,
                     ttype = tl_map.get(tl.lower())
                     if ttype is not None:
                         trend = series.Trendlines().Add(Type=ttype)
+                t_option = cfg.get("trendline_option", "")
+                if t_option in "eq": 
+                    trend.DisplayEquation = True # 式の表示
+                    # trend.DataLabel.Left
+                    # trend.DataLabel.Top
+                if t_option in "r2": 
+                    trend.DisplayRSquared = True # 決定係数(R²)を表示
 
         except Exception as e:
             print(f"系列{i}で例外発生:{e}")
@@ -363,24 +372,12 @@ def ModifyChart(chart,
             y_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
         y_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
         y_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
-
-        for ax in ch.Axes():    
-            # 軸の設定
-            tl_font = ax.TickLabels.Font
-            tl_font.Color = p.get("axis_tick_font_color", RGB(89,89,89))
-            tl_font.Size = p.get("axis_tick_font_size", 9)
-            tl_font.Name = p.get("axis_tick_font_name","Aptos Narrow 本文")
-            # 軸タイトルがあるとき、軸タイトルを設定する
-            if ax.HasTitle:
-                ax_font = ax.AxisTitle.Format.TextFrame2.TextRange.Font
-                ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color", RGB(89,89,89))
-                ax_font.Bold = p.get("axis_title_font_bold", False)
-                ax_font.Size = p.get("axis_title_font_size", 10)
-                ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
-                
+        axes = [x_axis, y_axis]
+              
         # 副軸の設定
         if use_secondary:
             y2 = ch.Axes(AxisType.xlValue, constants.xlSecondary)
+            axes.append(y2)
             y2.HasMajorGridlines = bool(y2_grid) or False
             if y2_min not in (None, ""):
                 y2.MinimumScale = y2_min
@@ -400,6 +397,20 @@ def ModifyChart(chart,
             elif y2_title not in (None, ""):
                 y2.HasTitle = True
                 y2.AxisTitle.Text = y2_title
+        
+        for ax in axes: 
+            # 軸の設定
+            tl_font = ax.TickLabels.Font
+            tl_font.Color = p.get("axis_tick_font_color", RGB(89,89,89))
+            tl_font.Size = p.get("axis_tick_font_size", 9)
+            tl_font.Name = p.get("axis_tick_font_name","Aptos Narrow 本文")
+            # 軸タイトルがあるとき、軸タイトルを設定する
+            if ax.HasTitle:
+                ax_font = ax.AxisTitle.Format.TextFrame2.TextRange.Font
+                ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color", RGB(89,89,89))
+                ax_font.Bold = p.get("axis_title_font_bold", False)
+                ax_font.Size = p.get("axis_title_font_size", 10)
+                ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
                 
         # 外枠の設定
         if frame_color is False:  # False:枠なし、0:黒枠
@@ -410,6 +421,7 @@ def ModifyChart(chart,
         else:
             ch.ChartArea.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
             ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)                    # 枠線の太さ(pt)                  
+        
         # 背景の透明化設定
         if transparent_bg is True:
             ch.ChartArea.Format.Fill.Visible = False
@@ -417,6 +429,8 @@ def ModifyChart(chart,
         elif transparent_bg is False:
             ch.ChartArea.Format.Fill.Visible = True
             ch.PlotArea.Format.Fill.Visible = True
+            ch.ChartArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
+            ch.PlotArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
         # ----------------------------------------------------------------------
     except Exception as e:
         print("フォーマットの設定でエラー:",e)

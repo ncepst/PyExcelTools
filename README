@@ -18,7 +18,7 @@ https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py
 ModifyChart関数の呼び出し例です。
 https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py
 
-Call_ModifyChart.pyを呼び出すExcelマクロで、ショートカットキーを割り当てると便利そうです。
+Call_ModifyChart.pyを呼び出すExcelマクロで、ショートカットキーを割り当てると便利です。
 https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas
 
 グラフの書式設定の項目は関数の引数にリスト化されています。
@@ -28,7 +28,7 @@ https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas
 series_list = [
     {
     "name":"系列1",                  # 系列名
-    "color_RGB": (68,114,196),      # 色
+    "color": RGB(68,114,196),       # 色
     "style":"line+marker",          # スタイル
     "marker":"C",                   # マーカーはC, S, D, T
     "size":5,                       # マーカーサイズ

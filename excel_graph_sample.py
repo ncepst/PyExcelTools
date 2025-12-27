@@ -1,4 +1,4 @@
-#excel_graph_sample.py
+# excel_graph_sample.py
 import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
@@ -206,4 +206,3 @@ t2 = time.time()
 elapsed_time = round(t2-t1,3)
 
 print("処理時間:"+str(elapsed_time)+" s")
-

@@ -102,7 +102,7 @@ def ModifyChart(chart,
                 y2_minor = None,
                 y2_format = None,
                 y2_log = None,
-                y2_grid = False,     # 副軸はグリッド無し
+                y2_grid = False,     # 副軸はグリッドなし:False
                 frame_color = None,  # 枠なし:False, 黒枠:0
                 width_inc = 0,
                 height_inc = 0,
@@ -452,7 +452,7 @@ def ModifyChart(chart,
         # 凡例設定
         if  legend in (None, ""):
             pass
-        elif legend is False:
+        elif legend == False:
             ch.HasLegend = False
         else:
             ch.HasLegend = True
@@ -480,5 +480,5 @@ def ModifyChart(chart,
                     ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
     except Exception as e:
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
-        
+
     return chart

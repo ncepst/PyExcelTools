@@ -10,6 +10,7 @@ def RGB(r, g, b):
     return r + g*256 + b*65536
 
 PRESET = {
+    # "Aptos Narrow 本文"は Excel 2021以降のみ
     "excel2021": {
         "title_font_size":14,
         "title_font_color":RGB(89,89,89),
@@ -21,7 +22,7 @@ PRESET = {
         "axis_title_font_bold":False,
         "axis_tick_font_color": RGB(89, 89, 89),
         "axis_tick_font_size": 9,
-        "axis_tick_font_name":"Aptos Narrow 本文", # "Aptos Narrow 本文"は Excel 2021以降のみ
+        "axis_tick_font_name":"Aptos Narrow 本文", 
         "axis_line_color":RGB(191, 191, 191),        
         "major_grid": True,
         "major_grid_color": RGB(217, 217, 217),
@@ -203,7 +204,8 @@ def ModifyChart(chart,
             "C":constants.xlMarkerStyleCircle,
             "S":constants.xlMarkerStyleSquare,
             "D":constants.xlMarkerStyleDiamond,
-            "T":constants.xlMarkerStyleTriangle
+            "T":constants.xlMarkerStyleTriangle,
+            "N":constants.xlMarkerStyleNone
             }
     
     style_all  = style or None

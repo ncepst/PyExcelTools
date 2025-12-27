@@ -97,6 +97,7 @@ def ModifyChart(chart,
                 legend_width_inc = 0,
                 legend_height_inc = 0,
                 legend_right_space = 0,
+                transparent_bg = None,
                 chart_type = None, 
                 ):
 
@@ -405,10 +406,17 @@ def ModifyChart(chart,
             ch.ChartArea.Border.LineStyle = 0 # 枠なし
         elif frame_color not in (None, ""):
             ch.ChartArea.Format.Line.ForeColor.RGB = frame_color
-            ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)  # 枠線の太さ(pt)
+            ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)
         else:
             ch.ChartArea.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
             ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)                    # 枠線の太さ(pt)                  
+        # 背景の透明化設定
+        if transparent_bg is True:
+            ch.ChartArea.Format.Fill.Visible = False
+            ch.PlotArea.Format.Fill.Visible = False
+        elif transparent_bg is False:
+            ch.ChartArea.Format.Fill.Visible = True
+            ch.PlotArea.Format.Fill.Visible = True
         # ----------------------------------------------------------------------
     except Exception as e:
         print("フォーマットの設定でエラー:",e)

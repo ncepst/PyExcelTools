@@ -8,8 +8,8 @@ from win32com.client import constants
 # chart = ScatterChart() で呼び出し
 
 # RGBのヘルパー関数
-def RGB(r, g, b): 
-    return r + g*256 + b*65536
+def RGB(r, g, b):
+    return r | (g << 8) | (b << 16)
 
 # cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
 def cm_to_pt(cm):
@@ -518,3 +518,4 @@ def ScatterChart(ws,
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
            
     return chart
+

@@ -74,7 +74,7 @@ chart1 = ScatterChart(ws = ws,
                       height_cm=7.54,
                       name = "",
                       title = "",
-                      series_list = [{"color_RGB": (68,114,196)}],
+                      series_list = [{"color": RGB(68,114,196)}],
                       x_title = "角度 (deg.)",
                       x_min = -90,
                       x_max = +90,
@@ -83,7 +83,7 @@ chart1 = ScatterChart(ws = ws,
                       x_format = "0",
                       y_format = "0.0",
                       legend="",
-                      frame_color="", #黒=0
+                      frame_color="",
                       )  
     
 # エクセルの画面更新を有効にする
@@ -96,4 +96,3 @@ wb.save()
 t2 = time.time()
 elapsed_time = round(t2-t1,3)
 print("処理時間:"+str(elapsed_time)+" s")
-

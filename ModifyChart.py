@@ -36,11 +36,11 @@ PRESET = {
         "marker_size":5,
     },
     "std": {
-        "axis_title_font_color":RGB(0,0,0), # 黒に変更
-        "axis_tick_font_color": RGB(0,0,0), # 黒に変更
+        "axis_title_font_color":RGB(0,0,0), 
+        "axis_tick_font_color": RGB(0,0,0),
     },
 }
-# std を excel2021 ベースで展開
+# std を excel2021 ベースで上書き
 PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 
 # False:無効化, None: 変更なし もしくは デフォルト値
@@ -61,26 +61,32 @@ def ModifyChart(chart,
                 marker = None,
                 alpha = None,
                 x_title = None,   # 無効化:False
+                x_title_space = +0,
                 x_min = None,
                 x_max = None,
                 x_major = None,
+                x_minor = None,
                 x_cross = None,
                 x_format = None,
+                x_log = None,
                 y_title = None,   # 無効化:False
-                x_title_space = +0,
+                y_title_space = +0,
                 y_min = None,
                 y_max = None,
                 y_major = None,
+                y_minor = None,
                 y_cross = None,
                 y_format = None,
+                y_log = None,
                 y2_title = None,
                 y2_min = None,
                 y2_max = None,
                 y2_major = None,
+                y2_minor = None,
                 y2_format = None,
+                y2_log = None,
                 y2_grid = False,   # 副軸はグリッド無し
                 frame_color = None,
-                y_title_space = +0,
                 width_inc = 0,
                 height_inc = 0,
                 legend = None,     # 無効化:False
@@ -88,7 +94,7 @@ def ModifyChart(chart,
                 legend_width_inc = 0,
                 legend_height_inc = 0,
                 legend_right_space = 0,
-                chart_type = None,
+                chart_type = None, 
                 ):
 
     p = PRESET.get(preset, PRESET["std"]) or {}
@@ -140,11 +146,16 @@ def ModifyChart(chart,
     elif x_max not in (None, ""):
         x_axis.MaximumScale = x_max
     if x_major not in (None, ""):     # 目盛間隔
-        x_axis.MajorUnit = x_major    
+        x_axis.MajorUnit = x_major
+    if x_minor not in (None, ""):     
+        x_axis.HasMinorGridlines = True
+        x_axis.MinorUnit = x_minor        
     if x_cross not in (None, ""):     # 交差位置(縦軸との交点)
         x_axis.CrossesAt = x_cross
     if x_format not in (None, ""): 
         x_axis.TickLabels.NumberFormatLocal = x_format
+    if x_log not in (None, ""):
+        x_axis.ScaleType = 1 if x_log == True else 0
 
     # 横軸のタイトル
     if x_title == False:
@@ -164,11 +175,16 @@ def ModifyChart(chart,
     elif y_max not in (None, ""):
         y_axis.MaximumScale = y_max
     if y_major not in (None, ""):     # 目盛間隔
-        y_axis.MajorUnit = y_major    
+        y_axis.MajorUnit = y_major
+    if y_minor not in (None, ""):     
+        y_axis.HasMinorGridlines = True
+        y_axis.MinorUnit = y_minor      
     if y_cross not in (None, ""):     # 交差位置(縦軸との交点)
         y_axis.CrossesAt = y_cross
     if y_format not in (None, ""): 
         y_axis.TickLabels.NumberFormatLocal = y_format
+    if y_log not in (None, ""):
+        y_axis.ScaleType = 1 if y_log == True else 0
 
     # 縦軸のタイトル
     if y_title == False:
@@ -178,6 +194,8 @@ def ModifyChart(chart,
         y_axis.AxisTitle.Text = y_title
         
     if chart_type not in (None,""):
+        if chart_type == "bar":
+            chart_type = "column_clustered"
         chart.chart_type = chart_type
     
     # 系列の設定 -----------------------------------------------------------------------------
@@ -188,10 +206,10 @@ def ModifyChart(chart,
             "T":constants.xlMarkerStyleTriangle
             }
     
-    style_all  = style
-    smooth_all = smooth
-    marker_all = marker
-    alpha_all  = alpha
+    style_all  = style or None
+    smooth_all = smooth or None
+    marker_all = marker or None
+    alpha_all  = alpha or None
     use_secondary = False
     
     NS = max(len(series_list), NS)
@@ -222,6 +240,7 @@ def ModifyChart(chart,
             
             if smooth_all in (None, ""):
                 smooth = cfg.get("smooth", p.get("smooth"))
+                # ある系列で cfg["smooth"] が指定され、次の系列で cfg["smooth"] が無い場合、前系列の値が使われる
             series.Smooth = bool(smooth)
     
             if style_all in (None, ""):
@@ -257,6 +276,13 @@ def ModifyChart(chart,
                 series.AxisGroup = constants.xlPrimary
             if cfg.get("chart_type") == "bar":
                 series.ChartType = constants.xlColumnClustered
+                
+            if cfg.get("trendline") not in (None, ""):
+                try:
+                    series.Trendlines().Delete()
+                except:
+                    pass
+                trend = series.Trendlines().Add(Type=constants.xlLinear)
                 
         except Exception as e:
             print(f"系列{i}で例外発生:{e}")
@@ -298,7 +324,7 @@ def ModifyChart(chart,
             if ax.HasTitle:
                 ax_font = ax.AxisTitle.Format.TextFrame2.TextRange.Font
                 ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color", RGB(89,89,89))
-                ax_font.TextFrame2.TextRange.Font.Bold = p.get("axis_title_font_bold", False)
+                ax_font.Bold = p.get("axis_title_font_bold", False)
                 ax_font.Size = p.get("axis_title_font_size", 10)
                 ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
                 
@@ -312,8 +338,13 @@ def ModifyChart(chart,
                 y2.MaximumScale = y2_max
             if y2_major not in (None, ""):
                 y2.MajorUnit = y2_major
+            if y2_minor not in (None, ""):     
+                y2.HasMinorGridlines = True
+                y2.MinorUnit = y2_minor   
             if y2_format not in (None, ""):
                 y2.TickLabels.NumberFormatLocal = y2_format
+            if y2_log not in (None, ""):
+                y2.ScaleType = 1 if y2_log == True else 0
             if y2_title == False:
                 y2.HasTitle = False
             elif y2_title not in (None, ""):

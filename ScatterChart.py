@@ -518,4 +518,3 @@ def ScatterChart(ws,
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
            
     return chart
-

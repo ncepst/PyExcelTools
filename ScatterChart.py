@@ -105,7 +105,7 @@ def ScatterChart(ws,
                  y2_minor = None,
                  y2_format = None,
                  y2_log = None,
-                 y2_grid = False,     # 副軸はグリッド無し
+                 y2_grid = False,     # 副軸はグリッドなし:False
                  frame_color = None,  # 枠なし:False, 黒枠:0
                  width_inc = 0,
                  height_inc = 0,

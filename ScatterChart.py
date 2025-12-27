@@ -488,7 +488,7 @@ def ScatterChart(ws,
         # 凡例設定
         if  legend in (None, ""):
             pass
-        elif legend is False:
+        elif legend == False:
             ch.HasLegend = False
         else:
             ch.HasLegend = True

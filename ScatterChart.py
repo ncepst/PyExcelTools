@@ -425,7 +425,7 @@ def ScatterChart(ws,
                 y2.TickLabels.NumberFormatLocal = y2_format
             if y2_log not in (None, ""):
                 y2.ScaleType = 1 if y2_log == True else 0
-            if y2_title is False:
+            if y2_title in (False, ""):
                 y2.HasTitle = False
             else:
                 y2.HasTitle = True
@@ -501,4 +501,5 @@ def ScatterChart(ws,
     except Exception as e:
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
         
+
     return chart

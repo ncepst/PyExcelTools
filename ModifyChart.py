@@ -32,6 +32,7 @@ PRESET = {
         "frame_weight":0.75,
         "style":"line+marker",
         "smooth":True,
+        "alpha":None,
         "line_weight":1.5,
         "marker": "C",
         "marker_size":5,
@@ -45,13 +46,14 @@ PRESET = {
 PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 
 # False:無効化, None: 変更なし もしくは デフォルト値
+# 優先順位 series cfg > 引数 > preset
 def ModifyChart(chart,
                 ws = None,
                 preset = "std",
                 width_cm = None,
                 height_cm = None,
                 name = None,
-                title = None,     # 無効化:False
+                title = None,       # 無効化:False
                 title_font_color = None,
                 title_font_size = None,
                 title_space = +0,
@@ -61,7 +63,7 @@ def ModifyChart(chart,
                 smooth = None,
                 marker = None,
                 alpha = None,
-                x_title = None,   # 無効化:False
+                x_title = None,     # 無効化:False
                 x_title_space = +0,
                 x_min = None,
                 x_max = None,
@@ -70,7 +72,7 @@ def ModifyChart(chart,
                 x_cross = None,
                 x_format = None,
                 x_log = None,
-                y_title = None,   # 無効化:False
+                y_title = None,     # 無効化:False
                 y_title_space = +0,
                 y_min = None,
                 y_max = None,
@@ -86,11 +88,11 @@ def ModifyChart(chart,
                 y2_minor = None,
                 y2_format = None,
                 y2_log = None,
-                y2_grid = False,   # 副軸はグリッド無し
-                frame_color = None,
+                y2_grid = False,     # 副軸はグリッド無し
+                frame_color = None,  # 枠なし:False
                 width_inc = 0,
                 height_inc = 0,
-                legend = None,     # 無効化:False
+                legend = None,       # 無効化:False
                 legend_font_size = None,
                 legend_width_inc = 0,
                 legend_height_inc = 0,
@@ -208,12 +210,7 @@ def ModifyChart(chart,
             "N":constants.xlMarkerStyleNone
             }
     
-    style_all  = style or None
-    smooth_all = smooth or None
-    marker_all = marker or None
-    alpha_all  = alpha or None
     use_secondary = False
-    
     NS = max(len(series_list), NS)
     for i in range(1, NS + 1):
         if i <= len(series_list):
@@ -222,53 +219,84 @@ def ModifyChart(chart,
             cfg = {}
         try:
             series = ch.SeriesCollection(i)
+            
+            # 系列名
             if cfg.get("name") not in (None, ""):
                 series.Name = cfg["name"]
-            if cfg.get("XValues"):
+                
+            # XValues / Values
+            if cfg.get("XValues") not in (None, ""):
                 try:
                     series.XValues = ws.range(cfg["XValues"]).api
-                except:
-                    print("wsの定義が必要です")
-            if cfg.get("Values"):
+                except Exception:
+                    print(f"系列{i}: wsの設定または範囲指定に問題")
+            if cfg.get("Values") not in (None, ""):
                 try:
                     series.Values  = ws.range(cfg["Values"]).api
-                except:
-                    print("wsの定義が必要です")
+                except Exception:
+                    print(f"系列{i}: wsの設定または範囲指定に問題")
+                    
+            # 色
             color = cfg.get("color")
             if color not in (None, ""):
                 series.Format.Line.ForeColor.RGB = color    # 線の色
                 series.MarkerForegroundColor = color        # マーカー枠線の色
                 series.MarkerBackgroundColor = color        # マーカー内部の色
             
-            if smooth_all in (None, ""):
-                smooth = cfg.get("smooth", p.get("smooth"))
-                # ある系列で cfg["smooth"] が指定され、次の系列で cfg["smooth"] が無い場合、前系列の値が使われる
-            series.Smooth = bool(smooth)
-    
-            if style_all in (None, ""):
-                style = cfg.get("style") or p.get("style") or "line+marker"           
-            if "marker" in style:
-                if marker_all in (None, ""):
-                    marker = cfg.get("marker") or p.get("marker")
-                series.MarkerStyle = marker_map.get(marker, constants.xlMarkerStyleCircle)    # マーカー:〇
+            # スムーズ
+            if cfg.get("smooth") not in (None, ""):
+                smooth_i = cfg["smooth"]
+            elif smooth not in (None, ""):
+                smooth_i = smooth
+            else:
+                smooth_i = p.get("smooth",True)
+            if smooth_i not in (None, ""):
+                series.Smooth = bool(smooth_i)
+
+            # スタイル(線とマーカー)
+            if cfg.get("style") not in (None, ""):
+                style_i = cfg["style"]
+            elif style not in (None, ""):
+                style_i = style
+            else:
+                style_i = p.get("style","line+marker") or ""
+                         
+            if "marker" in style_i:
+                if cfg.get("marker") not in (None, ""):
+                    marker_i = cfg["marker"]
+                elif marker not in (None, ""):
+                    marker_i = marker
+                elif p.get("marker") not in (None, ""):
+                    marker_i = p["marker"]
+                else:
+                    marker_i = None
+                series.MarkerStyle = marker_map.get(marker_i, constants.xlMarkerStyleCircle)  # マーカー:〇
                 series.MarkerSize = cfg.get("size",p.get("marker_size"))                      # マーカーサイズ
             else:
                 series.MarkerStyle = constants.xlMarkerStyleNone
-            if "line" in style:
+            if "line" in style_i:
                 series.Format.Line.Visible = True
                 series.Format.Line.Weight = cfg.get("weight", p.get("line_weight"))  # 線の太さ(pt)
-            elif isinstance(style, str) and style.startswith("dash"):
+            elif isinstance(style_i, str) and style_i.startswith("dash"):
                 series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 4
-            elif isinstance(style, str) and style.startswith("chain"):
+            elif isinstance(style_i, str) and style_i.startswith("chain"):
                 series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 5
             else:
                 series.Format.Line.Visible = False
-            if alpha_all in (None, ""):   
-                alpha = cfg.get("alpha",0) # 透明度は0~1
-            if alpha not in (None, ""):
-                series.Format.Line.Transparency = float(alpha)
+            
+            # 線の透明度の設定(0~1), デフォルト値は0
+            if cfg.get("alpha") not in (None, ""):
+                alpha_i = cfg["alpha"]
+            elif alpha not in (None, ""):
+                alpha_i = alpha
+            elif p.get("alpha") not in (None, ""):
+                alpha_i = p["alpha"]
+            else:
+                alpha_i = None
+            if alpha_i not in (None, ""):
+                series.Format.Line.Transparency = float(alpha_i) 
                 
             axis_name = cfg.get("axis", "primary")
             if axis_name == "secondary" or axis_name == "y2":
@@ -278,14 +306,33 @@ def ModifyChart(chart,
                 series.AxisGroup = constants.xlPrimary
             if cfg.get("chart_type") == "bar":
                 series.ChartType = constants.xlColumnClustered
-                
-            if cfg.get("trendline") not in (None, ""):
+            
+            tl = cfg.get("trendline")
+            if tl not in (None, ""):
                 try:
                     series.Trendlines().Delete()
-                except:
+                except Exception:
                     pass
-                trend = series.Trendlines().Add(Type=constants.xlLinear)
-                
+                trend = None
+                if tl == 0:
+                    pass
+                elif isinstance(tl, int):
+                    if tl == 1:
+                        trend = series.Trendlines().Add(Type=constants.xlLinear)
+                    elif 2 <= tl <= 6:
+                        trend = series.Trendlines().Add(Type=constants.xlPolynomial)
+                        trend.Order = tl
+                elif isinstance(tl, str):
+                    tl_map = {
+                        "exp": constants.xlExponential,   # 指数
+                        "log": constants.xlLogarithmic,   # 対数
+                        "pow": constants.xlPower,         # 累乗
+                        "mov": constants.xlMovingAvg,     # 移動平均
+                    }
+                    ttype = tl_map.get(tl.lower())
+                    if ttype is not None:
+                        trend = series.Trendlines().Add(Type=ttype)
+
         except Exception as e:
             print(f"系列{i}で例外発生:{e}")
     
@@ -361,10 +408,11 @@ def ModifyChart(chart,
             ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)  # 枠線の太さ(pt)
         else:
             ch.ChartArea.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
-            ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)                     # 枠線の太さ(pt)                  
+            ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)                    # 枠線の太さ(pt)                  
         # ----------------------------------------------------------------------
     except Exception as e:
         print("フォーマットの設定でエラー:",e)
+        
     try: 
         # 凡例を一度無効にする(例外あり)
         if legend == "right":
@@ -409,6 +457,6 @@ def ModifyChart(chart,
                 if "tb" in legend: # text black
                     ch.Legend.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = RGB(0, 0, 0)
     except Exception as e:
-        print("凡例かプロットエリアの調整でエラー:",e)
+        print("凡例 もしくは プロットエリアの調整でエラー:",e)
         
     return chart

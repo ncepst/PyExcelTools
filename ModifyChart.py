@@ -64,7 +64,7 @@ def ModifyChart(chart,
                 marker = None,
                 alpha = None,
                 x_title = None,     # 無効化:False
-                x_title_space = +0,
+                x_title_space = +0, # 下に広げる場合はマイナス
                 x_min = None,
                 x_max = None,
                 x_major = None,
@@ -89,7 +89,7 @@ def ModifyChart(chart,
                 y2_format = None,
                 y2_log = None,
                 y2_grid = False,     # 副軸はグリッド無し
-                frame_color = None,  # 枠なし:False
+                frame_color = None,  # 枠なし:False, 黒枠:0
                 width_inc = 0,
                 height_inc = 0,
                 legend = None,       # 無効化:False
@@ -127,7 +127,7 @@ def ModifyChart(chart,
     if name not in (None, ""):
         chart.name = name
 
-    # ChartObject(枠) → api[0]、Chart本体 → api[1]
+    # Chart本体 → api[1]
     ch = chart.api[1]
 
     # グラフタイトル
@@ -401,8 +401,8 @@ def ModifyChart(chart,
                 y2.AxisTitle.Text = y2_title
                 
         # 外枠の設定
-        if frame_color == False:
-            ch.ChartArea.Border.LineStyle = 0     # 枠なし
+        if frame_color is False:  # False:枠なし、0:黒枠
+            ch.ChartArea.Border.LineStyle = 0 # 枠なし
         elif frame_color not in (None, ""):
             ch.ChartArea.Format.Line.ForeColor.RGB = frame_color
             ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)  # 枠線の太さ(pt)

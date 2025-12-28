@@ -13,13 +13,13 @@
 - [ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py) — グラフ作成関数  
 - [Call_ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py) — ScatterChart 関数の呼び出し例
 
-さらに、既存グラフを変更する関数も作成しました。
+さらに、既存グラフを変更する関数を作成しました。
 
 - [ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py) — グラフ変更関数  
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
 
 Call_ModifyChart.py は Excelマクロから呼び出すことができ、ショートカットキーを割り当てると便利です。
-こちらのコードは、自動判定の範囲 もしくは 選択範囲 でグラフ作成し(VBA)、Pythonの呼び出しで選択中のグラフの体裁編集が可能です。
+こちらのコードは、自動判定の範囲 もしくは 選択範囲 でVBAでグラフ作成し、Pythonの呼び出しで選択中のグラフの体裁編集が可能です。
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 

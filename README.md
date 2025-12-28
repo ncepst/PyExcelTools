@@ -18,8 +18,8 @@
 - [ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py) — グラフ変更関数  
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
 
-Call_ModifyChart.py は Excelマクロから呼び出すことができ、ショートカットキーを割り当てることで操作を効率化できます。 
-こちらのVBAコードには、自動判定の範囲 / 選択範囲 でグラフを作成するマクロと、
+Call_ModifyChart.py は Excelマクロから呼び出すことができ、ショートカットキーを割り当てることで操作を効率化できます。   
+こちらのVBAコードには、自動判定の範囲 / 選択範囲 でグラフを作成するマクロと、  
 Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集ができるマクロが含まれており、柔軟な運用が可能です。
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)

@@ -18,7 +18,7 @@
 - [ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py) — グラフ変更関数  
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
 
-Excel マクロから Call_ModifyChart.py を呼び出す場合、**ショートカットキーの割り当てが便利**です。
+Call_ModifyChart.py は Excelマクロから呼び出すことができ、ショートカットキーを割り当てると便利です。
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 

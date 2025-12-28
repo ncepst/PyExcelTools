@@ -70,8 +70,8 @@ marker_map = {
 # 優先順位 series cfg > 引数 > preset
 def ScatterChart(ws,
                  start_range = "A1",
-                 row = 2,
-                 col = 2,
+                 row = None,
+                 col = None,
                  paste_range = "A1",
                  width_cm = 12.54,
                  height_cm = 7.54,

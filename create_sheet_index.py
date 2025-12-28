@@ -1,4 +1,4 @@
-#create_sheet_index.py
+# create_sheet_index.py
 import xlwings as xw
 
 # 注意-------------------------------
@@ -11,7 +11,7 @@ def RGB(r, g, b):
 
 def create_sheet_index():
     # pathは適宜変更してください-------------------------------
-    wb = xw.Book(r"C:\Users\*****\Desktop\Test.xlsx")
+    wb = xw.Book(r"C:\Users\*****\Desktop\test.xlsx")
     # -------------------------------------------------------
     
     idx_name = "目次"
@@ -89,4 +89,5 @@ def create_sheet_index():
     ctypes.windll.user32.MessageBoxW(0, "目次を作成しました", "完了", 0)
 
 if __name__ == "__main__":
+
     create_sheet_index()

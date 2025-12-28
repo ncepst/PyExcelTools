@@ -5,9 +5,9 @@ from win32com.client import constants
 
 # 新規グラフを作成します
 # from ScatterChart import ScatterChart, RGB
-# chart = ScatterChart() で呼び出し
+# ScatterChart() で呼び出し
 
-# RGBのヘルパー関数
+# RGB値をExcel用の整数に変換するヘルパー関数
 def RGB(r, g, b):
     return r | (g << 8) | (b << 16)
 
@@ -122,8 +122,8 @@ def ScatterChart(ws,
                  legend_right_space = 0,
                  transparent_bg = None,
                  chart_type = None, 
-                 x_zero_line=None,
-                 y_zero_line=None,
+                 x_bold_line = None,
+                 y_bold_line = None,
                 ):
     
     p = PRESET.get(preset, PRESET["std"]) or {}
@@ -273,12 +273,18 @@ def ScatterChart(ws,
             # XValues / Values
             if cfg.get("XValues") not in (None, ""):
                 try:
-                    series.XValues = ws.range(cfg["XValues"]).api
+                    wsx = cfg.get("sheet",ws)
+                    if isinstance(wsx, str):
+                        wsx = ws.parent.sheets[wsx]
+                    series.XValues = wsx.range(cfg["XValues"]).api
                 except Exception:
                     print(f"系列{i}: wsの設定または範囲指定に問題")
             if cfg.get("Values") not in (None, ""):
                 try:
-                    series.Values  = ws.range(cfg["Values"]).api
+                    wsy = cfg.get("sheet",ws)
+                    if isinstance(wsy, str):
+                        wsy = ws.parent.sheets[wsy]
+                    series.Values  = wsy.range(cfg["Values"]).api
                 except Exception:
                     print(f"系列{i}: wsの設定または範囲指定に問題")
                     
@@ -385,6 +391,12 @@ def ScatterChart(ws,
                     # trend.DataLabel.Top
                 if "r2" in t_option: 
                     trend.DisplayRSquared = True # 決定係数(R²)を表示
+                    
+            if cfg.get("legend") is False:
+                series.HasLegendKey = False
+                
+            if cfg.get("data_label", False):
+                series.HasDataLabels = True
 
         except Exception as e:
             print(f"系列{i}で例外発生:{e}")
@@ -479,11 +491,11 @@ def ScatterChart(ws,
             ch.ChartArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
             ch.PlotArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
             
-        # セロラインの強調
-        if x_zero_line == True:
-            emphasize_line(x_axis)
-        if y_zero_line == True:
-            emphasize_line(y_axis)
+        # ラインの強調
+        if x_bold_line is not None:
+            emphasize_line(x_axis,x_bold_line)
+        if y_bold_line is not None:
+            emphasize_line(y_axis,y_bold_line)
         # ----------------------------------------------------------------------
     except Exception as e:
         print("フォーマットの設定でエラー:",e)

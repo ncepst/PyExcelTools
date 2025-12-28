@@ -9,7 +9,7 @@
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
 
 記事を発展させて、グラフ作成を関数化したコードを作成しています。  
-PRESETで、詳細な書式設定を一覧化しています。
+PRESETにはグラフ書式設定パラメータが格納されています。
 
 - [ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py) — グラフ作成関数  
 - [Call_ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py) — ScatterChart 関数の呼び出し例
@@ -35,7 +35,9 @@ Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集がで
 `ModifyChart.py`は必須引数が`chart`の1つのみで、  
 残りの53個の任意引数により、設定項目を指定します。
 
-また、PRESETを Excel 2021 の標準フォーマット"excel2021"をベースとして、
+また、`PRESET`は **dict形式** で関数外に定義されており、  
+外側の辞書のキー`"excel2021"`に、Excel 2021 の散布図の書式設定が格納されています。  
+各グラフ設定パラメータはネスト(入れ子)辞書として管理されており、必要に応じて上書き・変更が可能です。
 ```python
 "std": {
         "axis_title_font_color":RGB(0,0,0), 
@@ -43,15 +45,17 @@ Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集がで
     }
 PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 ```
-のように上書きすることで、詳細な書式設定が可能です。
+上記のようにベースとなる設定を維持したまま一部を上書きすることで、  
+詳細な書式設定を簡単に適用できます。
 
-引数のうち、系列ごとの書式設定 `series_list = [{"name":"系列1"},{"name":"系列2"}]`については、  
-**dict形式** で指定します。
+任意引数のうち、系列ごとの書式設定は `series_list = [{"name":"系列1"},{"name":"系列2"}, ...]`  
+で指定します。各系列は **dict形式** で定義し、複数系列の場合はリストとしてまとめます。
 
-`series_list = None` でModifyChart.pyを実行する場合には、  
+`series_list = None` で`ModifyChart.py`を実行する場合には、  
 処理する系列数を関数の引数`NS`で指定してください。  
 デフォルト引数では`NS=1`となっています。  
-ScatterChart.pyでは、row, colの値から`NS`が自動計算されます。  
+`ScatterChart.py`では、row, col の値から`NS`が自動計算されます。  
+row, col がNoneの場合にも.end('down').rowで自動取得されます。 
 
 ### series_listで指定可能なkeyとそのデフォルト値
 以下から任意のkeyのみ設定可能です。
@@ -61,13 +65,16 @@ series_list = [
         "name": "系列1",               # 系列名
         "color": RGB(68,114,196),     # 色
         "style": "line+marker",       # スタイル
-        "marker": "C",                # マーカー: C, S, D, T
+        "marker": "C",                # マーカー: "C":●, "S":■, "D":◆, "T":▲
         "size": 5,                    # マーカーサイズ
         "weight": 1.5,                # 線の幅 (pt)
         "smooth": True,               # 曲線(True) or 折れ線(False)
         "alpha": None,                # 線の透明度(0~1), デフォルト None
         "axis": "primary",            # "y2"で副軸
-        "chart_type": None,           # デフォルトは散布図
+        "XValues":None,               # 系列のXの値(ExcelのRange指定)
+        "Values":None,                # 系列のYの値(ExcelのRange指定)
+        "sheet":None,                 # 系列のデータがあるシート名
+        "chart_type": None,           # グラフ種類の変更(デフォルトは散布部)
         "trendline": None,            # 近似曲線
         "trendline_option": None,     # 近似曲線オプション("eq+r2")
         "legend":None,                # 系列を凡例に入れるか選択

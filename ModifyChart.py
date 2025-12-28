@@ -10,7 +10,7 @@ from win32com.client import constants
 def RGB(r, g, b):
     return r | (g << 8) | (b << 16)
 
-# cm → pt 換算関数の定義 (1 point = 1/72 inch, 1 inch = 2.54 cm)
+# cm → pt 換算関数 (1 point = 1/72 inch, 1 inch = 2.54 cm)
 def cm_to_pt(cm):
     return cm * 72 / 2.54
 
@@ -337,7 +337,7 @@ def ModifyChart(chart,
                         trend = series.Trendlines().Add(Type=ttype)
                 t_option = cfg.get("trendline_option", "")
                 if "eq" in t_option: 
-                    trend.DisplayEquation = True # 式の表示
+                    trend.DisplayEquation = True # 近似式を表示
                     # trend.DataLabel.Left
                     # trend.DataLabel.Top
                 if "r2" in t_option: 
@@ -414,7 +414,7 @@ def ModifyChart(chart,
                 
         # 外枠の設定
         if frame_color is False:  # False:枠なし、0:黒枠
-            ch.ChartArea.Border.LineStyle = 0 # 枠なし
+            ch.ChartArea.Border.LineStyle = 0    # 枠なし
         elif frame_color not in (None, ""):
             ch.ChartArea.Format.Line.ForeColor.RGB = frame_color
             ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)

@@ -509,3 +509,57 @@ def ModifyChart(chart,
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
 
     return chart
+
+def add_shape(chart, x_start, x_end, y_start, y_end, left=0, top=0, width=None, height=None, color=RGB(255,255,255), alpha=0.8, 
+              frame=None, text=None, font_color=0, font_name="Calibri",  font_size=10, font_bold=True, Alignment=None):
+    ch = chart.api[1]
+    plot_area = ch.PlotArea
+    # X軸座標変換
+    if x_start is not None and x_end is not None:
+        x_axis = ch.Axes(constants.xlCategory)
+        x_min, x_max = x_axis.MinimumScale, x_axis.MaximumScale
+        left = plot_area.InsideLeft + (x_start - x_min) / (x_max - x_min) * plot_area.InsideWidth
+        width = (x_end - x_start) / (x_max - x_min) * plot_area.InsideWidth
+    else:
+        left = plot_area.InsideLeft + left
+        if width is not None:
+            pass
+        else:
+            width = plot_area.InsideWidth
+
+    # Y軸座標変換
+    if y_start is not None and y_end is not None:
+        y_axis = ch.Axes(constants.xlValue)
+        y_min, y_max = y_axis.MinimumScale, y_axis.MaximumScale
+        top = plot_area.InsideTop + (y_max - y_end) / (y_max - y_min) * plot_area.InsideHeight
+        height = (y_end - y_start) / (y_max - y_min) * plot_area.InsideHeight + 1
+    else:
+        top = plot_area.InsideTop + top
+        if height is not None:
+            pass
+        height = plot_area.InsideHeight + 1 
+    
+    shape = ch.Shapes.AddShape(1, left, top, width, height)  # 1 = msoShapeRectangle
+    # shape = ch.Shapes.AddTextbox(1, left, top, width, height)
+    shape.Fill.ForeColor.RGB = color
+    shape.Fill.Transparency = alpha
+    if frame is None:
+        shape.Line.Visible = False
+    else:
+        shape.Line.Visible = True
+        shape.Line.ForeColor.RGB = frame
+        shape.Line.Weight = 0.75
+    if text is not None:
+        shape.TextFrame.Characters().Text = text
+        shape.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = font_color
+        shape.TextFrame2.TextRange.Font.Name = font_name
+        shape.TextFrame2.TextRange.Font.Size = font_size
+        shape.TextFrame2.TextRange.Font.Bold = font_bold
+        if Alignment is not None:
+            if  Alignment == "中央":
+                    shape.TextFrame.HorizontalAlignment = constants.xlHAlignCenter
+            elif  Alignment == "センター":
+                    shape.TextFrame.HorizontalAlignment = constants.xlHAlignCenter
+                    shape.TextFrame.VerticalAlignment   = constants.xlVAlignCenter
+            elif  Alignment == "右":
+                    shape.TextFrame.HorizontalAlignment = constants.xlHAlignRight

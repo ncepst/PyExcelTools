@@ -1,7 +1,7 @@
 # PyExcelTools: Excel グラフ作成・編集ツール
 
 **Excel 2021 の標準スタイルに寄せて、研究資料・技術資料向けのグラフの体裁を素早く整えることを目的としています。**  
-対象環境は **Windows + Excel 2021 以降** です。
+対象環境は Windows + Excel 2021 以降 です。
 
 ## 1. サンプルコードと参考記事
 
@@ -50,6 +50,8 @@ series_list = [
         "axis": "primary",            # "y2"で副軸
         "chart_type": None,           # デフォルトは散布図
         "trendline": None,            # 近似曲線
-        "trendline_option": None      # 近似曲線オプション("eq+r2")
+        "trendline_option": None,     # 近似曲線オプション("eq+r2")
+        "legend":None,                # 系列を凡例に入れるか選択
+        "data_label":None             # データラベルの表示
     }
 ]

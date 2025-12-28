@@ -8,7 +8,7 @@
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
 - xlwings によるエクセルグラフ作成自動化の記事: [Qiita 記事](https://qiita.com/Bencepst/items/54c63974242bb9e18c23)
 
-記事を参考に、グラフ作成を関数化したコードも作成しています。
+記事を参考に、グラフ作成を関数化したコードを作成しています。
 
 - [ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py) — グラフ作成関数  
 - [Call_ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py) — ScatterChart 関数の呼び出し例
@@ -19,7 +19,7 @@
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
 
 Call_ModifyChart.py は Excelマクロから呼び出すことができ、ショートカットキーを割り当てると便利です。
-こちらのコードは、自動判定の範囲 もしくは 選択範囲 でのグラフ作成(VBA)と、Pythonの呼び出しで選択中のグラフの体裁編集が可能です。
+こちらのコードは、自動判定の範囲 もしくは 選択範囲 でグラフ作成し(VBA)、Pythonの呼び出しで選択中のグラフの体裁編集が可能です。
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 

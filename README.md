@@ -38,7 +38,7 @@ ModifyChart.pyは必須引数が`chart`の1つのみで、
 
 `series_list = None` でModifyChart.pyを実行する場合には、  
 処理する系列数を関数の引数`NS`で指定してください。  
-デフォルトでは`NS=1`となっています。  
+デフォルト引数では`NS=1`となっています。  
 ScatterChart.pyでは、row, colの値からNSが自動計算されます。  
 
 ### series_listで指定可能なkeyとそのデフォルト値

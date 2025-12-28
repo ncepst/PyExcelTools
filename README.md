@@ -33,7 +33,7 @@ Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集がで
 グラフの書式設定の項目は関数の引数としてリスト化されています。  
 ScatterChart.pyは必須引数が`ws, start_range, paste_range`の3つ、  
 ModifyChart.pyは必須引数が`chart`の1つのみで、  
-任意引数が53個あります。
+グラフの書式設定に関する任意引数が53個あります。
 
 引数のうち、系列ごとの書式設定 `series_list = [{"name":"系列1"},{"name":"系列2"}]`については、  
 **dict形式** で指定します。

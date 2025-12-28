@@ -56,7 +56,7 @@ PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 処理する系列数を関数の引数`NS`で指定してください。  
 デフォルト引数では`NS=1`となっています。  
 `ScatterChart.py`では、row, col の値から`NS`が自動計算されます。  
-row, col がNoneの場合にも.end('down').rowで自動取得されます。 
+row, col がNoneの場合にもstart_rangeからの.end('down').rowで自動取得されます。 
 
 ### series_listで指定可能なkeyとそのデフォルト値
 以下から任意のkeyのみ設定可能です。

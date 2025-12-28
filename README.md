@@ -33,7 +33,17 @@ Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集がで
 グラフの書式設定の項目は関数の引数としてリスト化されています。  
 ScatterChart.pyは必須引数が`ws, start_range, paste_range`の3つ、  
 ModifyChart.pyは必須引数が`chart`の1つのみで、  
-グラフの書式設定に関する任意引数が53個あります。
+残りの53個の任意引数により、設定項目を指定します。
+
+また、PRESETを Excel 2021 の標準フォーマット"excel2021"をベースとして、
+```python
+"std": {
+        "axis_title_font_color":RGB(0,0,0), 
+        "axis_tick_font_color": RGB(0,0,0),
+    }
+PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
+```
+のように上書きすることで、詳細な書式設定が可能です。
 
 引数のうち、系列ごとの書式設定 `series_list = [{"name":"系列1"},{"name":"系列2"}]`については、  
 **dict形式** で指定します。

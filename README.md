@@ -76,6 +76,4 @@ series_list = [
 ]
 ```
 ## License
-This project is licensed under the MIT License.
-
 Copyright (c) 2025 ncepst

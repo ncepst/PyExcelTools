@@ -33,7 +33,7 @@ ScatterChart.pyは必須引数が`ws, start_range, paste_range`の3つ、
 ModifyChart.pyは必須引数が`chart`の1つのみで、  
 任意引数が53個あります。
 
-引数のうち、系列ごとの書式設定 `series_list = [{"name":"系列1"},{"name":"系列2"}]`については、
+引数のうち、系列ごとの書式設定 `series_list = [{"name":"系列1"},{"name":"系列2"}]`については、  
 **dict形式** で指定します。
 
 `series_list = None` でModifyChart.pyを実行する場合には、  

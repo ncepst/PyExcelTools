@@ -1,4 +1,4 @@
-#delete_file.py
+# delete_file.py
 import os
 import fnmatch
 
@@ -61,3 +61,4 @@ else:
         os.remove(path)
 
     print(f"{len(delete_candidates)} 件のファイルを削除しました。")
+

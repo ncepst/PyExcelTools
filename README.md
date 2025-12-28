@@ -1,11 +1,11 @@
-# PyExcelTools: Excel グラフ作成・編集ツール
+# Excel グラフ作成・編集ツール
 
 Excel 2021 の標準スタイルに寄せて、**研究資料・技術資料向けのグラフの体裁を素早く整える**ことを目的としています。  
-対象環境は Windows + Excel 2021 以降 です。
+対象環境は Windows + Excel 2021 以降 です。 
 
-## 1. サンプルコードと参考記事
+サンプルコードと参考記事
 
-- xlwings によるエクセルグラフ作成自動化の記事を投稿しました。: [Qiita 記事](https://qiita.com/Bencepst/items/54c63974242bb9e18c23)
+- xlwings によるエクセルグラフ作成自動化の記事を投稿しています。: [Qiita 記事](https://qiita.com/Bencepst/items/54c63974242bb9e18c23)
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
 
 記事を元に、グラフ作成を関数化したコードを作成しています。
@@ -19,19 +19,17 @@ Excel 2021 の標準スタイルに寄せて、**研究資料・技術資料向�
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
 
 Pythonコード は Excelマクロから呼び出すこともでき、ショートカットキーを割り当てると便利です。   
-こちらのVBAコードには、自動判定の範囲 / 選択範囲 でグラフを作成するマクロと、  
-Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集ができるマクロが含まれ、柔軟に運用できます。
+付属のVBAコードには、自動判定の範囲 または 選択範囲 でグラフを作成するマクロと、  
+Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集ができるマクロが含まれており、柔軟な運用が可能です。
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 
 ---
 
-## 2. グラフ書式設定の指定方法
+## グラフ書式設定の指定方法
 
 グラフの書式設定は関数の引数としてリスト化されています。  
-系列ごとの書式設定は **dict形式** で指定可能です。
-
-### 基本仕様
+そのうち、系列ごとの書式設定は **dict形式** で指定可能です。
 
 - 指定可能なキーは任意で設定可能
 - `series_list = None` の場合は、処理する系列数を関数の引数 `NS` で指定

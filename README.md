@@ -34,7 +34,7 @@ Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集がで
 - 指定可能なキーは任意で設定可能
 - `series_list = None` の場合は、処理する系列数を関数の引数 `NS` で指定
 
-### series_list の例
+### series_list の一覧とデフォルト値
 
 ```python
 series_list = [

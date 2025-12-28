@@ -28,19 +28,18 @@ Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集がで
 
 ## グラフ書式設定の指定方法
 
-グラフの書式設定の項目は関数の引数としてリスト化されています。
-ScatterChart.pyは必須の引数がws, start_range, paste_rangeの3つで、  
-任意の引数が53個あります。
-ModifyChart.pyは必須の引数がchartの1つのみで、  
-任意の引数が53個あります。
+グラフの書式設定の項目は関数の引数としてリスト化されています。  
+ScatterChart.pyは必須引数が`ws, start_range, paste_range`の3つ、  
+ModifyChart.pyは必須引数が`chart`の1つのみで、  
+任意引数が53個あります。
 
-引数のうち、系列ごとの書式設定 `series_list = [{},{}]`については、
+引数のうち、系列ごとの書式設定 `series_list = [{"name":"系列1"},{"name":"系列2"}]`については、
 **dict形式** で指定します。
 
 `series_list = None` でModifyChart.pyを実行する場合には、  
-処理する系列数を関数の引数`NS`で指定してください。
-デフォルトでは`NS=1`となっています。
-ScatterChart.pyでは、row, colの値から自動計算されます。  
+処理する系列数を関数の引数`NS`で指定してください。  
+デフォルトでは`NS=1`となっています。  
+ScatterChart.pyでは、row, colの値からNSが自動計算されます。  
 
 ### series_listで指定可能なkeyとそのデフォルト値
 以下から任意のkeyのみ設定可能です。

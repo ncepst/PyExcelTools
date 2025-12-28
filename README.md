@@ -3,7 +3,7 @@
 Excel 2021 の標準スタイルに寄せて、**研究資料・技術資料向けのグラフの体裁を素早く整える**ことを目的としています。  
 対象環境は Windows + Excel 2021 以降 です。 
 
-サンプルコードと参考記事
+参考記事とサンプルコード
 
 - xlwings によるエクセルグラフ作成自動化の記事を投稿しています。: [Qiita 記事](https://qiita.com/Bencepst/items/54c63974242bb9e18c23)
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  

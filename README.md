@@ -5,10 +5,10 @@
 
 ## 1. サンプルコードと参考記事
 
+- xlwings によるエクセルグラフ作成自動化の記事を投稿しました。: [Qiita 記事](https://qiita.com/Bencepst/items/54c63974242bb9e18c23)
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
-- xlwings によるエクセルグラフ作成自動化の記事: [Qiita 記事](https://qiita.com/Bencepst/items/54c63974242bb9e18c23)
 
-記事を参考に、グラフ作成を関数化したコードを作成しています。
+記事を元に、グラフ作成を関数化したコードを作成しています。
 
 - [ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py) — グラフ作成関数  
 - [Call_ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py) — ScatterChart 関数の呼び出し例
@@ -18,7 +18,7 @@
 - [ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py) — グラフ変更関数  
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
 
-Call_ModifyChart.py は Excelマクロから呼び出すことができ、ショートカットキーを割り当てることで操作を効率化できます。   
+Call_ModifyChart.py は Excelマクロから呼び出すことができ、ショートカットキーを割り当てると便利です。   
 こちらのVBAコードには、自動判定の範囲 / 選択範囲 でグラフを作成するマクロと、  
 Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集ができるマクロが含まれており、柔軟な運用が可能です。
 

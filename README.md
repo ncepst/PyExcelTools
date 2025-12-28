@@ -20,7 +20,7 @@ Excel 2021 の標準スタイルに寄せて、**研究資料・技術資料向�
 
 Pythonは Excelマクロから実行することもでき、マクロにショートカットキーを割り当てると便利です。   
 付属のVBAコードには、自動判定の範囲 または 選択範囲 でグラフを作成するマクロと、  
-Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集ができるマクロが含まれており、柔軟な運用が可能です。
+`Call_ModifyChart.py` を呼び出して選択中のグラフの体裁編集ができるマクロが含まれており、柔軟な運用が可能です。
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 
@@ -31,11 +31,12 @@ Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集がで
 グラフの書式設定の項目は関数の引数としてリスト化されています。  
 そのうち、系列ごとの書式設定は **dict形式** で指定します。
 
-- 任意の引数、任意のkeyのみ設定可能
-- `series_list = None` の場合は、処理する系列数を関数の引数 `NS` で指定
+`series_list = None` のまま `ModifyChart.py`を実行する場合には、
+処理する系列数を関数の引数NSで指定してください。
 
 ### 指定可能なkeyとそのデフォルト値
 
+任意のkeyのみ設定可能です。
 ```python
 series_list = [
     {

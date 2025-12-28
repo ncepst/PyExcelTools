@@ -38,7 +38,7 @@ series_list = [
     "weight":1.5,                   # 線の幅 (pt)
     "smooth":True,                  # 曲線 or 折れ線か
     "alpha":None,                   # 線の透明度(0~1), デフォルト0
-    "axis":None,                    # "y2"で副軸
+    "axis":"primary",               # "y2"で副軸
     "chart_type":None,              # デフォルト散布図
     "trendline":None,               # 近似曲線
     "trendline_option":None         # 近似曲線オプション("eq+r2")

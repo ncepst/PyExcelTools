@@ -18,7 +18,7 @@ Excel 2021 の標準スタイルに寄せて、**研究資料・技術資料向�
 - [ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py) — グラフ変更関数  
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
 
-Pythonコード は Excelマクロから呼び出すこともでき、ショートカットキーを割り当てると便利です。   
+Pythonは Excelマクロから実行することもでき、マクロにショートカットキーを割り当てると便利です。   
 付属のVBAコードには、自動判定の範囲 または 選択範囲 でグラフを作成するマクロと、  
 Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集ができるマクロが含まれており、柔軟な運用が可能です。
 

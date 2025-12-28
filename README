@@ -22,10 +22,10 @@ Call_ModifyChart.pyを呼び出すExcelマクロで、ショートカットキ�
 https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas
 
 グラフの書式設定の項目は関数の引数としてリスト化されています。
-そのうち 系列ごとの書式設定はdict形式で指定します」。
+そのうち 系列ごとの書式設定はdict形式で指定します。
 指定可能なkeyと、そのデフォルト値は以下の通りです。
 任意のkeyのみ設定可能です。
-series_list = None のままModify_Chart.pyを実行する場合には、
+series_list = None のまま ModifyChart.pyを実行する場合には、
 処理する系列数を関数の引数NSで指定してください。
 
 series_list = [

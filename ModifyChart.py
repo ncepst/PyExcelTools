@@ -14,6 +14,12 @@ def RGB(r, g, b):
 def cm_to_pt(cm):
     return cm * 72 / 2.54
 
+def emphasize_line(axis,value=0,weight=1):
+    axis.CrossesAt = value
+    line = axis.Format.Line
+    line.Weight = weight
+    line.ForeColor.RGB = RGB(0,0,0)
+
 PRESET = {
     # "Aptos Narrow 本文"は Excel 2021以降のみ
     "excel2021": {
@@ -112,7 +118,9 @@ def ModifyChart(chart,
                 legend_height_inc = 0,
                 legend_right_space = 0,
                 transparent_bg = None,
-                chart_type = None, 
+                chart_type = None,
+                x_zero_line=None,
+                y_zero_line=None,
                 ):
 
     p = PRESET.get(preset, PRESET["std"]) or {}
@@ -431,6 +439,12 @@ def ModifyChart(chart,
             ch.PlotArea.Format.Fill.Visible = True
             ch.ChartArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
             ch.PlotArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
+            
+        # セロラインの強調
+        if x_zero_line == True:
+            emphasize_line(x_axis)
+        if y_zero_line == True:
+            emphasize_line(y_axis)
         # ----------------------------------------------------------------------
     except Exception as e:
         print("フォーマットの設定でエラー:",e)

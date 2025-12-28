@@ -31,8 +31,8 @@ Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集がで
 ## グラフ書式設定の指定方法
 
 グラフの書式設定の項目は関数の引数としてリスト化されています。  
-ScatterChart.pyは必須引数が`ws, start_range, paste_range`の3つ、  
-ModifyChart.pyは必須引数が`chart`の1つのみで、  
+`ScatterChart.py`は必須引数が`ws, start_range, paste_range`の3つ、  
+`ModifyChart.py`は必須引数が`chart`の1つのみで、  
 残りの53個の任意引数により、設定項目を指定します。
 
 また、PRESETを Excel 2021 の標準フォーマット"excel2021"をベースとして、

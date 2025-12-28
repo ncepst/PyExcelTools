@@ -25,7 +25,8 @@ https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas
 そのうち 系列ごとの書式設定はdict形式で指定します」。
 指定可能なkeyと、そのデフォルト値は以下の通りです。
 任意のkeyのみ設定可能です。
-series_list = None　で系列数が2以上の場合には、関数の引数:NS で系列数を指定してください。
+series_list = None のままModify_Chart.pyを実行する場合には、
+処理する系列数を関数の引数NSで指定してください。
 
 series_list = [
     {

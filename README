@@ -27,13 +27,17 @@ https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas
 
 series_list = [
     {
-    "name":"系列1",                  # 系列名
+    "name":"系列1",                 # 系列名
     "color": RGB(68,114,196),       # 色
     "style":"line+marker",          # スタイル
-    "marker":"C",                   # マーカーはC, S, D, T
+    "marker":"C",                   # マーカー:C, S, D, T
     "size":5,                       # マーカーサイズ
     "weight":1.5,                   # 線の幅(pt)
     "smooth":True,                  # 曲線か折れ線か
-    "alpha":0                       # 線の透明度(0~1)
+    "alpha":None,                   # 線の透明度(0~1):デフォルト0
+    "axis":None,                    # "y2"で副軸グラフ
+    "chart_type":None,              # デフォルト散布図
+    "trendline":None,               # 近似曲線
+    "trendline_option":None         # 近似曲線のオプション(eq+r2)
     }
     ],

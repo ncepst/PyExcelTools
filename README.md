@@ -9,7 +9,7 @@
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
 
 記事を発展させて、グラフ作成を関数化したコードを作成しています。  
-こちらはPRESETで、詳細な書式設定を定義しています。
+こちらはPRESETで、詳細な書式設定を一覧化しています。
 
 - [ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py) — グラフ作成関数  
 - [Call_ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py) — ScatterChart 関数の呼び出し例

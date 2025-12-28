@@ -511,7 +511,7 @@ def ModifyChart(chart,
     return chart
 
 def add_shape(chart, x_start, x_end, y_start, y_end, left=0, top=0, width=None, height=None, color=RGB(255,255,255), alpha=0.8, 
-              frame=None, text=None, font_color=0, font_name="Calibri",  font_size=10, font_bold=True, Alignment=None):
+              frame=None, text=None, font_color=0, font_name="Calibri",  font_size=10, font_bold=True, alignment=None):
     ch = chart.api[1]
     plot_area = ch.PlotArea
     # X軸座標変換
@@ -555,11 +555,11 @@ def add_shape(chart, x_start, x_end, y_start, y_end, left=0, top=0, width=None, 
         shape.TextFrame2.TextRange.Font.Name = font_name
         shape.TextFrame2.TextRange.Font.Size = font_size
         shape.TextFrame2.TextRange.Font.Bold = font_bold
-        if Alignment is not None:
-            if  Alignment == "中央":
+        if alignment is not None:
+            if  alignment == "中央":
                     shape.TextFrame.HorizontalAlignment = constants.xlHAlignCenter
-            elif  Alignment == "センター":
+            elif  alignment == "センター":
                     shape.TextFrame.HorizontalAlignment = constants.xlHAlignCenter
                     shape.TextFrame.VerticalAlignment   = constants.xlVAlignCenter
-            elif  Alignment == "右":
+            elif  alignment == "右":
                     shape.TextFrame.HorizontalAlignment = constants.xlHAlignRight

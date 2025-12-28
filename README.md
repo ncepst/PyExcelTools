@@ -20,7 +20,7 @@
 
 Call_ModifyChart.py は Excelマクロから呼び出すことができ、ショートカットキーを割り当てると便利です。   
 こちらのVBAコードには、自動判定の範囲 / 選択範囲 でグラフを作成するマクロと、  
-Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集ができるマクロが含まれており、柔軟な運用が可能です。
+Call_ModifyChart.py を呼び出して選択中のグラフの体裁編集ができるマクロが含まれており、柔軟に運用できます。
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 

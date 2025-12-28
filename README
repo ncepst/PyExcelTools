@@ -7,7 +7,7 @@ Windows + Excel 2021 以降での使用を前提としています。
 https://qiita.com/Bencepst/items/54c63974242bb9e18c23
 
 記事を元にグラフ作成を関数化したコードを作成しました。
-https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py[https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py]
+https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py
 
 ScatterChart関数の呼び出し例です。
 https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py

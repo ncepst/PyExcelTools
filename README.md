@@ -53,5 +53,5 @@ series_list = [
         "trendline_option": None,     # 近似曲線オプション("eq+r2")
         "legend":None,                # 系列を凡例に入れるか選択
         "data_label":None             # データラベルの表示
-    }
+    },
 ]

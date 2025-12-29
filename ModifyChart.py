@@ -2,6 +2,7 @@
 # import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
+from typing import Union, List, Dict
 
 # 既存グラフを変更します
 # from ModifyChart import ModifyChart, RGB
@@ -68,60 +69,60 @@ marker_map = {
 
 # False:無効化, None: 変更なし もしくは デフォルト値
 # 優先順位 series cfg > 引数 > preset
-def ModifyChart(chart,
-                ws = None,
+def ModifyChart(chart,     # ExcelのChartオブジェクト
+                ws = None, # Worksheetオブジェクト、またはNone
                 preset = "std",
                 width_cm = None,
                 height_cm = None,
                 name = None,
-                title = None,       # 無効化:False
+                title:Union[str,bool,None] = None,  # 無効化:False
                 title_font_color = None,
                 title_font_size = None,
                 title_space = +0,
                 NS = 1,
-                series_list = None,
-                style= None,
+                series_list:Union[List[Dict],None] = None,
+                style = None,
                 smooth = None,
                 marker = None,
                 alpha = None,
-                x_title = None,     # 無効化:False
-                x_title_space = +0, # 下に広げる場合はマイナス
-                x_min = None,
-                x_max = None,
-                x_major = None,
-                x_minor = None,
+                x_title:Union[str,bool,None] = None,  # 無効化:False
+                x_title_space = +0,                   # 下に広げる場合はマイナス
+                x_min:Union[float,str,None] = None,
+                x_max:Union[float,str,None] = None,
+                x_major:Union[float,None] = None,
+                x_minor:Union[float,None] = None,
                 x_cross = None,
                 x_format = None,
-                x_log = None,
-                y_title = None,     # 無効化:False
+                x_log:Union[bool,None] = None,
+                y_title:Union[str,bool,None] = None, # 無効化:False
                 y_title_space = +0,
-                y_min = None,
-                y_max = None,
-                y_major = None,
-                y_minor = None,
+                y_min:Union[float,str,None] = None,
+                y_max:Union[float,str,None] = None,
+                y_major:Union[float,None] = None,
+                y_minor:Union[float,None] = None,
                 y_cross = None,
                 y_format = None,
-                y_log = None,
-                y2_title = None,
-                y2_min = None,
-                y2_max = None,
-                y2_major = None,
-                y2_minor = None,
+                y_log:Union[bool,None] = None,
+                y2_title:Union[str,bool,None] = None,
+                y2_min:Union[float,None] = None,
+                y2_max:Union[float,None] = None,
+                y2_major:Union[float,None] = None,
+                y2_minor:Union[float,None] = None,
                 y2_format = None,
-                y2_log = None,
-                y2_grid = False,     # 副軸はグリッドなし:False
-                frame_color = None,  # 枠なし:False, 黒枠:0
+                y2_log:Union[bool,None] = None,
+                y2_grid:Union[bool,None] = False,         # 副軸はグリッドなし:False
+                frame_color:Union[bool,int,None] = None,  # 枠なし:False, 黒枠:0
                 width_inc = 0,
                 height_inc = 0,
-                legend = None,       # 無効化:False
+                legend:Union[bool,str,None] = None,       # 無効化:False
                 legend_font_size = None,
                 legend_width_inc = 0,
                 legend_height_inc = 0,
                 legend_right_space = 0,
-                transparent_bg = None,
+                transparent_bg:Union[bool,None] = None,
                 chart_type = None,
-                x_bold_line=None,
-                y_bold_line=None,
+                x_bold_line:Union[int,None] = None,
+                y_bold_line:Union[int,None] = None,
                 ):
 
     p = PRESET.get(preset, PRESET["std"]) or {}
@@ -513,8 +514,8 @@ def ModifyChart(chart,
 # プロットエリア内に帯や注釈用のボックスを配置する
 def add_shape(chart, x_start=None, x_end=None, y_start=None, y_end=None, 
               left=None,  width=None, top=None, height=None, delta_width=0, delta_height=0, 
-              color=RGB(0,0,255), alpha=0.8, frame=None, white_box=None,
-              text=None, font_color=RGB(0,0,0), font_name="Calibri",  font_size=10,
+              color=RGB(0,0,255), alpha=0.8, frame_color=None, white_box=None,
+              text=None, font_color=RGB(0,0,0), font_name="Calibri", font_size=10,
               font_bold=True, alignment=None, auto_size=None,
               right=None, bottom=None):
     """
@@ -604,18 +605,18 @@ def add_shape(chart, x_start=None, x_end=None, y_start=None, y_end=None,
         shape = ch.Shapes.AddTextbox(1, left, top, width, height)
         color = RGB(255,255,255)
         alpha = 0
-        frame = RGB(0,0,0)
+        frame_color = RGB(0,0,0)
     else:
         # 1 = msoShapeRectangle
         shape = ch.Shapes.AddShape(1, left, top, width, height)
              
     shape.Fill.ForeColor.RGB = color
     shape.Fill.Transparency = alpha
-    if frame is None:
+    if frame_color is None:
         shape.Line.Visible = False
     else:
         shape.Line.Visible = True
-        shape.Line.ForeColor.RGB = frame
+        shape.Line.ForeColor.RGB = frame_color
         shape.Line.Weight = 0.75
     if text is not None:
         shape.TextFrame.Characters().Text = text
@@ -676,5 +677,5 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     line.Line.ForeColor.RGB = color
     line.Line.Weight = weight
     if dash:
-        line.Line.DashStyle = 4     
+        line.Line.DashStyle = 4       
     return line

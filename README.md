@@ -86,5 +86,13 @@ series_list = [
     },
 ]
 ```
+### サブ関数
+`ModifyChart.py`には、`add_shape`, `add_line` の2つの関数が`ModifyChart` とは独立に定義されており、  
+`from ModifyChart import MofifyChart, RGB, add_shape, add_line` でインポートして使います。  
+`add_shape` は、引数に指定する`chart`のプロットエリア内に、帯状の長方形や注釈用のテキストボックスを追加します。  
+`add_line` は、引数に指定する`chart`のプロットエリア内に、線もしくは破線を追加します。  
+
+詳細な使い方は、`ModifyChart.py` の各関数定義の下にある docstring をご参照ください。
+
 ## License
 Copyright (c) 2025 ncepst

@@ -537,7 +537,8 @@ def add_shape(chart, x_start, x_end, y_start, y_end, left=0, top=0, width=None, 
         top = plot_area.InsideTop + top
         if height is not None:
             pass
-        height = plot_area.InsideHeight + 1 
+        else:
+            height = plot_area.InsideHeight + 1 
     
     shape = ch.Shapes.AddShape(1, left, top, width, height)  # 1 = msoShapeRectangle
     # shape = ch.Shapes.AddTextbox(1, left, top, width, height)
@@ -562,4 +563,5 @@ def add_shape(chart, x_start, x_end, y_start, y_end, left=0, top=0, width=None, 
                     shape.TextFrame.HorizontalAlignment = constants.xlHAlignCenter
                     shape.TextFrame.VerticalAlignment   = constants.xlVAlignCenter
             elif  alignment == "右":
+
                     shape.TextFrame.HorizontalAlignment = constants.xlHAlignRight

@@ -121,8 +121,8 @@ def ModifyChart(chart,     # ExcelのChartオブジェクト
                 legend_right_space = 0,
                 transparent_bg:Union[bool,None] = None,
                 chart_type = None,
-                x_bold_line:Union[int,None] = None,
-                y_bold_line:Union[int,None] = None,
+                x_bold_line:Union[float,None] = None,
+                y_bold_line:Union[float,None] = None,
                 ):
 
     p = PRESET.get(preset, PRESET["std"]) or {}

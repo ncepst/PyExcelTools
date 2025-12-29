@@ -528,7 +528,7 @@ def add_shape(chart, x_start=None, x_end=None, y_start=None, y_end=None,
     6) white_boxのNone/True に関わらず、text = "1行目\n2行目" (改行\n) でテキスト文字を指定できます。
     7) テキストありで、auto_size=True の場合、left\topを基準に右下方向へ自動拡張されます。
     8) alignment ではテキスト配置を 左揃え:"left"、中央揃え:"center"、右揃え:"right" 
-                                   と 上揃え:"top", 上下中央揃え:"middle", 下揃え:"bottom を組み合わせることができます。
+                                   と 上揃え:"top", 上下中央揃え:"middle", 下揃え:"bottom を組み合わせて指定できます。
     """
     ch = chart.api[1]
     plot_area = ch.PlotArea
@@ -675,8 +675,6 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     line = ch.Shapes.AddLine(x1, y1, x2, y2)
     line.Line.ForeColor.RGB = color
     line.Line.Weight = weight
-
     if dash:
-        line.Line.DashStyle = 4
-        
+        line.Line.DashStyle = 4     
     return line

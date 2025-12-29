@@ -510,38 +510,105 @@ def ModifyChart(chart,
 
     return chart
 
-def add_shape(chart, x_start, x_end, y_start, y_end, left=0, top=0, width=None, height=None, color=RGB(255,255,255), alpha=0.8, 
-              frame=None, text=None, font_color=0, font_name="Calibri",  font_size=10, font_bold=True, alignment=None):
+# プロットエリア内に帯や注釈用のボックスを配置する
+def add_shape(chart, x_start=None, x_end=None, y_start=None, y_end=None, 
+              left=None,  width=None, top=None, height=None, delta_width=0, delta_height=0, 
+              color=RGB(0,0,255), alpha=0.8, frame=None, white_box=None,
+              text=None, font_color=RGB(0,0,0), font_name="Calibri",  font_size=10,
+              font_bold=True, alignment=None, auto_size=None,
+              right=None, bottom=None):
+    """
+    優先順位  帯の指定(x_start, x_end) > 位置の指定(left, right) の両者指定 > left or right と width 
+                     (y_start, y_end) > 位置の指定(top, bottom) の両者指定 > top or bottom と height
+    1) start, x_end, y_start, y_endをすべてNoneとすることで位置 (数値pt または "数値%") で指定可能です。
+    2) left, right, top, bottomには 負の数値、"負の数値%" を指定できます。width,heightは0より大きい値を指定してください。
+    3) left + right > width もしくは top + bottom > height では負のサイズにより、エラー発生します。
+    4) delta_width, delta_heightで Excel描画都合の微調整ができます。
+    5) white_box = True では、不透明の白背景、黒枠のテキストボックスとなります。それ以外の条件はNoneにしてください。
+    6) white_boxのNone/True に関わらず、text = "1行目\n2行目" (改行\n) でテキスト文字を指定できます。
+    7) テキストありで、auto_size=True の場合、left\topを基準に右下方向へ自動拡張されます。
+    8) alignment ではテキスト配置を 左揃え:"left"、中央揃え:"center"、右揃え:"right" 
+                                   と 上揃え:"top", 上下中央揃え:"middle", 下揃え:"bottom を組み合わせることができます。
+    """
     ch = chart.api[1]
     plot_area = ch.PlotArea
-    # X軸座標変換
-    if x_start is not None and x_end is not None:
-        x_axis = ch.Axes(constants.xlCategory)
-        x_min, x_max = x_axis.MinimumScale, x_axis.MaximumScale
-        left = plot_area.InsideLeft + (x_start - x_min) / (x_max - x_min) * plot_area.InsideWidth
-        width = (x_end - x_start) / (x_max - x_min) * plot_area.InsideWidth
-    else:
-        left = plot_area.InsideLeft + left
-        if width is not None:
-            pass
+    x_axis = ch.Axes(constants.xlCategory)
+    x_min, x_max = x_axis.MinimumScale, x_axis.MaximumScale
+    y_axis = ch.Axes(constants.xlValue)
+    y_min, y_max = y_axis.MinimumScale, y_axis.MaximumScale
+      
+    # (x_start=None, x_end=None) or (y_start=None, y_end=None) で使用する関数
+    def parse_size(value, total_size):
+        """
+        value:
+            - 数値 → px
+            - "xx%" → total_size * xx/100
+            - None → 呼び出し側で解釈
+        """
+        if isinstance(value, str) and value.endswith("%"):
+            try:
+                pct = float(value.strip("%")) / 100
+                return total_size * pct
+            except ValueError:
+                raise ValueError(f"Invalid percentage value: {value}")
         else:
-            width = plot_area.InsideWidth
-
-    # Y軸座標変換
-    if y_start is not None and y_end is not None:
-        y_axis = ch.Axes(constants.xlValue)
-        y_min, y_max = y_axis.MinimumScale, y_axis.MaximumScale
-        top = plot_area.InsideTop + (y_max - y_end) / (y_max - y_min) * plot_area.InsideHeight
-        height = (y_end - y_start) / (y_max - y_min) * plot_area.InsideHeight + 1
-    else:
-        top = plot_area.InsideTop + top
-        if height is not None:
-            pass
-        else:
-            height = plot_area.InsideHeight + 1 
+            return value
+        
+    def resolve_1d(start, end, axis_min, axis_max, left, right, width, origin, total):
+        if start is not None and end is None: end   = axis_max
+        if start is None and end is not None: start = axis_min
+        if start is not None and end is not None:
+            left = origin + (start - axis_min) / (axis_max - axis_min) * total
+            width = (end - start) / (axis_max - axis_min) * total
+        elif left is None and right is None:
+            left = origin
+            width = parse_size(width, total)
+            if width is None:
+                width = total
+        elif left is not None and right is not None:
+            left_val  = parse_size(left,  total)
+            right_val = parse_size(right, total)
+            left  = origin + left_val
+            width = total - left_val - right_val
+        elif left is not None and right is None:
+            left_val = parse_size(left, total)
+            left = origin + left_val
+            width = parse_size(width, total)
+            if width is None:
+                width = total - left_val
+        elif left is None and right is not None:
+            right_val = parse_size(right, total)
+            width = parse_size(width, total)
+            if width is None:
+                width = total - right_val
+            left = origin + total - width - right_val
+        return left, width
     
-    shape = ch.Shapes.AddShape(1, left, top, width, height)  # 1 = msoShapeRectangle
-    # shape = ch.Shapes.AddTextbox(1, left, top, width, height)
+    # X軸座標変換
+    origin = plot_area.InsideLeft
+    total  = plot_area.InsideWidth  
+    left, width = resolve_1d(x_start, x_end, x_min, x_max, left, right, width, origin, total)
+    # Excel描画の都合の微調整
+    width += delta_width
+    # Y軸座標変換
+    origin = plot_area.InsideTop
+    total  = plot_area.InsideHeight
+    top, height = resolve_1d(y_start, y_end, y_min, y_max, top, bottom, height, origin, total)
+    # Excel描画の都合の微調整
+    height += delta_height
+    
+    if width <= 0 or height <= 0:
+        raise ValueError(f"Invalid shape size: width={width}, height={height}")
+    
+    if white_box:
+        shape = ch.Shapes.AddTextbox(1, left, top, width, height)
+        color = RGB(255,255,255)
+        alpha = 0
+        frame = RGB(0,0,0)
+    else:
+        # 1 = msoShapeRectangle
+        shape = ch.Shapes.AddShape(1, left, top, width, height)
+             
     shape.Fill.ForeColor.RGB = color
     shape.Fill.Transparency = alpha
     if frame is None:
@@ -552,16 +619,64 @@ def add_shape(chart, x_start, x_end, y_start, y_end, left=0, top=0, width=None, 
         shape.Line.Weight = 0.75
     if text is not None:
         shape.TextFrame.Characters().Text = text
+        if auto_size:
+            shape.TextFrame.AutoSize = True 
         shape.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = font_color
         shape.TextFrame2.TextRange.Font.Name = font_name
         shape.TextFrame2.TextRange.Font.Size = font_size
         shape.TextFrame2.TextRange.Font.Bold = font_bold
         if alignment is not None:
-            if  alignment == "中央":
-                    shape.TextFrame.HorizontalAlignment = constants.xlHAlignCenter
-            elif  alignment == "センター":
-                    shape.TextFrame.HorizontalAlignment = constants.xlHAlignCenter
-                    shape.TextFrame.VerticalAlignment   = constants.xlVAlignCenter
-            elif  alignment == "右":
+            alignment = alignment.strip().lower()
+            if "left" in alignment:
+                shape.TextFrame.HorizontalAlignment = constants.xlHAlignLeft  
+            elif "center" in alignment:
+                shape.TextFrame.HorizontalAlignment = constants.xlHAlignCenter
+            elif "right" in alignment:
+                shape.TextFrame.HorizontalAlignment = constants.xlHAlignRight
+            if "top" in alignment:
+                shape.TextFrame.VerticalAlignment = constants.xlVAlignTop
+            elif "middle" in alignment:
+                shape.TextFrame.VerticalAlignment   = constants.xlVAlignCenter
+            elif "bottom" in alignment:
+                shape.TextFrame.VerticalAlignment = constants.xlVAlignBottom
+    return shape
+                
+def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
+    """
+    プロットエリア内に基準線を描画する
 
-                    shape.TextFrame.HorizontalAlignment = constants.xlHAlignRight
+    x : 縦線（x軸の値）
+    y : 横線（y軸の値）
+    """
+
+    if (x is None) == (y is None):
+        raise ValueError("x または y のどちらか一方だけ指定してください")
+
+    ch = chart.api[1]
+    plot = ch.PlotArea
+
+    x_axis = ch.Axes(constants.xlCategory)
+    y_axis = ch.Axes(constants.xlValue)
+
+    # --- 縦線 ---
+    if x is not None:
+        x_pos = plot.InsideLeft + (x - x_axis.MinimumScale)/(x_axis.MaximumScale - x_axis.MinimumScale)*plot.InsideWidth
+        x1 = x2 = x_pos
+        y1 = plot.InsideTop
+        y2 = plot.InsideTop + plot.InsideHeight
+
+    # --- 横線 ---
+    else:
+        y_pos = plot.InsideTop + (1 - (y - y_axis.MinimumScale)/(y_axis.MaximumScale - y_axis.MinimumScale))*plot.InsideHeight
+        y1 = y2 = y_pos
+        x1 = plot.InsideLeft
+        x2 = plot.InsideLeft + plot.InsideWidth
+
+    line = ch.Shapes.AddLine(x1, y1, x2, y2)
+    line.Line.ForeColor.RGB = color
+    line.Line.Weight = weight
+
+    if dash:
+        line.Line.DashStyle = 4
+        
+    return line

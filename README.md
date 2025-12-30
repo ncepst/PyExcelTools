@@ -49,7 +49,7 @@ PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 詳細な書式設定を簡単に保存できます。  
 関数のデフォルト引数としては、`preset="std"`が適用されます。
 
-呼び出し側で、PRESETの更新も可能で、
+呼び出し側で、PRESETの更新も可能で、  
 以下では、一時的にグリッド線の表示設定をFalseに変更しています。
 ```python
 from ScatterChart import ScatterChart, PRESET
@@ -165,6 +165,46 @@ series_list = [
 `add_line` は、引数に指定する`chart`のプロットエリア内に、線もしくは破線を追加します。  
 
 詳細な使い方は、`ModifyChart.py` の各関数定義の下にある docstring をご参照ください。
+
+### PRESET["excel2021"] 一覧
+```python
+PRESET = {
+    # "Aptos Narrow 本文"は Excel 2021以降のみ
+    "excel2021": {
+        "title_font_size":14,
+        "title_font_color":RGB(89,89,89),
+        "title_font_bold":False,
+        "title_font_name":"Aptos Narrow 本文",
+        "axis_title_font_size":10,
+        "axis_title_font_name":"Aptos Narrow 本文",
+        "axis_title_font_color":RGB(89,89,89),
+        "axis_title_font_bold":False,
+        "axis_tick_font_color": RGB(89, 89, 89),
+        "axis_tick_font_size": 9,
+        "axis_tick_font_name":"Aptos Narrow 本文", 
+        "axis_line_color":RGB(191, 191, 191),        
+        "x_major_grid": True,
+        "y_major_grid": True,
+        "x_minor_grid": False,
+        "y_minor_grid": False,
+        "major_grid_color": RGB(217, 217, 217),
+        "major_grid_weight":0.75,
+        # TickMark: None, Inside, Outside, Cross
+        "major_tickmark":constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
+        "frame_color":RGB(217,217,217),             # False:枠なし
+        "frame_weight":0.75,
+        "style":"line+marker",
+        "smooth":True,
+        "alpha":None,
+        "line_weight":1.5,
+        "marker": "C",
+        "marker_size":5,
+        "y2_major_grid":False,  # 副軸グリッド表示なし
+        "y2_minor_grid":False,
+        "y2_major_tickmark":constants.xlTickMarkNone,
+    },
+}
+```
 
 ## License
 Copyright (c) 2025 ncepst

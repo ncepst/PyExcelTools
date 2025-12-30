@@ -50,11 +50,13 @@ PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 関数のデフォルト引数としては、`preset="std"`が適用されます。
 
 呼び出し側で、PRESETの更新も可能で、  
-以下では、一時的にグリッド線の表示設定をFalseに変更しています。
+以下では、グリッド線の表示設定を一時的に False に変更しています。  
+呼び出し側での変更は その Python セッション内で有効となります。
 ```python
 from ScatterChart import ScatterChart, PRESET
 PRESET["std"]["x_major_grid"] = False
 chart = ScatterChart(....)
+PRESET["std"]["x_major_grid"] = True
 ```
 
 任意引数のうち、系列ごとの書式設定は `series_list = [{"name":"系列1"},{"name":"系列2"}, ...]`  

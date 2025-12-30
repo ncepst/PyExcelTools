@@ -2,7 +2,7 @@
 # import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
-# 型チェックはPython 3.10以降
+# 型チェックには Python 3.10 以降の機能を使用しています
 
 # 既存グラフを変更します
 # from ModifyChart import ModifyChart, RGB
@@ -70,7 +70,7 @@ marker_map = {
 # False:無効化, None: 変更なし もしくは デフォルト値
 # 優先順位 series cfg > 引数 > preset
 def ModifyChart(chart,                        # ExcelのChartオブジェクト
-                ws = None,                    # None (系列設定ごとにレンジ指定する場合のみWorksheetオブジェクトを指定)
+                ws = None,                    # None (系列ごとにレンジ指定する場合のみWorksheetオブジェクトを指定)
                 preset = "std",               # プリセットスタイル名
                 width_cm = None,              # グラフ幅(cm)
                 height_cm = None,             # グラフ高さ(cm)

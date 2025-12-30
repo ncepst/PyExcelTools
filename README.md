@@ -86,7 +86,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 title_font_size = None,       # タイトルフォントサイズ
                 title_space = +0,             # タイトルとグラフの間隔(pt)
                 NS = 1,                       # データ系列数
-                series_list:list[dict]|None = None, # 各系列の設定
+                series_list:list[dict]|None = None,  # 各系列の設定
                 style = None,                 # 線＋マーカーのスタイル
                 smooth = None,                # Trueで曲線、Falseで折れ線
                 marker = None,                # マーカー種類: "C":●, "S":■, "D":◆, "T":▲, "N":なし

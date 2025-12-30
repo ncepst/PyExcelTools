@@ -74,8 +74,8 @@ chart = ScatterChart(....)
 def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 ws = None,                    # None (系列ごとにレンジ指定する場合のみWorksheetオブジェクトを指定)
                 preset = "std",               # プリセットスタイル名
-                width_cm = None,              # グラフ幅(cm)
-                height_cm = None,             # グラフ高さ(cm)
+                width_cm = None,              # グラフ幅(cm), Noneで変更なし
+                height_cm = None,             # グラフ高さ(cm), Noneで変更なし
                 name = None,                  # グラフ名変更
                 title: str|bool|None = None,  # タイトル文字列, Falseで無効化, Noneで変更なし
                 title_font_color = None,      # タイトルフォント色(RGB)
@@ -89,20 +89,20 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 alpha = None,                 # 線の透明度(0~1)
                 x_title:str|bool|None = None, # X軸タイトル文字列。Falseで無効化、Noneで変更なし
                 x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス
-                x_min:float|str|None = None,  # X軸最小値, "auto"で自動調整
-                x_max:float|str|None = None,  # X軸最大値, "auto"で自動調整
+                x_min:float|str|None = None,  # X軸最小値, "auto"で自動調整, Noneで変更なし
+                x_max:float|str|None = None,  # X軸最大値, "auto"で自動調整, Noneで変更なし
                 x_major:float|None = None,    # X軸主目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
                 x_minor:float|None = None,    # X軸副目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
-                x_cross = None,               # Y軸との交差位置
-                x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など)
+                x_cross = None,               # Y軸との交差位置, Noneで変更なし
+                x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など), Noneで変更なし
                 x_log:bool|None = None,       # Trueで対数表示
-                y_title:str|bool|None = None, # Y軸タイトル
+                y_title:str|bool|None = None, # Y軸タイトル, Noneで変更なし
                 y_title_space = +0,           
                 y_min:float|str|None = None,  
                 y_max:float|str|None = None,  
                 y_major:float|None = None,    
                 y_minor:float|None = None,    
-                y_cross = None,                     # X軸との交差位置        
+                y_cross = None,                     # X軸との交差位置, Noneで変更なし        
                 y_format = None,              
                 y_log:bool|None = None,       
                 y2_title:str|bool|None = None,      # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
@@ -112,23 +112,26 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y2_minor:float|None = None,
                 y2_format = None,
                 y2_log:bool|None = None,       
-                frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠)
+                frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠), Noneでpreset
                 width_inc = 0,                     # プロットエリアの幅増減(pt)
                 height_inc = 0,                    # プロットエリアの高さ増減(pt)
-                legend:bool|str|None = None,       # 凡例表示(False:非表示)
+                legend:bool|str|None = None,       # 凡例表示(False:非表示, Noneで変更なし, "right"で右側に表示) 
                 legend_font_size = None,           # 凡例のフォントサイズ
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
                 legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
                 legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御
                 transparent_bg:bool|None = None,   # 背景を透明化する場合はTrue
-                chart_type = None,                 # "bar"で棒グラフ
+                chart_type = None,                 # "bar"で棒グラフに変更
                 x_bold_line:float|None = None,     # x_bold_line=0でx=0が太線
                 y_bold_line:float|None = None,     # y_bold_line=0でy=0が太線
                 ):
 ```
-型チェックには `Python 3.10 以降`の機能を使用しています。 `ModifyChart.py`のみ型チェックを使用しました。   
-
-`ScatterChart`関数の場合には、上記の引数: `NS`, `chart`の代わりに、  
+- 型チェックには `Python 3.10 以降`の機能を使用しています。 `ModifyChart.py`のみ型チェックを使用しました。   
+- smooth, alpha, line_weight, marker については、series cfg と PRESETとにも同様の項目があり、  
+優先順位としては、series cfg > 引数 > preset となります。  
+series cfg (設定なしで自動的にNone) と 引数が None で preset の設定が適用されます。
+ 
+- `ScatterChart`関数の場合には、上記の引数: `NS`, `chart`の代わりに、  
 必須引数:`start_range`, `paste_range`、 任意引数:`row` ,`col` が加わって、`ws`は必須引数に変わります。  
 戻り値はChartオブジェクトとなります。
 

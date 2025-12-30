@@ -86,7 +86,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 title_font_size = None,       # タイトルフォントサイズ
                 title_space = +0,             # タイトルとグラフの間隔(pt)
                 NS = 1,                       # データ系列数
-                series_list:list[dict]|None = None, # 各系列の設定
+                series_list:list[dict]|None = None,  # 各系列の設定
                 style = None,                 # 線＋マーカーのスタイル
                 smooth = None,                # Trueで曲線、Falseで折れ線
                 marker = None,                # マーカー種類: "C":●, "S":■, "D":◆, "T":▲, "N":なし
@@ -181,7 +181,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
     x_axis.HasMinorGridlines = p.get("x_minor_grid", False)           
     if x_minor not in (None, ""):
         x_axis.MinorUnit = x_minor        
-    if x_cross not in (None, ""):     # 交差位置(縦軸との交点)
+    if x_cross not in (None, ""):    # 交差位置(縦軸との交点)
         x_axis.CrossesAt = x_cross
     if x_format not in (None, ""): 
         x_axis.TickLabels.NumberFormatLocal = x_format
@@ -211,7 +211,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
     y_axis.HasMinorGridlines = p.get("y_minor_grid", False)
     if y_minor not in (None, ""):
         y_axis.MinorUnit = y_minor
-    if y_cross not in (None, ""):     # 交差位置(縦軸との交点)
+    if y_cross not in (None, ""):    # 交差位置(縦軸との交点)
         y_axis.CrossesAt = y_cross
     if y_format not in (None, ""): 
         y_axis.TickLabels.NumberFormatLocal = y_format

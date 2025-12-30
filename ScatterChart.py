@@ -205,7 +205,7 @@ def ScatterChart(ws,
     x_axis.HasMinorGridlines = p.get("x_minor_grid", False)           
     if x_minor not in (None, ""):
         x_axis.MinorUnit = x_minor         
-    if x_cross not in (None, ""):     # 交差位置(縦軸との交点)
+    if x_cross not in (None, ""):    # 交差位置(縦軸との交点)
         x_axis.CrossesAt = x_cross
     if x_format not in (None, ""): 
         x_axis.TickLabels.NumberFormatLocal = x_format
@@ -238,7 +238,7 @@ def ScatterChart(ws,
     y_axis.HasMinorGridlines = p.get("y_minor_grid", False)
     if y_minor not in (None, ""):
         y_axis.MinorUnit = y_minor 
-    if y_cross not in (None, ""):     # 交差位置(縦軸との交点)
+    if y_cross not in (None, ""):    # 交差位置(縦軸との交点)
         y_axis.CrossesAt = y_cross
     if y_format not in (None, ""): 
         y_axis.TickLabels.NumberFormatLocal = y_format

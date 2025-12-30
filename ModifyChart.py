@@ -178,7 +178,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
     x_axis.HasMajorGridlines = p.get("x_major_grid", True)    
     if x_major not in (None, ""):
         x_axis.MajorUnit = x_major   # 目盛間隔
-    x_axis.HasMinorGridlines = p.get("x_minor_grid",False)           
+    x_axis.HasMinorGridlines = p.get("x_minor_grid", False)           
     if x_minor not in (None, ""):
         x_axis.MinorUnit = x_minor        
     if x_cross not in (None, ""):     # 交差位置(縦軸との交点)

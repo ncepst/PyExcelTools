@@ -72,11 +72,11 @@ chart = ScatterChart(....)
 ### ModifyChart関数の引数説明
 ```python
 def ModifyChart(chart,                        # ExcelのChartオブジェクト
-                ws = None,                    # None (系列ごとにレンジ指定する場合のみWorksheetオブジェクトを指定)
+                ws = None,                    # None (系列ごとにRange指定する場合のみWorksheetオブジェクトを指定)
                 preset = "std",               # プリセットスタイル名
                 width_cm = None,              # グラフ幅(cm), Noneで変更なし
                 height_cm = None,             # グラフ高さ(cm), Noneで変更なし
-                name = None,                  # グラフ名変更
+                name = None,                  # グラフ名変更, Noneで変更なし
                 title: str|bool|None = None,  # タイトル文字列, Falseで無効化, Noneで変更なし
                 title_font_color = None,      # タイトルフォント色(RGB)
                 title_font_size = None,       # タイトルフォントサイズ
@@ -95,7 +95,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 x_minor:float|None = None,    # X軸副目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
                 x_cross = None,               # Y軸との交差位置, Noneで変更なし
                 x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など), Noneで変更なし
-                x_log:bool|None = None,       # Trueで対数表示
+                x_log:bool|None = None,       # Trueで対数表示, Noneで変更なし
                 y_title:str|bool|None = None, # Y軸タイトル, Noneで変更なし
                 y_title_space = +0,           
                 y_min:float|str|None = None,  
@@ -112,11 +112,11 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y2_minor:float|None = None,
                 y2_format = None,
                 y2_log:bool|None = None,       
-                frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠), Noneでpreset
+                frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠, Noneでpreset)
                 width_inc = 0,                     # プロットエリアの幅増減(pt)
                 height_inc = 0,                    # プロットエリアの高さ増減(pt)
                 legend:bool|str|None = None,       # 凡例表示(False:非表示, Noneで変更なし, "right"で右側に表示) 
-                legend_font_size = None,           # 凡例のフォントサイズ
+                legend_font_size = None,           # 凡例のフォントサイズ, Noneで変更なし
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
                 legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
                 legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御

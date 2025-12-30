@@ -76,11 +76,11 @@ marker_map = {
 # False:無効化, None: 変更なし もしくは デフォルト値
 # 優先順位 series cfg > 引数 > preset
 def ModifyChart(chart,                        # ExcelのChartオブジェクト
-                ws = None,                    # None (系列ごとにレンジ指定する場合のみWorksheetオブジェクトを指定)
+                ws = None,                    # None (系列ごとにRange指定する場合のみWorksheetオブジェクトを指定)
                 preset = "std",               # プリセットスタイル名
-                width_cm = None,              # グラフ幅(cm)
-                height_cm = None,             # グラフ高さ(cm)
-                name = None,                  # グラフ名変更
+                width_cm = None,              # グラフ幅(cm), Noneで変更なし
+                height_cm = None,             # グラフ高さ(cm), Noneで変更なし
+                name = None,                  # グラフ名変更, Noneで変更なし
                 title: str|bool|None = None,  # タイトル文字列, Falseで無効化, Noneで変更なし
                 title_font_color = None,      # タイトルフォント色(RGB)
                 title_font_size = None,       # タイトルフォントサイズ
@@ -93,20 +93,20 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 alpha = None,                 # 線の透明度(0~1)
                 x_title:str|bool|None = None, # X軸タイトル文字列。Falseで無効化、Noneで変更なし
                 x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス
-                x_min:float|str|None = None,  # X軸最小値, "auto"で自動調整
-                x_max:float|str|None = None,  # X軸最大値, "auto"で自動調整
+                x_min:float|str|None = None,  # X軸最小値, "auto"で自動調整, Noneで変更なし
+                x_max:float|str|None = None,  # X軸最大値, "auto"で自動調整, Noneで変更なし
                 x_major:float|None = None,    # X軸主目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
                 x_minor:float|None = None,    # X軸副目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
-                x_cross = None,               # Y軸との交差位置
-                x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など)
-                x_log:bool|None = None,       # Trueで対数表示
-                y_title:str|bool|None = None, # Y軸タイトル
+                x_cross = None,               # Y軸との交差位置, Noneで変更なし
+                x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など), Noneで変更なし
+                x_log:bool|None = None,       # Trueで対数表示, Noneで変更なし
+                y_title:str|bool|None = None, # Y軸タイトル, Noneで変更なし
                 y_title_space = +0,           
                 y_min:float|str|None = None,  
                 y_max:float|str|None = None,  
                 y_major:float|None = None,    
                 y_minor:float|None = None,    
-                y_cross = None,                     # X軸との交差位置        
+                y_cross = None,                     # X軸との交差位置, Noneで変更なし        
                 y_format = None,              
                 y_log:bool|None = None,       
                 y2_title:str|bool|None = None,      # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
@@ -116,16 +116,16 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y2_minor:float|None = None,
                 y2_format = None,
                 y2_log:bool|None = None,       
-                frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠)
+                frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠, Noneでpreset)
                 width_inc = 0,                     # プロットエリアの幅増減(pt)
                 height_inc = 0,                    # プロットエリアの高さ増減(pt)
-                legend:bool|str|None = None,       # 凡例表示(False:非表示)
-                legend_font_size = None,           # 凡例のフォントサイズ
+                legend:bool|str|None = None,       # 凡例表示(False:非表示, Noneで変更なし, "right"で右側に表示) 
+                legend_font_size = None,           # 凡例のフォントサイズ, Noneで変更なし
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
                 legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
                 legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御
                 transparent_bg:bool|None = None,   # 背景を透明化する場合はTrue
-                chart_type = None,                 # "bar"で棒グラフ
+                chart_type = None,                 # "bar"で棒グラフに変更
                 x_bold_line:float|None = None,     # x_bold_line=0でx=0が太線
                 y_bold_line:float|None = None,     # y_bold_line=0でy=0が太線
                 ):

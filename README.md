@@ -49,6 +49,14 @@ PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 詳細な書式設定を簡単に保存できます。  
 関数のデフォルト引数としては、`preset="std"`が適用されます。
 
+呼び出し側で、PRESETの更新も可能で、
+以下では、一時的にグリッド線の表示設定をFalseに変更しています。
+```python
+from ScatterChart import ScatterChart, PRESET
+PRESET["std"]["x_major_grid"] = False
+chart = ScatterChart(....)
+```
+
 任意引数のうち、系列ごとの書式設定は `series_list = [{"name":"系列1"},{"name":"系列2"}, ...]`  
 で指定します。各系列は **dict形式** で定義し、複数系列の場合はリストとしてまとめます。
 
@@ -83,8 +91,8 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス
                 x_min:float|str|None = None,  # X軸最小値, "auto"で自動調整
                 x_max:float|str|None = None,  # X軸最大値, "auto"で自動調整
-                x_major:float|bool|None = None,    # X軸主目盛間隔, Noneで変更なし, boolはPRESETで決定
-                x_minor:float|bool|None = None,    # X軸副目盛間隔, Noneで変更なし, boolはPRESETで決定
+                x_major:float|None = None,    # X軸主目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
+                x_minor:float|None = None,    # X軸副目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
                 x_cross = None,               # Y軸との交差位置
                 x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など)
                 x_log:bool|None = None,       # Trueで対数表示
@@ -92,16 +100,16 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y_title_space = +0,           
                 y_min:float|str|None = None,  
                 y_max:float|str|None = None,  
-                y_major:float|bool|None = None,    
-                y_minor:float|bool|None = None,    
+                y_major:float|None = None,    
+                y_minor:float|None = None,    
                 y_cross = None,                     # X軸との交差位置        
                 y_format = None,              
                 y_log:bool|None = None,       
                 y2_title:str|bool|None = None,      # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
                 y2_min:float|str|None = None,
                 y2_max:float|str|None = None,
-                y2_major:float|bool|None = False,   # 副軸グリッド表示:False (PRESET定義なし)
-                y2_minor:float|bool|None = None,
+                y2_major:float|None = None,
+                y2_minor:float|None = None,
                 y2_format = None,
                 y2_log:bool|None = None,       
                 frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠)
@@ -111,19 +119,18 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 legend_font_size = None,           # 凡例のフォントサイズ
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
                 legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
-                legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御(左右)
+                legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御
                 transparent_bg:bool|None = None,   # 背景を透明化する場合はTrue
                 chart_type = None,                 # "bar"で棒グラフ
                 x_bold_line:float|None = None,     # x_bold_line=0でx=0が太線
                 y_bold_line:float|None = None,     # y_bold_line=0でy=0が太線
                 ):
 ```
-型チェックには Python 3.10 以降の機能を使用しています  
+型チェックには `Python 3.10 以降`の機能を使用しています。 `ModifyChart.py`のみ型チェックを使用しました。   
 
 `ScatterChart`関数の場合には、上記の引数: `NS`, `chart`の代わりに、  
-必須引数:`start_range`, `paste_range`, 任意引数:`row` ,`col` が加わって、`ws`は必須引数となります。  
+必須引数:`start_range`, `paste_range`、 任意引数:`row` ,`col` が加わって、`ws`は必須引数に変わります。  
 戻り値はChartオブジェクトとなります。
-
 
 
 ### series_listで指定可能なkeyとそのデフォルト値

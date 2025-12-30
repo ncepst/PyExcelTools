@@ -36,7 +36,10 @@ PRESET = {
         "axis_tick_font_size": 9,
         "axis_tick_font_name":"Aptos Narrow 本文", 
         "axis_line_color":RGB(191, 191, 191),        
-        "major_grid": True,
+        "x_major_grid": True,
+        "y_major_grid": True,
+        "x_minor_grid": False,
+        "y_minor_grid": False,
         "major_grid_color": RGB(217, 217, 217),
         "major_grid_weight":0.75,
         # TickMark: None, Inside, Outside, Cross
@@ -49,6 +52,9 @@ PRESET = {
         "line_weight":1.5,
         "marker": "C",
         "marker_size":5,
+        "y2_major_grid":False,  # 副軸グリッド表示なし
+        "y2_minor_grid":False,
+        "y2_major_tickmark":constants.xlTickMarkNone,
     },
     "std": {
         "axis_title_font_color":RGB(0,0,0), 
@@ -111,7 +117,6 @@ def ScatterChart(ws,
                  y2_minor = None,
                  y2_format = None,
                  y2_log = None,
-                 y2_grid = False,     # 副軸はグリッドなし:False
                  frame_color = None,  # 枠なし:False, 黒枠:0
                  width_inc = 0,
                  height_inc = 0,
@@ -186,19 +191,20 @@ def ScatterChart(ws,
 
     # 横軸のオプション
     x_axis = ch.Axes(AxisType.xlCategory)
-    if x_min == "auto":               #最小値
+    if x_min == "auto":              
         x_axis.MinimumScaleIsAuto = True
     elif x_min not in (None, ""):
-        x_axis.MinimumScale = x_min
-    if x_max == "auto":               #最大値
+        x_axis.MinimumScale = x_min  # 最小値
+    if x_max == "auto":               
         x_axis.MaximumScaleIsAuto = True
     elif x_max not in (None, ""):
-        x_axis.MaximumScale = x_max
-    if x_major not in (None, ""):     # 目盛間隔
-        x_axis.MajorUnit = x_major
-    if x_minor not in (None, "", False):     
-        x_axis.HasMinorGridlines = True
-        x_axis.MinorUnit = x_minor        
+        x_axis.MaximumScale = x_max  # 最大値
+    x_axis.HasMajorGridlines = p.get("x_major_grid", True)
+    if x_major not in (None, ""):     
+        x_axis.MajorUnit = x_major   # 目盛間隔
+    x_axis.HasMinorGridlines = p.get("x_minor_grid",False)           
+    if x_minor not in (None, ""):
+        x_axis.MinorUnit = x_minor         
     if x_cross not in (None, ""):     # 交差位置(縦軸との交点)
         x_axis.CrossesAt = x_cross
     if x_format not in (None, ""): 
@@ -218,19 +224,20 @@ def ScatterChart(ws,
 
     # 縦軸のオプション
     y_axis = ch.Axes(AxisType.xlValue)
-    if y_min == "auto":               #最小値
+    if y_min == "auto":               
         y_axis.MinimumScaleIsAuto = True
     elif y_min not in (None, ""):
         y_axis.MinimumScale = y_min
-    if y_max == "auto":               #最大値
+    if y_max == "auto":               
         y_axis.MaximumScaleIsAuto = True
     elif y_max not in (None, ""):
         y_axis.MaximumScale = y_max
-    if y_major not in (None, ""):     # 目盛間隔
-        y_axis.MajorUnit = y_major
-    if y_minor not in (None, "", False):     
-        y_axis.HasMinorGridlines = True
-        y_axis.MinorUnit = y_minor      
+    y_axis.HasMajorGridlines = p.get("y_major_grid", True)
+    if y_major not in (None, ""):
+        y_axis.MajorUnit = y_major   # 目盛間隔
+    y_axis.HasMinorGridlines = p.get("y_minor_grid", False)
+    if y_minor not in (None, ""):
+        y_axis.MinorUnit = y_minor 
     if y_cross not in (None, ""):     # 交差位置(縦軸との交点)
         y_axis.CrossesAt = y_cross
     if y_format not in (None, ""): 
@@ -416,13 +423,11 @@ def ScatterChart(ws,
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = p.get("title_font_size", 14)
         
         # グリッド線の設定（デフォルト: 薄いグレー)
-        x_axis.HasMajorGridlines = p.get("major_grid", True)
         if x_axis.HasMajorGridlines:
             x_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
             x_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
         x_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
         x_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
-        y_axis.HasMajorGridlines = p.get("major_grid", True)
         if y_axis.HasMajorGridlines:
             y_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
             y_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
@@ -434,16 +439,21 @@ def ScatterChart(ws,
         if use_secondary:
             y2 = ch.Axes(AxisType.xlValue, constants.xlSecondary)
             axes.append(y2)
-            y2.HasMajorGridlines = bool(y2_grid) or False
-            if y2_min not in (None, ""):
+            if y2_min == "auto":                
+                y2.MinimumScaleIsAuto = True
+            elif y2_min not in (None, ""):
                 y2.MinimumScale = y2_min
-            if y2_max not in (None, ""):
+            if y2_max == "auto":                
+                y2.MaximumScaleIsAuto = True
+            elif y2_max not in (None, ""):
                 y2.MaximumScale = y2_max
-            if y2_major not in (None, ""):
+            y2.HasMajorGridlines = p.get("y2_major_grid",False)
+            y2.MajorTickMark = p.get("y2_major_tickmark", constants.xlTickMarkNone)
+            if y2_major not in (None, ""):    
                 y2.MajorUnit = y2_major
-            if y2_minor not in (None, "", False):   
-                y2.HasMinorGridlines = True
-                y2.MinorUnit = y2_minor   
+            y2.HasMinorGridlines = p.get("y2_minor_grid",False) 
+            if y2_minor not in (None, ""):
+                y2.MinorUnit = y2_minor  
             if y2_format not in (None, ""):
                 y2.TickLabels.NumberFormatLocal = y2_format
             if y2_log not in (None, ""):

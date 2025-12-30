@@ -37,7 +37,10 @@ PRESET = {
         "axis_tick_font_size": 9,
         "axis_tick_font_name":"Aptos Narrow 本文", 
         "axis_line_color":RGB(191, 191, 191),        
-        "major_grid": True,
+        "x_major_grid": True,
+        "y_major_grid": True,
+        "x_minor_grid": False,
+        "y_minor_grid": False,
         "major_grid_color": RGB(217, 217, 217),
         "major_grid_weight":0.75,
         # TickMark: None, Inside, Outside, Cross
@@ -50,6 +53,9 @@ PRESET = {
         "line_weight":1.5,
         "marker": "C",
         "marker_size":5,
+        "y2_major_grid":False,  # 副軸グリッド表示なし
+        "y2_minor_grid":False,
+        "y2_major_tickmark":constants.xlTickMarkNone,
     },
     "std": {
         "axis_title_font_color":RGB(0,0,0), 
@@ -89,8 +95,8 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス
                 x_min:float|str|None = None,  # X軸最小値, "auto"で自動調整
                 x_max:float|str|None = None,  # X軸最大値, "auto"で自動調整
-                x_major:float|bool|None = None,    # X軸主目盛間隔, Falseで無効化, Noneで変更なし
-                x_minor:float|bool|None = None,    # X軸副目盛間隔, Falseで無効化, Noneで変更なし
+                x_major:float|None = None,    # X軸主目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
+                x_minor:float|None = None,    # X軸副目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
                 x_cross = None,               # Y軸との交差位置
                 x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など)
                 x_log:bool|None = None,       # Trueで対数表示
@@ -98,16 +104,16 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y_title_space = +0,           
                 y_min:float|str|None = None,  
                 y_max:float|str|None = None,  
-                y_major:float|bool|None = None,    
-                y_minor:float|bool|None = None,    
+                y_major:float|None = None,    
+                y_minor:float|None = None,    
                 y_cross = None,                     # X軸との交差位置        
                 y_format = None,              
                 y_log:bool|None = None,       
                 y2_title:str|bool|None = None,      # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
                 y2_min:float|str|None = None,
                 y2_max:float|str|None = None,
-                y2_major:float|bool|None = False,   # 副軸グリッド表示:False
-                y2_minor:float|bool|None = None,
+                y2_major:float|None = None,
+                y2_minor:float|None = None,
                 y2_format = None,
                 y2_log:bool|None = None,       
                 frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠)
@@ -161,26 +167,20 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
 
     # 横軸のオプション
     x_axis = ch.Axes(AxisType.xlCategory)
-    if x_min == "auto":               #最小値
+    if x_min == "auto":              
         x_axis.MinimumScaleIsAuto = True
     elif x_min not in (None, ""):
-        x_axis.MinimumScale = x_min
-    if x_max == "auto":               #最大値
+        x_axis.MinimumScale = x_min  # 最小値
+    if x_max == "auto":               
         x_axis.MaximumScaleIsAuto = True
     elif x_max not in (None, ""):
-        x_axis.MaximumScale = x_max
-    if x_major not in (None, ""):     # 目盛間隔
-        if x_major is False:
-            x_axis.HasMajorGridlines = False
-        else:
-            x_axis.HasMajorGridlines = True
-            x_axis.MajorUnit = x_major
+        x_axis.MaximumScale = x_max  # 最大値
+    x_axis.HasMajorGridlines = p.get("x_major_grid", True)    
+    if x_major not in (None, ""):
+        x_axis.MajorUnit = x_major   # 目盛間隔
+    x_axis.HasMinorGridlines = p.get("x_minor_grid",False)           
     if x_minor not in (None, ""):
-        if x_minor is False:
-            x_axis.HasMinorGridlines = False
-        else:
-            x_axis.HasMinorGridlines = True
-            x_axis.MinorUnit = x_minor        
+        x_axis.MinorUnit = x_minor        
     if x_cross not in (None, ""):     # 交差位置(縦軸との交点)
         x_axis.CrossesAt = x_cross
     if x_format not in (None, ""): 
@@ -197,26 +197,20 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
 
     # 縦軸のオプション
     y_axis = ch.Axes(AxisType.xlValue)
-    if y_min == "auto":               #最小値
+    if y_min == "auto":               
         y_axis.MinimumScaleIsAuto = True
     elif y_min not in (None, ""):
         y_axis.MinimumScale = y_min
-    if y_max == "auto":               #最大値
+    if y_max == "auto":               
         y_axis.MaximumScaleIsAuto = True
     elif y_max not in (None, ""):
         y_axis.MaximumScale = y_max
-    if y_major not in (None, ""):     # 目盛間隔
-        if y_major is False:
-            y_axis.HasMajorGridlines = False
-        else:
-            y_axis.HasMajorGridlines = True
-            y_axis.MajorUnit = y_major
+    y_axis.HasMajorGridlines = p.get("y_major_grid", True)    
+    if y_major not in (None, ""):
+        y_axis.MajorUnit = y_major   # 目盛間隔
+    y_axis.HasMinorGridlines = p.get("y_minor_grid", False)
     if y_minor not in (None, ""):
-        if y_minor is False:
-            y_axis.HasMinorGridlines = False
-        else:
-            y_axis.HasMinorGridlines = True
-            y_axis.MinorUnit = y_minor     
+        y_axis.MinorUnit = y_minor
     if y_cross not in (None, ""):     # 交差位置(縦軸との交点)
         y_axis.CrossesAt = y_cross
     if y_format not in (None, ""): 
@@ -395,13 +389,11 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             else:
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = p.get("title_font_size", 14)
         # グリッド線の設定（デフォルト: 薄いグレー)
-        x_axis.HasMajorGridlines = p.get("major_grid", True)
         if x_axis.HasMajorGridlines:
             x_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
             x_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
         x_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
         x_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
-        y_axis.HasMajorGridlines = p.get("major_grid", True)
         if y_axis.HasMajorGridlines:
             y_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
             y_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
@@ -421,18 +413,13 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y2.MaximumScaleIsAuto = True
             elif y2_max not in (None, ""):
                 y2.MaximumScale = y2_max
-            if y2_major not in (None, ""):
-                if y2_major is False:
-                    y2.HasMajorGridlines = False
-                else:
-                    y2.HasMajorGridlines = True
-                    y2.MajorUnit = y2_major
+            y2.HasMajorGridlines = p.get("y2_major_grid",False)
+            y2.MajorTickMark = p.get("y2_major_tickmark", constants.xlTickMarkNone)
+            if y2_major not in (None, ""):    
+                y2.MajorUnit = y2_major
+            y2.HasMinorGridlines = p.get("y2_minor_grid",False) 
             if y2_minor not in (None, ""):
-                if y2_minor is False:
-                    y2.HasMinorGridlines = False
-                else:
-                    y2.HasMinorGridlines = True
-                    y2.MinorUnit = y2_minor   
+                y2.MinorUnit = y2_minor
             if y2_format not in (None, ""):
                 y2.TickLabels.NumberFormatLocal = y2_format
             if y2_log not in (None, ""):
@@ -702,4 +689,3 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     if dash:
         line.Line.DashStyle = 4       
     return line
-

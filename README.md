@@ -83,8 +83,8 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス
                 x_min:float|str|None = None,  # X軸最小値, "auto"で自動調整
                 x_max:float|str|None = None,  # X軸最大値, "auto"で自動調整
-                x_major:float|bool|None = None,    # X軸主目盛間隔, Falseで無効化, Noneで変更なし
-                x_minor:float|bool|None = None,    # X軸副目盛間隔, Falseで無効化, Noneで変更なし
+                x_major:float|bool|None = None,    # X軸主目盛間隔, Noneで変更なし, boolはPRESETで決定
+                x_minor:float|bool|None = None,    # X軸副目盛間隔, Noneで変更なし, boolはPRESETで決定
                 x_cross = None,               # Y軸との交差位置
                 x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など)
                 x_log:bool|None = None,       # Trueで対数表示
@@ -100,7 +100,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y2_title:str|bool|None = None,      # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
                 y2_min:float|str|None = None,
                 y2_max:float|str|None = None,
-                y2_major:float|bool|None = False,   # 副軸グリッド表示:False
+                y2_major:float|bool|None = False,   # 副軸グリッド表示:False (PRESET定義なし)
                 y2_minor:float|bool|None = None,
                 y2_format = None,
                 y2_log:bool|None = None,       

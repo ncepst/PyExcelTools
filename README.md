@@ -1,7 +1,7 @@
 ## 概要
 
 **Pythonで技術資料向けのエクセルグラフの体裁を素早く整える**ことを目的としています。  
-対象環境は Windows + Excel （Excel 2021 以降推奨）となります。 
+対象環境は Windows + Excel （Excel 2021 以降推奨）+ Python 3.10 以降 となります。 
 
 参考記事とサンプルコード
 
@@ -33,7 +33,7 @@ Pythonスクリプトは Excelマクロから実行することもでき、マ�
 グラフの書式設定の項目は関数の引数としてリスト化されています。  
 `ScatterChart.py`は必須引数が`ws, start_range, paste_range`の3つ、  
 `ModifyChart.py`は必須引数が`chart`の1つのみで、  
-残りの53個の任意引数により、設定項目を指定します。
+残りの52個の任意引数により、設定項目を指定します。
 
 また、`PRESET`は **dict形式** で関数外に定義されており、  
 外側の辞書のキー`"excel2021"`に、Excel 2021 の散布図の書式設定が格納されています。  
@@ -59,7 +59,72 @@ PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 
 一方、`ScatterChart.py`では、`row` と `col` の値から`NS`が自動計算されます。  
 `row` や `col` が `None` の場合は、`start_range`の入力値から`.end('down').row` 等を使って自動取得されます。   
-`paste_range`ではグラフを貼り付ける左上の座標として、どのセルの左上を基準にするのかを指定します。  
+`paste_range`ではグラフを貼り付ける左上の座標として、どのセルの左上を基準にするのかを指定します。
+
+### ModifyChart関数の引数説明
+```python
+def ModifyChart(chart,                        # ExcelのChartオブジェクト
+                ws = None,                    # None (系列ごとにレンジ指定する場合のみWorksheetオブジェクトを指定)
+                preset = "std",               # プリセットスタイル名
+                width_cm = None,              # グラフ幅(cm)
+                height_cm = None,             # グラフ高さ(cm)
+                name = None,                  # グラフ名変更
+                title: str|bool|None = None,  # タイトル文字列, Falseで無効化, Noneで変更なし
+                title_font_color = None,      # タイトルフォント色(RGB)
+                title_font_size = None,       # タイトルフォントサイズ
+                title_space = +0,             # タイトルとグラフの間隔(pt)
+                NS = 1,                       # データ系列数
+                series_list:list[dict]|None = None, # 各系列の設定
+                style = None,                 # 線＋マーカーのスタイル
+                smooth = None,                # Trueで曲線、Falseで折れ線
+                marker = None,                # マーカー種類: "C":●, "S":■, "D":◆, "T":▲, "N":なし
+                alpha = None,                 # 線の透明度(0~1)
+                x_title:str|bool|None = None, # X軸タイトル文字列。Falseで無効化、Noneで変更なし
+                x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス
+                x_min:float|str|None = None,  # X軸最小値, "auto"で自動調整
+                x_max:float|str|None = None,  # X軸最大値, "auto"で自動調整
+                x_major:float|bool|None = None,    # X軸主目盛間隔, Falseで無効化, Noneで変更なし
+                x_minor:float|bool|None = None,    # X軸副目盛間隔, Falseで無効化, Noneで変更なし
+                x_cross = None,               # Y軸との交差位置
+                x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など)
+                x_log:bool|None = None,       # Trueで対数表示
+                y_title:str|bool|None = None, # Y軸タイトル
+                y_title_space = +0,           
+                y_min:float|str|None = None,  
+                y_max:float|str|None = None,  
+                y_major:float|bool|None = None,    
+                y_minor:float|bool|None = None,    
+                y_cross = None,                     # X軸との交差位置        
+                y_format = None,              
+                y_log:bool|None = None,       
+                y2_title:str|bool|None = None,      # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
+                y2_min:float|str|None = None,
+                y2_max:float|str|None = None,
+                y2_major:float|bool|None = False,   # 副軸グリッド表示:False
+                y2_minor:float|bool|None = None,
+                y2_format = None,
+                y2_log:bool|None = None,       
+                frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠)
+                width_inc = 0,                     # プロットエリアの幅増減(pt)
+                height_inc = 0,                    # プロットエリアの高さ増減(pt)
+                legend:bool|str|None = None,       # 凡例表示(False:非表示)
+                legend_font_size = None,           # 凡例のフォントサイズ
+                legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
+                legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
+                legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御(左右)
+                transparent_bg:bool|None = None,   # 背景を透明化する場合はTrue
+                chart_type = None,                 # "bar"で棒グラフ
+                x_bold_line:float|None = None,     # x_bold_line=0でx=0が太線
+                y_bold_line:float|None = None,     # y_bold_line=0でy=0が太線
+                ):
+```
+型チェックには Python 3.10 以降の機能を使用しています  
+
+`ScatterChart`関数の場合には、上記の引数: `NS`, `chart`の代わりに、  
+必須引数:`start_range`, `paste_range`, 任意引数:`row` ,`col` が加わって、`ws`は必須引数となります。  
+戻り値はChartオブジェクトとなります。
+
+
 
 ### series_listで指定可能なkeyとそのデフォルト値
 以下から任意のkeyのみ設定可能です。

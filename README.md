@@ -127,7 +127,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 ):
 ```
 - 型チェックには `Python 3.10 以降`の機能を使用しています。 `ModifyChart.py`のみ型チェックを使用しました。   
-- smooth, alpha, line_weight, marker については、series cfg と PRESETとにも同様の項目があり、  
+- smooth, alpha, line_weight, marker については、series cfg と PRESET にも同様の項目があり、  
 優先順位としては、series cfg > 引数 > preset となります。  
 series cfg (設定なしで自動的にNone) と 引数が None で preset の設定が適用されます。
  

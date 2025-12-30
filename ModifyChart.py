@@ -117,7 +117,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 legend_font_size = None,           # 凡例のフォントサイズ
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
                 legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
-                legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御(左右)
+                legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御
                 transparent_bg:bool|None = None,   # 背景を透明化する場合はTrue
                 chart_type = None,                 # "bar"で棒グラフ
                 x_bold_line:float|None = None,     # x_bold_line=0でx=0が太線
@@ -702,3 +702,4 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     if dash:
         line.Line.DashStyle = 4       
     return line
+

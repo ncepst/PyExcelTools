@@ -2,7 +2,7 @@
 # import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
-from typing import Union, List, Dict
+# 型チェックはPython 3.10以降
 
 # 既存グラフを変更します
 # from ModifyChart import ModifyChart, RGB
@@ -69,60 +69,59 @@ marker_map = {
 
 # False:無効化, None: 変更なし もしくは デフォルト値
 # 優先順位 series cfg > 引数 > preset
-def ModifyChart(chart,     # ExcelのChartオブジェクト
-                ws = None, # Worksheetオブジェクト、またはNone
-                preset = "std",
-                width_cm = None,
-                height_cm = None,
-                name = None,
-                title:Union[str,bool,None] = None,  # 無効化:False
-                title_font_color = None,
-                title_font_size = None,
-                title_space = +0,
-                NS = 1,
-                series_list:Union[List[Dict],None] = None,
-                style = None,
-                smooth = None,
-                marker = None,
-                alpha = None,
-                x_title:Union[str,bool,None] = None,  # 無効化:False
-                x_title_space = +0,                   # 下に広げる場合はマイナス
-                x_min:Union[float,str,None] = None,
-                x_max:Union[float,str,None] = None,
-                x_major:Union[float,None] = None,
-                x_minor:Union[float,None] = None,
-                x_cross = None,
-                x_format = None,
-                x_log:Union[bool,None] = None,
-                y_title:Union[str,bool,None] = None, # 無効化:False
-                y_title_space = +0,
-                y_min:Union[float,str,None] = None,
-                y_max:Union[float,str,None] = None,
-                y_major:Union[float,None] = None,
-                y_minor:Union[float,None] = None,
-                y_cross = None,
-                y_format = None,
-                y_log:Union[bool,None] = None,
-                y2_title:Union[str,bool,None] = None,
-                y2_min:Union[float,None] = None,
-                y2_max:Union[float,None] = None,
-                y2_major:Union[float,None] = None,
-                y2_minor:Union[float,None] = None,
+def ModifyChart(chart,                        # ExcelのChartオブジェクト
+                ws = None,                    # None (系列設定ごとにレンジ指定する場合のみWorksheetオブジェクトを指定)
+                preset = "std",               # プリセットスタイル名
+                width_cm = None,              # グラフ幅(cm)
+                height_cm = None,             # グラフ高さ(cm)
+                name = None,                  # グラフ名変更
+                title: str|bool|None = None,  # タイトル文字列, Falseで無効化, Noneで変更なし
+                title_font_color = None,      # タイトルフォント色(RGB)
+                title_font_size = None,       # タイトルフォントサイズ
+                title_space = +0,             # タイトルとグラフの間隔(pt)
+                NS = 1,                       # データ系列数
+                series_list:list[dict]|None = None, # 各系列の設定
+                style = None,                 # 線＋マーカーのスタイル
+                smooth = None,                # Trueで曲線、Falseで折れ線
+                marker = None,                # マーカー種類("C","S","D","T","N")
+                alpha = None,                 # 線の透明度(0~1)
+                x_title:str|bool|None = None, # X軸タイトル文字列。Falseで無効化、Noneで変更なし
+                x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス
+                x_min:float|str|None = None,  # X軸最小値, "auto"で自動調整
+                x_max:float|str|None = None,  # X軸最大値, "auto"で自動調整
+                x_major:float|bool|None = None,    # X軸主目盛間隔, Falseで無効化, Noneで変更なし
+                x_minor:float|bool|None = None,    # X軸副目盛間隔, Falseで無効化, Noneで変更なし
+                x_cross = None,               # Y軸との交差位置
+                x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など)
+                x_log:bool|None = None,       # Trueで対数表示
+                y_title:str|bool|None = None, # Y軸タイトル
+                y_title_space = +0,           
+                y_min:float|str|None = None,  
+                y_max:float|str|None = None,  
+                y_major:float|bool|None = None,    
+                y_minor:float|bool|None = None,    
+                y_cross = None,                     # X軸との交差位置        
+                y_format = None,              
+                y_log:bool|None = None,       
+                y2_title:str|bool|None = None,      # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
+                y2_min:float|str|None = None,
+                y2_max:float|str|None = None,
+                y2_major:float|bool|None = False,   # 副軸グリッド表示:False
+                y2_minor:float|bool|None = None,
                 y2_format = None,
-                y2_log:Union[bool,None] = None,
-                y2_grid:Union[bool,None] = False,         # 副軸はグリッドなし:False
-                frame_color:Union[bool,int,None] = None,  # 枠なし:False, 黒枠:0
-                width_inc = 0,
-                height_inc = 0,
-                legend:Union[bool,str,None] = None,       # 無効化:False
-                legend_font_size = None,
-                legend_width_inc = 0,
-                legend_height_inc = 0,
-                legend_right_space = 0,
-                transparent_bg:Union[bool,None] = None,
-                chart_type = None,
-                x_bold_line:Union[float,None] = None,
-                y_bold_line:Union[float,None] = None,
+                y2_log:bool|None = None,       
+                frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠)
+                width_inc = 0,                     # プロットエリアの幅増減(pt)
+                height_inc = 0,                    # プロットエリアの高さ増減(pt)
+                legend:bool|str|None = None,       # 凡例表示(False:非表示)
+                legend_font_size = None,           # 凡例のフォントサイズ
+                legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
+                legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
+                legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御(左右)
+                transparent_bg:bool|None = None,   # 背景を透明化する場合はTrue
+                chart_type = None,                 # "bar"で棒グラフ
+                x_bold_line:float|None = None,     # x_bold_line=0でx=0が太線
+                y_bold_line:float|None = None,     # y_bold_line=0でy=0が太線
                 ):
 
     p = PRESET.get(preset, PRESET["std"]) or {}
@@ -171,10 +170,17 @@ def ModifyChart(chart,     # ExcelのChartオブジェクト
     elif x_max not in (None, ""):
         x_axis.MaximumScale = x_max
     if x_major not in (None, ""):     # 目盛間隔
-        x_axis.MajorUnit = x_major
-    if x_minor not in (None, ""):     
-        x_axis.HasMinorGridlines = True
-        x_axis.MinorUnit = x_minor        
+        if x_major is False:
+            x_axis.HasMajorGridlines = False
+        else:
+            x_axis.HasMajorGridlines = True
+            x_axis.MajorUnit = x_major
+    if x_minor not in (None, ""):
+        if x_minor is False:
+            x_axis.HasMinorGridlines = False
+        else:
+            x_axis.HasMinorGridlines = True
+            x_axis.MinorUnit = x_minor        
     if x_cross not in (None, ""):     # 交差位置(縦軸との交点)
         x_axis.CrossesAt = x_cross
     if x_format not in (None, ""): 
@@ -200,10 +206,17 @@ def ModifyChart(chart,     # ExcelのChartオブジェクト
     elif y_max not in (None, ""):
         y_axis.MaximumScale = y_max
     if y_major not in (None, ""):     # 目盛間隔
-        y_axis.MajorUnit = y_major
-    if y_minor not in (None, ""):     
-        y_axis.HasMinorGridlines = True
-        y_axis.MinorUnit = y_minor      
+        if y_major is False:
+            y_axis.HasMajorGridlines = False
+        else:
+            y_axis.HasMajorGridlines = True
+            y_axis.MajorUnit = y_major
+    if y_minor not in (None, ""):
+        if y_minor is False:
+            y_axis.HasMinorGridlines = False
+        else:
+            y_axis.HasMinorGridlines = True
+            y_axis.MinorUnit = y_minor     
     if y_cross not in (None, ""):     # 交差位置(縦軸との交点)
         y_axis.CrossesAt = y_cross
     if y_format not in (None, ""): 
@@ -400,16 +413,26 @@ def ModifyChart(chart,     # ExcelのChartオブジェクト
         if use_secondary:
             y2 = ch.Axes(AxisType.xlValue, constants.xlSecondary)
             axes.append(y2)
-            y2.HasMajorGridlines = bool(y2_grid) or False
-            if y2_min not in (None, ""):
+            if y2_min == "auto":                
+                y2.MinimumScaleIsAuto = True
+            elif y2_min not in (None, ""):
                 y2.MinimumScale = y2_min
-            if y2_max not in (None, ""):
+            if y2_max == "auto":                
+                y2.MaximumScaleIsAuto = True
+            elif y2_max not in (None, ""):
                 y2.MaximumScale = y2_max
             if y2_major not in (None, ""):
-                y2.MajorUnit = y2_major
-            if y2_minor not in (None, ""):     
-                y2.HasMinorGridlines = True
-                y2.MinorUnit = y2_minor   
+                if y2_major is False:
+                    y2.HasMajorGridlines = False
+                else:
+                    y2.HasMajorGridlines = True
+                    y2.MajorUnit = y2_major
+            if y2_minor not in (None, ""):
+                if y2_minor is False:
+                    y2.HasMinorGridlines = False
+                else:
+                    y2.HasMinorGridlines = True
+                    y2.MinorUnit = y2_minor   
             if y2_format not in (None, ""):
                 y2.TickLabels.NumberFormatLocal = y2_format
             if y2_log not in (None, ""):

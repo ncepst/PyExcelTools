@@ -89,7 +89,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 series_list:list[dict]|None = None, # 各系列の設定
                 style = None,                 # 線＋マーカーのスタイル
                 smooth = None,                # Trueで曲線、Falseで折れ線
-                marker = None,                # マーカー種類("C","S","D","T","N")
+                marker = None,                # マーカー種類: "C":●, "S":■, "D":◆, "T":▲, "N":なし
                 alpha = None,                 # 線の透明度(0~1)
                 x_title:str|bool|None = None, # X軸タイトル文字列。Falseで無効化、Noneで変更なし
                 x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス

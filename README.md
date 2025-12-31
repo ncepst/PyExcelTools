@@ -12,7 +12,7 @@ openpyxl や xlwings を用いることで、Python から Excel グラフを作
 matplotlibで作成できる画像形式のグラフの書式設定や、VBAを用いた Excel グラフ操作に関する情報は比較的多く見られますが、  
 Python で Excel グラフの書式設定までを自動化するための参考記事が少ないように思われます。  
 また、細かな書式設定を行うには多数のパラメータ指定が必要となり、手軽に再利用できる汎用コードがないことも課題だと考えました。  
-そのため、グラフ書式設定までを短時間で自動化プログラムに組み込み、作業の効率化を図るための汎用コードを作成しました。
+そのため、**グラフ書式設定までを短時間に自動化プログラムに組み込み**、作業の効率化を図るための汎用コードを作成しました。
 
 ## 概要 
 
@@ -21,13 +21,13 @@ Python で Excel グラフの書式設定までを自動化するための参考
 - Qiitaに記事を投稿しています: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
 
-記事を発展させて、グラフ作成を関数化したコードを作成しています。  
+記事を発展させて、グラフ作成を関数化したコードを作成しました。  
 `PRESET`にはグラフ書式設定パラメータが格納されています。
 
 - [ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py) — グラフ作成関数  
 - [Call_ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py) — ScatterChart 関数の呼び出し例
 
-さらに、既存グラフを変更する関数を作成しました。
+さらに、既存グラフを変更する関数も作成しています。
 
 - [ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py) — グラフ変更関数  
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例

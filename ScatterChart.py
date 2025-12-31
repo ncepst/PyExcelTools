@@ -36,29 +36,29 @@ PRESET = {
         "axis_tick_font_size": 9,
         "axis_tick_font_name":"Aptos Narrow 本文", 
         "axis_line_color":RGB(191, 191, 191),        
-        "x_major_grid": True,
-        "y_major_grid": True,
+        "x_major_grid":True,
+        "y_major_grid":True,
         "x_minor_grid": None,
         "y_minor_grid": None,
         # TickMark: None, Inside, Outside, Cross
         "x_major_tickmark":constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
         "y_major_tickmark":constants.xlTickMarkNone,
-        "x_minor_tickmark":None,
-        "y_minor_tickmark":None,
+        "x_minor_tickmark": None,
+        "y_minor_tickmark": None,
         "major_grid_color": RGB(217, 217, 217),
         "major_grid_weight":0.75,
         "frame_color":RGB(217,217,217),             # False:枠なし
         "frame_weight":0.75,
         "style":"line+marker",
         "smooth":True,
-        "alpha":None,
+        "alpha": None,
         "line_weight":1.5,
         "marker": "C",
         "marker_size":5,
         "y2_major_grid":False,  # 副軸グリッド表示なし
         "y2_minor_grid":False,
         "y2_major_tickmark":constants.xlTickMarkNone,
-        "y2_minor_tickmark":None,
+        "y2_minor_tickmark": None,
     },
     "std": {
         "axis_title_font_color":RGB(0,0,0), 
@@ -462,7 +462,7 @@ def ScatterChart(ws,
             if p.get("y2_minor_grid") is not None:
                 y2.HasMinorGridlines = p.get("y2_minor_grid")
             if p.get("y2_minor_tickmark") is not None:
-                y2.MinorTickMarks = p.get("y2_minor_tickmark")
+                y2.MinorTickMark = p.get("y2_minor_tickmark")
             if y2_major not in (None, ""):    
                 y2.MajorUnit = y2_major 
             if y2_minor not in (None, ""):
@@ -571,3 +571,4 @@ def ScatterChart(ws,
            
 
     return chart
+

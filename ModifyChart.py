@@ -25,44 +25,44 @@ def emphasize_line(axis,value=0,weight=1):
 PRESET = {
     # "Aptos Narrow 本文"は Excel 2021以降のみ
     "excel2021": {
-        "title_font_size":14,
-        "title_font_color":RGB(89,89,89),
-        "title_font_bold":False,
-        "title_font_name":"Aptos Narrow 本文",
-        "axis_title_font_size":10,
-        "axis_title_font_name":"Aptos Narrow 本文",
-        "axis_title_font_color":RGB(89,89,89),
-        "axis_title_font_bold":False,
+        "title_font_size": 14,
+        "title_font_color": RGB(89,89,89),
+        "title_font_bold": False,
+        "title_font_name": "Aptos Narrow 本文",
+        "axis_title_font_size": 10,
+        "axis_title_font_name": "Aptos Narrow 本文",
+        "axis_title_font_color": RGB(89,89,89),
+        "axis_title_font_bold": False,
         "axis_tick_font_color": RGB(89, 89, 89),
         "axis_tick_font_size": 9,
-        "axis_tick_font_name":"Aptos Narrow 本文", 
-        "axis_line_color":RGB(191, 191, 191),        
-        "x_major_grid":True,
-        "y_major_grid":True,
+        "axis_tick_font_name": "Aptos Narrow 本文", 
+        "axis_line_color": RGB(191, 191, 191),        
+        "x_major_grid": True,
+        "y_major_grid": True,
         "x_minor_grid": None,
         "y_minor_grid": None,
         # TickMark: None, Inside, Outside, Cross
-        "x_major_tickmark":constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
-        "y_major_tickmark":constants.xlTickMarkNone,
+        "x_major_tickmark": constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
+        "y_major_tickmark": constants.xlTickMarkNone,
         "x_minor_tickmark": None,
         "y_minor_tickmark": None,
         "major_grid_color": RGB(217, 217, 217),
-        "major_grid_weight":0.75,
-        "frame_color":RGB(217,217,217),             # False:枠なし
-        "frame_weight":0.75,
-        "style":"line+marker",
-        "smooth":True,
+        "major_grid_weight": 0.75,
+        "frame_color": RGB(217,217,217),             # False:枠なし
+        "frame_weight": 0.75,
+        "style": "line+marker",
+        "smooth": True,
         "alpha": None,
-        "line_weight":1.5,
+        "line_weight": 1.5,
         "marker": "C",
-        "marker_size":5,
-        "y2_major_grid":False,  # 副軸グリッド表示なし
-        "y2_minor_grid":False,
-        "y2_major_tickmark":constants.xlTickMarkNone,
+        "marker_size": 5,
+        "y2_major_grid": False,  # 副軸グリッド表示なし
+        "y2_minor_grid": False,
+        "y2_major_tickmark": constants.xlTickMarkNone,
         "y2_minor_tickmark": None,
     },
     "std": {
-        "axis_title_font_color":RGB(0,0,0), 
+        "axis_title_font_color": RGB(0,0,0), 
         "axis_tick_font_color": RGB(0,0,0),
     },
 }
@@ -702,4 +702,5 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     if dash:
         line.Line.DashStyle = 4       
     return line
+
 

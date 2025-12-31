@@ -38,12 +38,15 @@ PRESET = {
         "axis_line_color":RGB(191, 191, 191),        
         "x_major_grid": True,
         "y_major_grid": True,
-        "x_minor_grid": False,
-        "y_minor_grid": False,
+        "x_minor_grid": None,
+        "y_minor_grid": None,
+        # TickMark: None, Inside, Outside, Cross
+        "x_major_tickmark":constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
+        "y_major_tickmark":constants.xlTickMarkNone,
+        "x_minor_tickmark":None,
+        "y_minor_tickmark":None,
         "major_grid_color": RGB(217, 217, 217),
         "major_grid_weight":0.75,
-        # TickMark: None, Inside, Outside, Cross
-        "major_tickmark":constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
         "frame_color":RGB(217,217,217),             # False:枠なし
         "frame_weight":0.75,
         "style":"line+marker",
@@ -55,6 +58,7 @@ PRESET = {
         "y2_major_grid":False,  # 副軸グリッド表示なし
         "y2_minor_grid":False,
         "y2_major_tickmark":constants.xlTickMarkNone,
+        "y2_minor_tickmark":None,
     },
     "std": {
         "axis_title_font_color":RGB(0,0,0), 
@@ -200,9 +204,13 @@ def ScatterChart(ws,
     elif x_max not in (None, ""):
         x_axis.MaximumScale = x_max  # 最大値
     x_axis.HasMajorGridlines = p.get("x_major_grid", True)
+    x_axis.MajorTickMark = p.get("x_major_tickmark", constants.xlTickMarkNone)
+    if p.get("x_minor_grid") is not None:
+        x_axis.HasMinorGridlines = p.get("x_minor_grid")
+    if p.get("x_minor_tickmark") is not None:
+        x_axis.MinorTickMark = p.get("x_minor_tickmark")
     if x_major not in (None, ""):     
-        x_axis.MajorUnit = x_major   # 目盛間隔
-    x_axis.HasMinorGridlines = p.get("x_minor_grid", False)           
+        x_axis.MajorUnit = x_major   # 目盛間隔          
     if x_minor not in (None, ""):
         x_axis.MinorUnit = x_minor         
     if x_cross not in (None, ""):    # 交差位置(縦軸との交点)
@@ -233,9 +241,13 @@ def ScatterChart(ws,
     elif y_max not in (None, ""):
         y_axis.MaximumScale = y_max
     y_axis.HasMajorGridlines = p.get("y_major_grid", True)
+    y_axis.MajorTickMark = p.get("y_major_tickmark", constants.xlTickMarkNone)
+    if p.get("y_minor_grid") is not None:
+        y_axis.HasMinorGridlines = p.get("y_minor_grid")
+    if p.get("y_minor_tickmark") is not None:
+        y_axis.MinorTickMark = p.get("y_minor_tickmark")
     if y_major not in (None, ""):
         y_axis.MajorUnit = y_major   # 目盛間隔
-    y_axis.HasMinorGridlines = p.get("y_minor_grid", False)
     if y_minor not in (None, ""):
         y_axis.MinorUnit = y_minor 
     if y_cross not in (None, ""):    # 交差位置(縦軸との交点)
@@ -427,12 +439,10 @@ def ScatterChart(ws,
             x_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
             x_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
         x_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
-        x_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
         if y_axis.HasMajorGridlines:
             y_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
             y_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
         y_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
-        y_axis.MajorTickMark = p.get("major_tickmark", constants.xlTickMarkNone)  # 目盛の内向き/外向きなし
         axes = [x_axis, y_axis]
                 
         # 副軸の設定
@@ -449,9 +459,12 @@ def ScatterChart(ws,
                 y2.MaximumScale = y2_max
             y2.HasMajorGridlines = p.get("y2_major_grid",False)
             y2.MajorTickMark = p.get("y2_major_tickmark", constants.xlTickMarkNone)
+            if p.get("y2_minor_grid") is not None:
+                y2.HasMinorGridlines = p.get("y2_minor_grid")
+            if p.get("y2_minor_tickmark") is not None:
+                y2.MinorTickMarks = p.get("y2_minor_tickmark")
             if y2_major not in (None, ""):    
-                y2.MajorUnit = y2_major
-            y2.HasMinorGridlines = p.get("y2_minor_grid",False) 
+                y2.MajorUnit = y2_major 
             if y2_minor not in (None, ""):
                 y2.MinorUnit = y2_minor  
             if y2_format not in (None, ""):
@@ -556,4 +569,5 @@ def ScatterChart(ws,
     except Exception as e:
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
            
+
     return chart

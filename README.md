@@ -1,5 +1,8 @@
 ## はじめに
 本リポジトリの主要コードは、**Pythonで技術資料向けのエクセルグラフの体裁を素早く整える**ことを目的としています。  
+多量のグラフ作成が必要となる**XYグラフ**を主な対象としています。  
+特に、測定データやシミュレーションデータを扱う用途を想定しています。  
+
 対象環境は Windows + Excel （Excel 2021 以降推奨）+ Python 3.10 以降 となります。  
 使用する主なライブラリは xlwings と win32com です。
 
@@ -9,7 +12,7 @@ openpyxl や xlwings を用いることで、Python から Excel グラフを作
 - Excel 画面上で手動作成したグラフと比較して、書式設定が一致しない場合が多い
 - 技術資料やレポート用途では、一定の体裁を整えるために多くの書式設定が必要となる
 
-matplotlibで作成できる画像形式のグラフの書式設定や、  
+matplotlib で作成できる画像形式のグラフの書式設定や、  
 VBAを用いた Excel グラフ操作に関する情報は比較的多く見られますが、   
 Python で Excel グラフの書式設定までを自動化するための参考記事が少ないように思われます。   
 
@@ -23,13 +26,13 @@ Python で Excel グラフの書式設定までを自動化するための参考
 - Qiitaに記事を投稿しています: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
 
-記事を発展させて、グラフ作成を関数化したコードを作成しました。  
+記事を発展させて、グラフ作成とその書式設定を関数化したコードを作成しました。  
 `PRESET`にはグラフ書式設定パラメータが格納されています。
 
 - [ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py) — グラフ作成関数  
 - [Call_ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py) — ScatterChart 関数の呼び出し例
 
-さらに、既存グラフを変更する関数も作成しています。
+さらに、既存グラフを変更する関数も作成しております。
 
 - [ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py) — グラフ変更関数  
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
@@ -45,7 +48,7 @@ Pythonスクリプトは Excelマクロから実行することもでき、マ�
 
 ## グラフ書式設定の指定方法
 
-グラフの書式設定の項目は関数の引数としてリスト化されています。  
+グラフの書式設定の項目のうち、用途ごとに指定が必要な項目が関数の引数としてリスト化されています。  
 `ScatterChart.py`は必須引数が`ws, start_range, paste_range`の3つ、  
 `ModifyChart.py`は必須引数が`chart`の1つのみで、  
 残りの52個の任意引数により、設定項目を指定します。

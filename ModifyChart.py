@@ -1,4 +1,6 @@
-# ModifyChart.py
+# Copyright (c) 2025 ncepst
+
+# save as ModifyChart.py
 from xlwings.constants import AxisType
 from win32com.client import constants
 # 型チェックには Python 3.10 以降の機能を使用しています
@@ -86,6 +88,7 @@ PRESET = {
 }
 # std を excel2021 ベースで上書き
 PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
+# std ベースで上書き
 PRESET["no_grid"] = {**PRESET["std"], **PRESET["no_grid"]}
 PRESET["grid"] = {**PRESET["std"], **PRESET["grid"]}
 
@@ -735,5 +738,6 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     if dash:
         line.Line.DashStyle = 4       
     return line
+
 
 

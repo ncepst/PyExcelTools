@@ -1,10 +1,9 @@
 # ModifyChart.py
-# import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
 # 型チェックには Python 3.10 以降の機能を使用しています
 
-# 既存グラフを変更します
+# 既存グラフの書式設定を変更
 # from ModifyChart import ModifyChart, RGB
 # ModifyChart() で呼び出し
 
@@ -35,8 +34,10 @@ PRESET = {
         "axis_title_font_bold": False,
         "axis_tick_font_color": RGB(89, 89, 89),
         "axis_tick_font_size": 9,
-        "axis_tick_font_name": "Aptos Narrow 本文", 
-        "axis_line_color": RGB(191, 191, 191),        
+        "axis_tick_font_name": "Aptos Narrow 本文",
+        "axis_line": True,
+        "axis_line_color": RGB(191, 191, 191),
+        "axis_line_weight": 0.75,    
         "x_major_grid": True,
         "y_major_grid": True,
         "x_minor_grid": None,
@@ -48,8 +49,12 @@ PRESET = {
         "y_minor_tickmark": None,
         "major_grid_color": RGB(217, 217, 217),
         "major_grid_weight": 0.75,
-        "frame_color": RGB(217,217,217),             # False:枠なし
+        # 外枠の有無は引数で指定してください
+        "frame_color": RGB(217,217,217),
         "frame_weight": 0.75,
+        "plot_area_frame": None,
+        "plot_area_frame_color": RGB(0,0,0),
+        "plot_area_frame_weight": 1.0,
         "style": "line+marker",
         "smooth": True,
         "alpha": None,
@@ -65,9 +70,24 @@ PRESET = {
         "axis_title_font_color": RGB(0,0,0), 
         "axis_tick_font_color": RGB(0,0,0),
     },
+    "no_grid":{
+        "x_major_grid": False,
+        "y_major_grid": False,
+        "plot_area_frame": True,
+        "axis_line": True,
+        "axis_line_color": RGB(0, 0, 0),  
+        "x_major_tickmark": constants.xlTickMarkInside,
+        "y_major_tickmark": constants.xlTickMarkInside,
+    },
+    "grid":{
+        "major_grid_color": RGB(0, 0, 0),
+        "axis_line_color": RGB(0, 0, 0),
+    },
 }
 # std を excel2021 ベースで上書き
 PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
+PRESET["no_grid"] = {**PRESET["std"], **PRESET["no_grid"]}
+PRESET["grid"] = {**PRESET["std"], **PRESET["grid"]}
 
 marker_map = {
         "C":constants.xlMarkerStyleCircle,
@@ -400,17 +420,22 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = title_font_size
             else:
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = p.get("title_font_size", 14)
+        
         # グリッド線の設定（デフォルト: 薄いグレー)
-        if x_axis.HasMajorGridlines:
-            x_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
-            x_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
-        x_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
-        if y_axis.HasMajorGridlines:
-            y_axis.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
-            y_axis.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
-        y_axis.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
         axes = [x_axis, y_axis]
-              
+        for ax in axes:
+            if ax.HasMajorGridlines:
+                ax.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
+                ax.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
+            if p.get("axis_line") is None:
+                pass
+            elif p.get("axis_line") is True:
+                ax.Format.Line.Visible = True
+                ax.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
+                ax.Format.Line.Weight = p.get("axis_line_weight", 0.75)
+            elif p.get("axis_line") is False:
+                ax.Format.Line.Visible = False
+        
         # 副軸の設定
         if use_secondary:
             y2 = ch.Axes(AxisType.xlValue, constants.xlSecondary)
@@ -467,6 +492,14 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             ch.ChartArea.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
             ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)                    # 枠線の太さ(pt)                  
         
+        # プロットエリアの枠設定
+        if p.get("plot_area_frame") is not None:
+            plot_area = ch.PlotArea
+            plot_area.Format.Line.Visible = p.get("plot_area_frame", False)
+            if p.get("plot_area_frame") is True:
+                plot_area.Format.Line.ForeColor.RGB = p.get("plot_area_frame_color", 0)
+                plot_area.Format.Line.Weight = p.get("plot_area_frame_weight", 1.0)
+
         # 背景の透明化設定
         if transparent_bg is True:
             ch.ChartArea.Format.Fill.Visible = False

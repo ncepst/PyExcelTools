@@ -1,4 +1,6 @@
-# ScatterChart.py
+# Copyright (c) 2025 ncepst
+
+# save as ScatterChart.py
 import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
@@ -86,6 +88,7 @@ PRESET = {
 }
 # std を excel2021 ベースで上書き
 PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
+# std ベースで上書き
 PRESET["no_grid"] = {**PRESET["std"], **PRESET["no_grid"]}
 PRESET["grid"] = {**PRESET["std"], **PRESET["grid"]}
 
@@ -604,5 +607,6 @@ def ScatterChart(ws,
            
 
     return chart
+
 
 

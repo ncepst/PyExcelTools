@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 # Copyright (c) 2025 ncepst
 
 # save as ModifyChart.py
@@ -738,6 +739,7 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     if dash:
         line.Line.DashStyle = 4       
     return line
+
 
 
 

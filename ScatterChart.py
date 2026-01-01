@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 # Copyright (c) 2025 ncepst
 
 # save as ScatterChart.py
@@ -607,6 +608,7 @@ def ScatterChart(ws,
            
 
     return chart
+
 
 
 

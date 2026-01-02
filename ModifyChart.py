@@ -515,7 +515,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
         # 背景の透明化設定
         if transparent_bg is True:
             chart_area.Format.Fill.Visible = False
-            chart_area.Format.Fill.Visible = False
+            plot_area.Format.Fill.Visible = False
         elif transparent_bg is False:
             chart_area.Format.Fill.Visible = True
             plot_area.Format.Fill.Visible = True
@@ -751,4 +751,5 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     line.Line.Weight = weight
     if dash:
         line.Line.DashStyle = 4       
+
     return line

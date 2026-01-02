@@ -1,7 +1,7 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 ncepst
-
 # save as ScatterChart.py
+# Copyright (c) 2025 ncepst
+# SPDX-License-Identifier: MIT
+
 import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
@@ -45,13 +45,13 @@ PRESET = {
         "y_major_grid": True,
         "x_minor_grid": None,
         "y_minor_grid": None,
+        "major_grid_color": RGB(217, 217, 217),
+        "major_grid_weight": 0.75,
         # TickMark: None, Inside, Outside, Cross
         "x_major_tickmark": constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
         "y_major_tickmark": constants.xlTickMarkNone,
         "x_minor_tickmark": None,
         "y_minor_tickmark": None,
-        "major_grid_color": RGB(217, 217, 217),
-        "major_grid_weight": 0.75,
         # 外枠の有無は引数で指定してください
         "frame_color": RGB(217,217,217),
         "frame_weight": 0.75,
@@ -70,6 +70,7 @@ PRESET = {
         "y2_minor_tickmark": None,
     },
     "std": {
+        "title_font_color": RGB(0,0,0),
         "axis_title_font_color": RGB(0,0,0), 
         "axis_tick_font_color": RGB(0,0,0),
     },
@@ -607,3 +608,4 @@ def ScatterChart(ws,
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
            
     return chart
+

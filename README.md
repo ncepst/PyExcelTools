@@ -148,7 +148,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y_bold_line:float|None = None,     # y_bold_line=0でy=0が太線
                 ):
 ```
-- 型チェックには `Python 3.10 以降`の機能を使用しています。 `ModifyChart.py`のみ型チェックを使用しました。   
+- 型ヒントには `Python 3.10 以降`の記法を使用しています。 `ModifyChart.py`のみ型ヒントを使用しました。   
 - smooth, alpha, line_weight, marker については、series cfg と PRESET にも同様の項目があり、  
 優先順位としては、series cfg > 引数 > preset となります。  
 series cfg (設定なしで自動的にNone) と 引数が None で preset の設定が適用されます。

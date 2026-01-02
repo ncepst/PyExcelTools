@@ -301,24 +301,31 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                         wsy = ws.parent.sheets[wsy]
                     series.Values  = wsy.range(cfg["Values"]).api
                 except Exception:
-                    print(f"系列{i}: wsの設定または範囲指定に問題")
+                    print(f"系列{i}: wsの設定または範囲指定に問題")     
+            try:
+                # 色
+                color = cfg.get("color")
+                if color not in (None, ""):
+                    series.Format.Line.ForeColor.RGB = color    # 線の色
+                    series.MarkerForegroundColor = color        # マーカー枠線の色
+                    series.MarkerBackgroundColor = color        # マーカー内部の色
                     
-            # 色
-            color = cfg.get("color")
-            if color not in (None, ""):
-                series.Format.Line.ForeColor.RGB = color    # 線の色
-                series.MarkerForegroundColor = color        # マーカー枠線の色
-                series.MarkerBackgroundColor = color        # マーカー内部の色
-            
-            # スムーズ
-            if cfg.get("smooth") not in (None, ""):
-                smooth_i = cfg["smooth"]
-            elif smooth not in (None, ""):
-                smooth_i = smooth
-            else:
-                smooth_i = p.get("smooth",True)
-            if smooth_i not in (None, ""):
-                series.Smooth = bool(smooth_i)
+                # スムーズ
+                if cfg.get("smooth") not in (None, ""):
+                    smooth_i = cfg["smooth"]
+                elif smooth not in (None, ""):
+                    smooth_i = smooth
+                else:
+                    smooth_i = p.get("smooth",True)
+                if smooth_i not in (None, "") and hasattr(series,"Smooth"):
+                    series.Smooth = bool(smooth_i)
+            except:
+                if hasattr(series.Format, "Fill"):
+                    print(f"系列{i}: 棒グラフ")
+                    if color not in (None, ""):
+                        series.Format.Fill.ForeColor.RGB = color
+                else:
+                    print(f"系列{i}:色、smoothでエラー")
 
             # スタイル(線とマーカー)
             if cfg.get("style") not in (None, ""):
@@ -399,6 +406,16 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                     ttype = tl_map.get(tl.lower())
                     if ttype is not None:
                         trend = series.Trendlines().Add(Type=ttype)
+                if cfg.get("trendline_name") is not None:
+                    trend.Name = cfg.get("trendline_name")
+                trend.Format.Line.ForeColor.RGB = cfg.get("trendline_color",cfg.get("color",RGB(0,0,0)))
+                trend.Format.Line.Weight = cfg.get("trendline_weight", 1.5)
+                Dashstyle = cfg.get("trendline_style", "solid").lower()
+                if Dashstyle == "dash":
+                    trend.Format.Line.DashStyle = 4
+                else:  # solid / default
+                    trend.Format.Line.DashStyle = 0
+                    
                 t_option = cfg.get("trendline_option", "")
                 if "eq" in t_option: 
                     trend.DisplayEquation = True # 近似式を表示
@@ -429,7 +446,10 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = title_font_size
             else:
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = p.get("title_font_size", 14)
+    except Exception as e:
+        print("タイトル設定でエラー:",e) 
         
+    try:   
         # グリッド線の設定（デフォルト: 薄いグレー)
         axes = [x_axis, y_axis]
         for ax in axes:
@@ -444,7 +464,10 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 ax.Format.Line.Weight = p.get("axis_line_weight", 0.75)
             elif p.get("axis_line") is False:
                 ax.Format.Line.Visible = False
+    except Exception as e:
+        print("軸の設定1でエラー:",e)
         
+    try:
         # 副軸の設定
         if use_secondary:
             y2 = ch.Axes(AxisType.xlValue, constants.xlSecondary)
@@ -476,7 +499,10 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             elif y2_title not in (None, ""):
                 y2.HasTitle = True
                 y2.AxisTitle.Text = y2_title
+    except Exception as e:
+        print("副軸の設定でエラー:",e)
         
+    try:    
         for ax in axes: 
             # 軸の設定
             tl_font = ax.TickLabels.Font
@@ -490,7 +516,10 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 ax_font.Bold = p.get("axis_title_font_bold", False)
                 ax_font.Size = p.get("axis_title_font_size", 10)
                 ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
+    except Exception as e:
+        print("軸の設定2でエラー:",e)
         
+    try:
         # chart_area/plot_area のオブジェクト取得
         chart_area = ch.ChartArea
         plot_area = ch.PlotArea
@@ -527,9 +556,8 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             emphasize_line(x_axis,x_bold_line)
         if y_bold_line is not None:
             emphasize_line(y_axis,y_bold_line)
-        # ----------------------------------------------------------------------
     except Exception as e:
-        print("フォーマットの設定でエラー:",e)
+        print("チャートエリア、プロットエリアの設定でエラー:",e)
         
     try: 
         # 凡例を一度無効にする(例外あり)
@@ -751,5 +779,4 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     line.Line.Weight = weight
     if dash:
         line.Line.DashStyle = 4       
-
     return line

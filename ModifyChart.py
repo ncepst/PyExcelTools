@@ -149,8 +149,6 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y2_format = None,
                 y2_log:bool|None = None,       
                 frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠, Noneでpreset)
-                width_inc = 0,                     # プロットエリアの幅増減(pt)
-                height_inc = 0,                    # プロットエリアの高さ増減(pt)
                 legend:bool|str|None = None,       # 凡例表示(False:非表示, Noneで変更なし, "right"で右側に表示) 
                 legend_font_size = None,           # 凡例のフォントサイズ, Noneで変更なし
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
@@ -160,6 +158,9 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 chart_type = None,                 # "bar"で棒グラフに変更
                 x_bold_line:float|None = None,     # x_bold_line=0でx=0が太線
                 y_bold_line:float|None = None,     # y_bold_line=0でy=0が太線
+                plot_area_space:str = "relative",  # plot_area調整時の基準位置を"absolute"/"relative"で指定
+                width_inc = 0,                     # プロットエリアの幅増減(pt)
+                height_inc = 0,                    # プロットエリアの高さ増減(pt)
                 ):
 
     p = PRESET.get(preset, PRESET["std"]) or {}
@@ -415,7 +416,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
         except Exception as e:
             print(f"系列{i}で例外発生:{e}")
     
-    # デフォルトはExcel 2021 以降の標準スタイル -------------------------------------------------
+    # フォーマットの設定 -------------------------------------------------
     try:
         if ch.HasTitle:
             ch.ChartTitle.Format.TextFrame2.TextRange.Font.Bold = p.get("title_font_bold", False)
@@ -489,20 +490,23 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 ax_font.Bold = p.get("axis_title_font_bold", False)
                 ax_font.Size = p.get("axis_title_font_size", 10)
                 ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
-                
+        
+        # chart_area/plot_area のオブジェクト取得
+        chart_area = ch.ChartArea
+        plot_area = ch.PlotArea
+        
         # 外枠の設定
         if frame_color is False:  # False:枠なし、0:黒枠
-            ch.ChartArea.Border.LineStyle = 0    # 枠なし
+            chart_area.Border.LineStyle = 0    # 枠なし
         elif frame_color not in (None, ""):
-            ch.ChartArea.Format.Line.ForeColor.RGB = frame_color
-            ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)
+            chart_area.Format.Line.ForeColor.RGB = frame_color
+            chart_area.Format.Line.Weight = p.get("frame_weight",0.75)
         else:
-            ch.ChartArea.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
-            ch.ChartArea.Format.Line.Weight = p.get("frame_weight",0.75)                    # 枠線の太さ(pt)                  
+            chart_area.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
+            chart_area.Format.Line.Weight = p.get("frame_weight",0.75)                    # 枠線の太さ(pt)
         
         # プロットエリアの枠設定
         if p.get("plot_area_frame") is not None:
-            plot_area = ch.PlotArea
             plot_area.Format.Line.Visible = p.get("plot_area_frame", False)
             if p.get("plot_area_frame") is True:
                 plot_area.Format.Line.ForeColor.RGB = p.get("plot_area_frame_color", 0)
@@ -510,13 +514,13 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
 
         # 背景の透明化設定
         if transparent_bg is True:
-            ch.ChartArea.Format.Fill.Visible = False
-            ch.PlotArea.Format.Fill.Visible = False
+            chart_area.Format.Fill.Visible = False
+            chart_area.Format.Fill.Visible = False
         elif transparent_bg is False:
-            ch.ChartArea.Format.Fill.Visible = True
-            ch.PlotArea.Format.Fill.Visible = True
-            ch.ChartArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
-            ch.PlotArea.Format.Fill.ForeColor.RGB = RGB(255,255,255)
+            chart_area.Format.Fill.Visible = True
+            plot_area.Format.Fill.Visible = True
+            chart_area.Format.Fill.ForeColor.RGB = RGB(255,255,255)
+            plot_area.Format.Fill.ForeColor.RGB = RGB(255,255,255)
             
         # ラインの強調
         if x_bold_line is not None:
@@ -535,11 +539,16 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             ch.HasLegend = False
         
         # プロットエリアの調整
-        pa = ch.PlotArea
-        pa.InsideLeft   = pa.InsideLeft + y_title_space
-        pa.InsideTop    = pa.InsideTop + title_space
-        pa.InsideWidth  = pa.InsideWidth - y_title_space + width_inc
-        pa.InsideHeight = pa.InsideHeight - title_space - x_title_space + height_inc
+        if plot_area_space in ("absolute","abs"):
+            plot_area.InsideLeft   = chart_area.Left + y_title_space
+            plot_area.InsideTop    = chart_area.Top + title_space
+            plot_area.InsideWidth  = chart_area.Width - y_title_space + width_inc
+            plot_area.InsideHeight = chart_area.Height - title_space - x_title_space + height_inc
+        else:  # relative / dafault
+            plot_area.InsideLeft   = plot_area.InsideLeft + y_title_space
+            plot_area.InsideTop    = plot_area.InsideTop + title_space
+            plot_area.InsideWidth  = plot_area.InsideWidth - y_title_space + width_inc
+            plot_area.InsideHeight = plot_area.InsideHeight - title_space - x_title_space + height_inc
         
         # 凡例設定
         if  legend in (None, ""):
@@ -743,5 +752,3 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     if dash:
         line.Line.DashStyle = 4       
     return line
-
-

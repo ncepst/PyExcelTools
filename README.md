@@ -159,7 +159,7 @@ series cfg (設定なしで自動的にNone) と 引数が None で preset の�
 戻り値はChartオブジェクトとなります。
 
 - chart_type = "bar" で集合縦棒グラフが表示されますが、try構文の例外発生より軸の設定1,2でエラーとなります。
-- 引数のchart_type = "line"で、系列2のchart_type = "bar"にすると、棒+折れ線グラフ の組み合わせグラフも表示されます。
+- 引数のchart_type = "line"で、系列2のchart_type = "bar"にすると、棒+折れ線グラフ の組み合わせグラフも表示できます。
 
 ### series_listで指定可能なkeyとそのデフォルト値
 以下から任意のkeyのみ設定可能です。

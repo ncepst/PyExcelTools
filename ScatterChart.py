@@ -1,4 +1,4 @@
-# save as ScatterChart.py
+# ScatterChart.py
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
 """

@@ -1,14 +1,17 @@
 # save as ScatterChart.py
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
+"""
+概要:
+新規の Excel グラフの作成と書式設定を簡単に行うモジュールです。
 
+使用法:
+from ScatterChart import ScatterChart, RGB
+ScatterChart(ws, start_range = "H3", paste_range = "A1")  のように呼び出して使用
+"""
 import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
-
-# 新規グラフの作成と書式設定
-# from ScatterChart import ScatterChart, RGB
-# ScatterChart() で呼び出し
 
 # RGB値をExcel用の整数に変換するヘルパー関数
 def RGB(r, g, b):
@@ -608,4 +611,3 @@ def ScatterChart(ws,
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
            
     return chart
-

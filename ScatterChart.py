@@ -160,7 +160,7 @@ def ScatterChart(ws,
                  chart_type = None, 
                  x_bold_line = None,
                  y_bold_line = None,
-                 plot_area_space = "relative",  # plot_area調整時の基準位置を"absolute"/"relative"で指定
+                 plot_area_space = "relative",  # プロットエリア調整時の基準位置を"absolute"/"relative"で指定
                  width_inc = 0,
                  height_inc = 0,
                  ):

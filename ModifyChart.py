@@ -11,7 +11,7 @@ ModifyChart(chart, preset="std", NS=2) のように呼び出して使用
 """
 from xlwings.constants import AxisType
 from win32com.client import constants
-# 型チェックには Python 3.10 以降の機能を使用しています
+# 型ヒントには Python 3.10 以降の記法を使用しています
 
 # RGB値をExcel用の整数に変換するヘルパー関数
 def RGB(r, g, b):
@@ -743,3 +743,4 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     if dash:
         line.Line.DashStyle = 4       
     return line
+

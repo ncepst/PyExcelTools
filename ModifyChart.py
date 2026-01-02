@@ -1,14 +1,17 @@
 # save as ModifyChart.py
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
+"""
+概要:
+既存の Excel グラフの書式設定を簡単に行うモジュールです。
 
+使用法:
+from ModifyChart import ModifyChart, RGB
+ModifyChart(chart, preset="std", NS=2) のように呼び出して使用
+"""
 from xlwings.constants import AxisType
 from win32com.client import constants
 # 型チェックには Python 3.10 以降の機能を使用しています
-
-# 既存グラフの書式設定を変更
-# from ModifyChart import ModifyChart, RGB
-# ModifyChart() で呼び出し
 
 # RGB値をExcel用の整数に変換するヘルパー関数
 def RGB(r, g, b):
@@ -740,4 +743,5 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     if dash:
         line.Line.DashStyle = 4       
     return line
+
 

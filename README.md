@@ -50,7 +50,7 @@ Pythonスクリプトは Excelマクロから実行することもでき、マ�
 グラフの書式設定の項目のうち、用途ごとに指定が必要な項目が関数の引数としてリスト化されています。  
 `ScatterChart.py`は必須引数が`ws, start_range, paste_range`の3つ、  
 `ModifyChart.py`は必須引数が`chart`の1つのみで、  
-残りの52個の任意引数により、設定項目を指定します。
+残りの53個の任意引数により、設定項目を指定します。
 
 また、`PRESET`は **dict形式** で関数外に定義されており、  
 外側の辞書のキー`"excel2021"`に、Excel 2021 の散布図の書式設定が格納されています。  
@@ -135,8 +135,6 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y2_format = None,
                 y2_log:bool|None = None,       
                 frame_color:bool|int|None = None,  # グラフ枠色 (False:枠なし, 0:黒枠, Noneでpreset)
-                width_inc = 0,                     # プロットエリアの幅増減(pt)
-                height_inc = 0,                    # プロットエリアの高さ増減(pt)
                 legend:bool|str|None = None,       # 凡例表示(False:非表示, Noneで変更なし, "right"で右側に表示) 
                 legend_font_size = None,           # 凡例のフォントサイズ, Noneで変更なし
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
@@ -146,6 +144,9 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 chart_type = None,                 # "bar"で棒グラフに変更
                 x_bold_line:float|None = None,     # x_bold_line=0でx=0が太線
                 y_bold_line:float|None = None,     # y_bold_line=0でy=0が太線
+                plot_area_space:str = "relative",  # プロットエリア調整時の基準位置を"absolute"/"relative"で指定
+                width_inc = 0,                     # プロットエリアの幅増減(pt)
+                height_inc = 0,                    # プロットエリアの高さ増減(pt)
                 ):
 ```
 - 型ヒントには `Python 3.10 以降`の記法を使用しています。 `ModifyChart.py`のみ型ヒントを使用しました。   

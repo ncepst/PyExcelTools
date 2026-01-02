@@ -57,6 +57,7 @@ Pythonスクリプトは Excelマクロから実行することもでき、マ�
 各グラフ設定パラメータはネスト(入れ子)辞書として管理されており、必要に応じて上書き・変更が可能です。
 ```python
 "std": {
+        "title_font_color": RGB(0,0,0),
         "axis_title_font_color":RGB(0,0,0), 
         "axis_tick_font_color": RGB(0,0,0),
     }
@@ -64,7 +65,7 @@ PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 ```
 上記のようにベースとなる設定を維持したまま一部を上書きすることで、  
 詳細な書式設定を簡単に保存できます。  
-関数のデフォルト引数としては、`preset="std"`が適用されます。
+関数の引数で`preset`を指定することができ、デフォルト引数では`preset="std"`が適用されます。
 
 呼び出し側でも、PRESETの更新が可能で、  
 以下では、グリッド線の表示設定を一時的に False に変更しています。  
@@ -213,13 +214,13 @@ PRESET = {
         "y_major_grid": True,
         "x_minor_grid": None,
         "y_minor_grid": None,
+        "major_grid_color": RGB(217, 217, 217),
+        "major_grid_weight": 0.75,
         # TickMark: None, Inside, Outside, Cross
         "x_major_tickmark": constants.xlTickMarkNone,  # 目盛の内向き/外向きなし
         "y_major_tickmark": constants.xlTickMarkNone,
         "x_minor_tickmark": None,
         "y_minor_tickmark": None,
-        "major_grid_color": RGB(217, 217, 217),
-        "major_grid_weight": 0.75,
         # 外枠の有無は引数で指定してください
         "frame_color": RGB(217,217,217),
         "frame_weight": 0.75,

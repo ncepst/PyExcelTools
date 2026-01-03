@@ -177,6 +177,8 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                     "green":RGB(112,173,71),
                     "yellow":RGB(255,192,0),
                     "purple":RGB(112,48,160),
+                    "brown":RGB(192,0,0),
+                    "navy":RGB(0,32,96),
                     "gray":RGB(165,165,165)
                     }       
     for cfg in series_list:

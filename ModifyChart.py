@@ -165,18 +165,24 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
 
     p = PRESET.get(preset, PRESET["std"]) or {}
     
-    # list / dict はミュータブルのため、デフォルト引数を None にしている
+    # 注意) series_listの系列数をデータ範囲以下にしないと例外発生となる
+    # list / dict はミュータブルのため、デフォルト引数は None
     if series_list is None:
-        series_list = [{"color": RGB(68,114,196)}]
-    """
-    注意) series_listの系列数をデータ範囲以下にしないと例外発生となる
-    series_list = [{"name":"系列1", "color": RGB(68,114,196)},  # 青
-                   {"name":"系列2", "color": RGB(237,125,49)},  # オレンジ
-                   {"name":"系列3", "color": RGB(112,173,71)},  # 緑
-                   {"name":"系列4", "color": RGB(165,165,165)}, # グレー
-                  ],
-    """               
-    
+        series_list = [{"color": "blue"}]
+ 
+    COLOR_NAME_TO_RGB = {
+                    "blue": RGB(68,114,196),
+                    "orange":RGB(237,125,49),
+                    "green":RGB(112,173,71),
+                    "yellow":RGB(255,192,0),
+                    "purple":RGB(112,48,160),
+                    "gray":RGB(165,165,165)
+                    }       
+    for cfg in series_list:
+        c = cfg.get("color")
+        if isinstance(c, str):
+            cfg["color"] = COLOR_NAME_TO_RGB.get(c.lower())
+            
     # グラフ全体のサイズ変更
     if width_cm not in (None, "", 0):
         chart.width = cm_to_pt(width_cm)
@@ -280,53 +286,60 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             cfg = {}
         try:
             series = ch.SeriesCollection(i)
+        except Exception as e:
+            print(f"系列{i}を取得できません: {e}")
+            continue
             
-            # 系列名
-            if cfg.get("name") not in (None, ""):
-                series.Name = cfg["name"]
-                
-            # XValues / Values
-            if cfg.get("XValues") not in (None, ""):
-                try:
-                    wsx = cfg.get("sheet",ws)
-                    if isinstance(wsx, str):
-                        wsx = ws.parent.sheets[wsx]
-                    series.XValues = wsx.range(cfg["XValues"]).api
-                except Exception:
-                    print(f"系列{i}: wsの設定または範囲指定に問題")
-            if cfg.get("Values") not in (None, ""):
-                try:
-                    wsy = cfg.get("sheet",ws)
-                    if isinstance(wsy, str):
-                        wsy = ws.parent.sheets[wsy]
-                    series.Values  = wsy.range(cfg["Values"]).api
-                except Exception:
-                    print(f"系列{i}: wsの設定または範囲指定に問題")     
+        # 系列名
+        if cfg.get("name") not in (None, ""):
+            series.Name = cfg["name"]
+            
+        # XValues / Values
+        if cfg.get("XValues") not in (None, ""):
             try:
-                # 色
-                color = cfg.get("color")
+                wsx = cfg.get("sheet",ws)
+                if isinstance(wsx, str):
+                    wsx = ws.parent.sheets[wsx]
+                series.XValues = wsx.range(cfg["XValues"]).api
+            except Exception:
+                print(f"系列{i}: wsの設定または範囲指定に問題")
+        if cfg.get("Values") not in (None, ""):
+            try:
+                wsy = cfg.get("sheet",ws)
+                if isinstance(wsy, str):
+                    wsy = ws.parent.sheets[wsy]
+                series.Values  = wsy.range(cfg["Values"]).api
+            except Exception:
+                print(f"系列{i}: wsの設定または範囲指定に問題")     
+        
+        try:
+            if cfg.get("chart_type") == "bar":
+                series.ChartType = constants.xlColumnClustered
+            # 色
+            color = cfg.get("color")
+            if color not in (None, ""):
+                series.Format.Line.ForeColor.RGB = color    # 線の色
+                series.MarkerForegroundColor = color        # マーカー枠線の色
+                series.MarkerBackgroundColor = color        # マーカー内部の色
+                
+            # スムーズ
+            if cfg.get("smooth") not in (None, ""):
+                smooth_i = cfg["smooth"]
+            elif smooth not in (None, ""):
+                smooth_i = smooth
+            else:
+                smooth_i = p.get("smooth",True)
+            if smooth_i not in (None, "") and hasattr(series,"Smooth"):
+                series.Smooth = bool(smooth_i)
+        except:
+            if hasattr(series.Format, "Fill"):
+                print(f"系列{i}: 棒グラフ")
                 if color not in (None, ""):
-                    series.Format.Line.ForeColor.RGB = color    # 線の色
-                    series.MarkerForegroundColor = color        # マーカー枠線の色
-                    series.MarkerBackgroundColor = color        # マーカー内部の色
-                    
-                # スムーズ
-                if cfg.get("smooth") not in (None, ""):
-                    smooth_i = cfg["smooth"]
-                elif smooth not in (None, ""):
-                    smooth_i = smooth
-                else:
-                    smooth_i = p.get("smooth",True)
-                if smooth_i not in (None, "") and hasattr(series,"Smooth"):
-                    series.Smooth = bool(smooth_i)
-            except:
-                if hasattr(series.Format, "Fill"):
-                    print(f"系列{i}: 棒グラフ")
-                    if color not in (None, ""):
-                        series.Format.Fill.ForeColor.RGB = color
-                else:
-                    print(f"系列{i}:色、smoothでエラー")
+                    series.Format.Fill.ForeColor.RGB = color
+            else:
+                print(f"系列{i}:色、smoothでエラー")
 
+        try:
             # スタイル(線とマーカー)
             if cfg.get("style") not in (None, ""):
                 style_i = cfg["style"]
@@ -378,8 +391,6 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 use_secondary = True
             else:
                 series.AxisGroup = constants.xlPrimary
-            if cfg.get("chart_type") == "bar":
-                series.ChartType = constants.xlColumnClustered
             
             tl = cfg.get("trendline")
             if tl not in (None, ""):
@@ -406,23 +417,23 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                     ttype = tl_map.get(tl.lower())
                     if ttype is not None:
                         trend = series.Trendlines().Add(Type=ttype)
-                if cfg.get("trendline_name") is not None:
-                    trend.Name = cfg.get("trendline_name")
-                trend.Format.Line.ForeColor.RGB = cfg.get("trendline_color",cfg.get("color",RGB(0,0,0)))
-                trend.Format.Line.Weight = cfg.get("trendline_weight", 1.5)
-                Dashstyle = cfg.get("trendline_style", "solid").lower()
-                if Dashstyle == "dash":
-                    trend.Format.Line.DashStyle = 4
-                else:  # solid / default
-                    trend.Format.Line.DashStyle = 0
-                    
-                t_option = cfg.get("trendline_option", "")
-                if "eq" in t_option: 
-                    trend.DisplayEquation = True # 近似式を表示
-                    # trend.DataLabel.Left
-                    # trend.DataLabel.Top
-                if "r2" in t_option: 
-                    trend.DisplayRSquared = True # 決定係数(R²)を表示
+                if trend is not None:
+                    if cfg.get("trendline_name") is not None:
+                        trend.Name = cfg.get("trendline_name")
+                    trend.Format.Line.ForeColor.RGB = cfg.get("trendline_color",cfg.get("color",RGB(0,0,0)))
+                    trend.Format.Line.Weight = cfg.get("trendline_weight", 1.5)
+                    Dashstyle = cfg.get("trendline_style", "solid").lower()
+                    if Dashstyle == "dash":
+                        trend.Format.Line.DashStyle = 4
+                    else:  # solid / default
+                        trend.Format.Line.DashStyle = 0
+                    t_option = cfg.get("trendline_option", "")
+                    if "eq" in t_option: 
+                        trend.DisplayEquation = True # 近似式を表示
+                        # trend.DataLabel.Left
+                        # trend.DataLabel.Top
+                    if "r2" in t_option: 
+                        trend.DisplayRSquared = True # 決定係数(R²)を表示
             
             if cfg.get("legend") is False:
                 series.HasLegendKey = False
@@ -431,7 +442,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 series.HasDataLabels = True
 
         except Exception as e:
-            print(f"系列{i}で例外発生:{e}")
+            print(f"系列{i}の設定で例外発生:{e}")
     
     # フォーマットの設定 -------------------------------------------------
     try:
@@ -558,7 +569,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             emphasize_line(y_axis,y_bold_line)
     except Exception as e:
         print("チャートエリア、プロットエリアの設定でエラー:",e)
-        
+
     try: 
         # 凡例を一度無効にする(例外あり)
         if legend == "right":

@@ -581,8 +581,10 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
 
     try: 
         # 凡例を一度無効にする(例外あり)
-        if legend == "right":
+        if "right" in legend:
             ch.HasLegend = True
+            if legend_font_size not in (None, ""):
+                    ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
         elif legend not in (None, ""):
             ch.HasLegend = False
         
@@ -804,5 +806,5 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     line.Line.ForeColor.RGB = color
     line.Line.Weight = weight
     if dash:
-        line.Line.DashStyle = 4       
+        line.Line.DashStyle = 4
     return line

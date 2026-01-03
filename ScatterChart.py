@@ -614,8 +614,10 @@ def ScatterChart(ws,
         
     try: 
         # 凡例を一度無効にする(例外あり)
-        if legend == "right":
+        if "right" in legend:
             ch.HasLegend = True
+            if legend_font_size not in (None, ""):
+                    ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
         else:
             ch.HasLegend = False
         

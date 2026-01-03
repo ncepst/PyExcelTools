@@ -259,7 +259,7 @@ PRESET = {
         "alpha": None,
         "line_weight": 1.5,
         "marker": "C",
-        "marker_size": 5,
+        "markersize": 5,
         "y2_major_grid": False,  # 副軸グリッド表示なし
         "y2_minor_grid": False,
         "y2_major_tickmark": constants.xlTickMarkNone,
@@ -267,6 +267,14 @@ PRESET = {
     },
 }
 ```
+### 補足
+- 透明度の`alpha`は`matplotlib`に由来  
+- 線の太さ`line_weight`はExcel COM のプロパティ名`Line.Weight`に由来 
+  (matplotlibでは`linewidth`)  
+- マーカーの種類(`"C","S","D","T","N"`)は頭文字に由来
+  (matplotlibの`"o","s","D","^",""`は使えません)  
+- `style`では、`matplotlib`由来の表記で`"--"`や`"-."`が利用できますが、  
+破線の種類は上記の2種類のみ対応しています。
 
 ## License
 MIT License  

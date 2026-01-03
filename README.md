@@ -158,7 +158,9 @@ series cfg (設定なしで自動的にNone) と 引数が None で preset の�
 必須引数:`start_range`, `paste_range`、 任意引数:`row` ,`col` が加わって、`ws`は必須引数に変わります。  
 戻り値はChartオブジェクトとなります。
 
-- chart_type = "bar" で集合縦棒グラフが表示されますが、try構文の例外発生より軸の設定・軸のフォント設定でエラーとなります。
+- chart_type = "bar" で集合縦棒グラフ(xlColumnClustered)が表示されますが、  
+  try構文の例外発生より軸の設定・軸のフォント設定でエラーとなります。
+  
 - 引数のchart_type = "line"で、片方の系列設定のchart_type = "bar"にすると、棒+折れ線グラフ の組み合わせグラフも表示できます。
 
 ### series_listで指定可能なkeyとそのデフォルト値

@@ -29,7 +29,7 @@ Python から Excel グラフを作成する手段として、`openpyxl` や `xl
 
 ### 記事とサンプルコード
 
-- Qiita 記事: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
+- Qiita に投稿した記事: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
 
 上記記事を発展させ、グラフ作成とその書式設定を関数化したコードとして整理しています。  

@@ -1,6 +1,6 @@
 ## はじめに
 本リポジトリの主要コードは、**Pythonで技術資料向けの Excel グラフの体裁を効率的に整える**ことを目的としています。  
-主に **XYグラフ（散布図）** を対象としており、測定データやシミュレーションデータなど、繰り返しグラフ作成が必要となる用途を想定しています。   
+主に **XYプロット（散布図）** を対象としており、測定データやシミュレーションデータなど、繰り返しグラフ作成が必要となる用途を想定しています。   
 
 対象環境は Windows + Excel （Excel 2021 以降推奨）+ Python 3.10 以降 となります。  
 使用する主なライブラリは `xlwings` と `win32com` です。
@@ -65,7 +65,7 @@ Pythonスクリプトは Excelマクロから実行することもでき、
 グラフの書式設定の項目のうち、用途ごとに指定が必要な項目が関数の引数としてリスト化されています。  
 `ScatterChart.py`は必須引数が`ws, start_range, paste_range`の3つ、  
 `ModifyChart.py`は必須引数が`chart`の1つのみで、  
-残りの53個の任意引数により、設定項目を指定します。
+残りの54個の任意引数により、設定項目を指定します。
 
 また、`PRESET`は **dict形式** で関数外に定義されており、  
 外側の辞書のキー`"excel2021"`に、Excel 2021 の散布図の書式設定が格納されています。  
@@ -155,6 +155,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
                 legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
                 legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御
+                legent_top_space = 0,              # 凡例の上端 = プロットエリアの上端を基準とした凡例位置制御
                 transparent_bg: bool|None = None,  # 背景を透明化する場合はTrue
                 chart_type = None,                 # "bar"で棒グラフに変更
                 x_bold_line: float|None = None,    # x_bold_line=0でx=0が太線

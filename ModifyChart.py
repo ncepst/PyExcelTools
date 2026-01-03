@@ -66,7 +66,7 @@ PRESET = {
         "alpha": None,
         "line_weight": 1.5,
         "marker": "C",
-        "marker_size": 5,
+        "markersize": 5,
         "y2_major_grid": False,  # 副軸グリッド表示なし
         "y2_minor_grid": False,
         "y2_major_tickmark": constants.xlTickMarkNone,
@@ -179,7 +179,10 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                     "purple":RGB(112,48,160),
                     "brown":RGB(192,0,0),
                     "navy":RGB(0,32,96),
-                    "gray":RGB(165,165,165)
+                    "gray":RGB(165,165,165),
+                    "teal":RGB(0,128,128),
+                    "cyan": RGB(0,255,255),
+                    "magenta": RGB(255,0,255),
                     }       
     for cfg in series_list:
         c = cfg.get("color")
@@ -361,16 +364,16 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 else:
                     marker_i = None
                 series.MarkerStyle = marker_map.get(marker_i, constants.xlMarkerStyleCircle)  # マーカー:〇
-                series.MarkerSize = cfg.get("size",p.get("marker_size"))                      # マーカーサイズ
+                series.MarkerSize = cfg.get("size",p.get("markersize"))                      # マーカーサイズ
             else:
                 series.MarkerStyle = constants.xlMarkerStyleNone
             if "line" in style_i:
                 series.Format.Line.Visible = True
-                series.Format.Line.Weight = cfg.get("weight", p.get("line_weight"))  # 線の太さ(pt)
-            elif isinstance(style_i, str) and style_i.startswith("dash"):
+                series.Format.Line.Weight = cfg.get("line_weight", p.get("line_weight"))  # 線の太さ(pt)
+            elif isinstance(style_i, str) and ("dash" in style_i or "--" in style_i):
                 series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 4
-            elif isinstance(style_i, str) and style_i.startswith("chain"):
+            elif isinstance(style_i, str) and ("chain" in style_i or "-." in style_i):
                 series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 5
             else:
@@ -421,13 +424,15 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                     if ttype is not None:
                         trend = series.Trendlines().Add(Type=ttype)
                 if trend is not None:
-                    if cfg.get("trendline_name") is not None:
+                    if cfg.get("trend_name") is not None:
                         trend.Name = cfg.get("trendline_name", "Regression line")
                     trend.Format.Line.ForeColor.RGB = cfg.get("trendline_color",cfg.get("color",RGB(0,0,0)))
                     trend.Format.Line.Weight = cfg.get("trendline_weight", 1.5)
                     Dashstyle = cfg.get("trendline_style", "solid").lower()
-                    if Dashstyle == "dash":
+                    if Dashstyle in ("dash", "--"):
                         trend.Format.Line.DashStyle = 4
+                    elif Dashstyle in ("chain", "-."):
+                        trend.Format.Line.DashStyle = 5
                     else:  # solid / default
                         # trend.Format.Line.DashStyle = constants.xlSolid
                         pass

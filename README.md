@@ -272,8 +272,8 @@ PRESET = {
 - 線の太さ`line_weight`はExcel COM のプロパティ名`Line.Weight`に由来します。 
   (matplotlibでは`linewidth`)  
 - マーカーの種類(`"C","S","D","T","N"`)は頭文字に由来します。
-  (matplotlibの`"o","s","D","^",""`は使えません)  
-- `style`では、`matplotlib`由来の表記で`"--"`や`"-."`が利用できますが、  
+  (matplotlibの`"o","s","^"`などは使えません)  
+- `style`では、`matplotlib`由来の表記`"--"`や`"-."`が利用できますが、  
 破線の種類は上記の2種類のみ対応しています。  
 - 関数の引数が多いため、同じ引数を二度渡さないよう注意してください。  
   (二重指定すると `SyntaxError` になります)

@@ -149,9 +149,10 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 height_inc = 0,                    # プロットエリアの高さ増減(pt)
                 ):
 ```
-- 型ヒントには `Python 3.10 以降`の記法を使用しています。 `ModifyChart.py`のみ型ヒントを使用しました。   
-- smooth, alpha, line_weight, marker については、series cfg と PRESET にも同様の項目があり、  
-優先順位としては、series cfg > 引数 > preset となります。  
+- 型ヒントには `Python 3.10 以降`の記法を使用しています。 `ModifyChart.py`のみ型ヒントを使用しました。
+  
+- `smooth`, `alpha`, `line_weight`, `marker` については、series cfg と PRESET にも同様の項目があり、  
+優先順位としては、`series cfg > 引数 > preset` となります。  
 series cfg (設定なしで自動的にNone) と 引数が None で preset の設定が適用されます。
  
 - `ScatterChart`関数の場合には、上記の引数: `NS`, `chart`の代わりに、  
@@ -161,7 +162,8 @@ series cfg (設定なしで自動的にNone) と 引数が None で preset の�
 - `chart_type = "bar"` を指定すると、集合縦棒グラフ (`xlColumnClustered`) が表示されます。   
   ただしこの場合、内部処理でtry構文の例外が発生しやく、軸の設定・軸のフォント設定には未対応です。
   
-- 引数で chart_type = "line"を指定し、そのうち一部の系列の chart_type を "bar" にすると、棒グラフ+折れ線グラフの組み合わせグラフ を表示できます。
+- 引数で `chart_type = "line"`を指定し、そのうち一部の系列の chart_type を "bar" にすると、  
+  棒グラフ+折れ線グラフの組み合わせグラフ を表示できます。
 
 ### series_listで指定可能なkeyとそのデフォルト値
 以下から任意のkeyのみ設定可能です。

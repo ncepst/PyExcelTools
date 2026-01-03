@@ -156,6 +156,7 @@ def ScatterChart(ws,
                  legend_width_inc = 0,
                  legend_height_inc = 0,
                  legend_right_space = 0,
+                 legent_top_space = 0,
                  transparent_bg = None,
                  chart_type = None, 
                  x_bold_line = None,
@@ -183,7 +184,7 @@ def ScatterChart(ws,
     for cfg in series_list:
         c = cfg.get("color")
         if isinstance(c, str):
-            cfg["color"] = COLOR_NAME_TO_RGB.get(c.lower())
+            cfg["color"] = COLOR_NAME_TO_RGB.get(c.lower(), None)
             
     # ----------------------------------------------------------
     # 散布図のエクセルグラフを作成する
@@ -428,10 +429,6 @@ def ScatterChart(ws,
             
             tl = cfg.get("trendline")
             if tl not in (None, ""):
-                try:
-                    series.Trendlines().Delete()
-                except Exception:
-                    pass
                 trend = None
                 if tl == 0:
                     pass
@@ -453,14 +450,15 @@ def ScatterChart(ws,
                         trend = series.Trendlines().Add(Type=ttype)
                 if trend is not None:
                     if cfg.get("trendline_name") is not None:
-                        trend.Name = cfg.get("trendline_name")
+                        trend.Name = cfg.get("trendline_name", "Regression line")
                     trend.Format.Line.ForeColor.RGB = cfg.get("trendline_color",cfg.get("color",RGB(0,0,0)))
                     trend.Format.Line.Weight = cfg.get("trendline_weight", 1.5)
                     Dashstyle = cfg.get("trendline_style", "solid").lower()
                     if Dashstyle == "dash":
                         trend.Format.Line.DashStyle = 4
                     else:  # solid / default
-                        trend.Format.Line.DashStyle = 0
+                        # trend.Format.Line.DashStyle = constants.xlSolid
+                        pass    
                     t_option = cfg.get("trendline_option", "")
                     if "eq" in t_option: 
                         trend.DisplayEquation = True # 近似式を表示
@@ -642,10 +640,16 @@ def ScatterChart(ws,
                     ch.Legend.Width  += legend_width_inc
                 if legend_height_inc!=0:
                     ch.Legend.Height += legend_height_inc
-                if "U" in legend: # 大文字のUを含む場合
-                    ch.Legend.Top = ch.PlotArea.InsideTop
-                if "R" in legend: # 大文字のRを含む場合
-                    ch.Legend.Left = ch.PlotArea.InsideLeft + ch.PlotArea.InsideWidth - ch.Legend.Width - legend_right_space
+                if "U" in legend:   # 大文字のUを含む場合
+                    ch.Legend.Top = plot_area.InsideTop + legent_top_space
+                elif "B" in legend: # 大文字のBを含む場合
+                    ch.Legend.Top = plot_area.InsideTop + plot_area.InsideHeight - ch.Legend.Height - legent_top_space
+                if "R" in legend:   # 大文字のRを含む場合
+                    ch.Legend.Left = plot_area.InsideLeft + plot_area.InsideWidth - ch.Legend.Width - legend_right_space
+                elif "L" in legend: # 大文字のLを含む場合
+                    ch.Legend.Left = plot_area.InsideLeft + legend_right_space
+                elif "C" in legend: # 大文字のCを含む場合
+                    ch.Legend.Left = plot_area.InsideLeft + (plot_area.InsideWidth - ch.Legend.Width)/2
                 if "bw" in legend: # background white
                     ch.Legend.Format.Fill.ForeColor.RGB = RGB(255, 255, 255)
                     ch.Legend.Format.Fill.Visible = True

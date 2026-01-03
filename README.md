@@ -268,14 +268,31 @@ PRESET = {
 }
 ```
 ### 補足
-- 透明度の`alpha`は`matplotlib`に由来  
-- 線の太さ`line_weight`はExcel COM のプロパティ名`Line.Weight`に由来 
+- 透明度(0～1)の`alpha`は`matplotlib`に由来です。  
+- 線の太さ`line_weight`はExcel COM のプロパティ名`Line.Weight`に由来します。 
   (matplotlibでは`linewidth`)  
-- マーカーの種類(`"C","S","D","T","N"`)は頭文字に由来
+- マーカーの種類(`"C","S","D","T","N"`)は頭文字に由来します。
   (matplotlibの`"o","s","D","^",""`は使えません)  
 - `style`では、`matplotlib`由来の表記で`"--"`や`"-."`が利用できますが、  
-破線の種類は上記の2種類のみ対応しています。
-
+破線の種類は上記の2種類のみ対応しています。  
+- 関数の引数が多いので、同じ引数を二度渡さないように注意して下さい。  
+  (二重指定すると `SyntaxError` になります)
+- 系列の色指定については`RGB(r,g,b)`の他に以下の文字列でも指定できます。
+```python
+COLOR_NAME_TO_RGB = {
+              "blue": RGB(68,114,196),
+              "orange":RGB(237,125,49),
+              "green":RGB(112,173,71),
+              "yellow":RGB(255,192,0),
+              "purple":RGB(112,48,160),
+              "brown":RGB(192,0,0),
+              "navy":RGB(0,32,96),
+              "gray":RGB(165,165,165),
+              "teal":RGB(0,128,128),
+              "cyan": RGB(0,255,255),
+              "magenta": RGB(255,0,255),
+              }
+```
 ## License
 MIT License  
 Copyright (c) 2025 ncepst

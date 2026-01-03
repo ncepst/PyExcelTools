@@ -403,7 +403,7 @@ def ScatterChart(ws,
                 series.MarkerStyle = constants.xlMarkerStyleNone
             if "line" in style_i:
                 series.Format.Line.Visible = True
-                series.Format.Line.Weight = cfg.get("line_weight", p.get("line_weight"))  # 線の太さ(pt)
+                series.Format.Line.Weight = cfg.get("weight", p.get("line_weight"))  # 線の太さ(pt)
             elif isinstance(style_i, str) and ("dash" in style_i or "--" in style_i):
                 series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 4

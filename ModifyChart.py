@@ -369,7 +369,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 series.MarkerStyle = constants.xlMarkerStyleNone
             if "line" in style_i:
                 series.Format.Line.Visible = True
-                series.Format.Line.Weight = cfg.get("line_weight", p.get("line_weight"))  # 線の太さ(pt)
+                series.Format.Line.Weight = cfg.get("weight", p.get("line_weight"))  # 線の太さ(pt)
             elif isinstance(style_i, str) and ("dash" in style_i or "--" in style_i):
                 series.Format.Line.Visible = True
                 series.Format.Line.DashStyle = 4
@@ -424,7 +424,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                     if ttype is not None:
                         trend = series.Trendlines().Add(Type=ttype)
                 if trend is not None:
-                    if cfg.get("trend_name") is not None:
+                    if cfg.get("trendline_name") is not None:
                         trend.Name = cfg.get("trendline_name", "Regression line")
                     trend.Format.Line.ForeColor.RGB = cfg.get("trendline_color",cfg.get("color",RGB(0,0,0)))
                     trend.Format.Line.Weight = cfg.get("trendline_weight", 1.5)

@@ -27,28 +27,36 @@ Python から Excel グラフを作成する手段として、`openpyxl` や `xl
 
 ## 概要 
 
-参考記事とサンプルコード
+### 記事とサンプルコード
 
-- Qiitaに記事を投稿しています: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
+- Qiita 記事: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
 - サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
 
-記事を発展させて、グラフ作成とその書式設定を関数化したコードを作成しました。  
-`PRESET`にはグラフ書式設定パラメータが格納されています。
+上記記事を発展させ、グラフ作成とその書式設定を関数化したコードとして整理しています。  
+グラフ書式設定パラメータは`PRESET`で管理しています。
 
+### 構成ファイル
+
+**グラフ作成**
 - [ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py) — グラフ作成関数  
 - [Call_ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py) — ScatterChart 関数の呼び出し例
 
-さらに、既存グラフを変更する関数も作成しております。
+**既存グラフの編集**
 
 - [ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py) — グラフ変更関数  
 - [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
 
-Pythonスクリプトは Excelマクロから実行することもでき、マクロにショートカットキーを割り当てると便利です。   
-付属のVBAコードには、自動判定の範囲 または 選択範囲 でグラフを作成するマクロと、  
-`Call_ModifyChart.py` を呼び出して選択中のグラフの体裁編集ができるマクロが含まれており、  
-柔軟な運用が可能です。
+**VBA連携**
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
+
+Pythonスクリプトは Excelマクロから実行することもでき、  
+マクロにショートカットキーを割り当てると便利です。  
+
+付属のVBAコードには、  
+● 自動判定の範囲 または 選択範囲 でグラフを作成するマクロ  
+● `Call_ModifyChart.py` を呼び出して選択中のグラフの体裁編集ができるマクロ    
+が含まれており、柔軟な運用が可能です。
 
 ---
 

@@ -315,13 +315,18 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
         try:
             if cfg.get("chart_type") == "bar":
                 series.ChartType = constants.xlColumnClustered
+
             # 色
             color = cfg.get("color")
             if color not in (None, ""):
-                series.Format.Line.ForeColor.RGB = color    # 線の色
-                series.MarkerForegroundColor = color        # マーカー枠線の色
-                series.MarkerBackgroundColor = color        # マーカー内部の色
-                
+                try:
+                    series.Format.Line.ForeColor.RGB = color    # 線の色
+                    series.MarkerForegroundColor = color        # マーカー枠線の色
+                    series.MarkerBackgroundColor = color        # マーカー内部の色
+                except:
+                    # hasattr(series.Format, "Fill")
+                    series.Format.Fill.ForeColor.RGB = color
+
             # スムーズ
             if cfg.get("smooth") not in (None, ""):
                 smooth_i = cfg["smooth"]
@@ -329,17 +334,12 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 smooth_i = smooth
             else:
                 smooth_i = p.get("smooth",True)
-            if smooth_i not in (None, "") and hasattr(series,"Smooth"):
-                series.Smooth = bool(smooth_i)
-        except:
-            if hasattr(series.Format, "Fill"):
-                print(f"系列{i}: 棒グラフ")
-                if color not in (None, ""):
-                    series.Format.Fill.ForeColor.RGB = color
-            else:
-                print(f"系列{i}:色、smoothでエラー")
+            if smooth_i not in (None, ""):
+                try:
+                    series.Smooth = bool(smooth_i)
+                except:
+                    pass
 
-        try:
             # スタイル(線とマーカー)
             if cfg.get("style") not in (None, ""):
                 style_i = cfg["style"]
@@ -442,7 +442,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 series.HasDataLabels = True
 
         except Exception as e:
-            print(f"系列{i}の設定で例外発生:{e}")
+            print(f"系列{i}の設定でエラー発生:{e}")
     
     # フォーマットの設定 -------------------------------------------------
     try:
@@ -476,7 +476,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             elif p.get("axis_line") is False:
                 ax.Format.Line.Visible = False
     except Exception as e:
-        print("軸の設定1でエラー:",e)
+        print("軸の設定でエラー:",e)
         
     try:
         # 副軸の設定
@@ -528,7 +528,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 ax_font.Size = p.get("axis_title_font_size", 10)
                 ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
     except Exception as e:
-        print("軸の設定2でエラー:",e)
+        print("軸のフォント設定でエラー:",e)
         
     try:
         # chart_area/plot_area のオブジェクト取得

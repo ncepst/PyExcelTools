@@ -617,7 +617,7 @@ def ScatterChart(ws,
         if "right" in legend:
             ch.HasLegend = True
             if legend_font_size not in (None, ""):
-                    ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
+                ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
         else:
             ch.HasLegend = False
         

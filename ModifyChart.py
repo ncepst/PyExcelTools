@@ -607,7 +607,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                     ch.Legend.Width  += legend_width_inc
                 if legend_height_inc!=0:
                     ch.Legend.Height += legend_height_inc
-                if "U" in legend:   # 大文字のUを含む場合
+                if "T" in legend:   # 大文字のTを含む場合
                     ch.Legend.Top = plot_area.InsideTop + legent_top_space
                 elif "B" in legend: # 大文字のBを含む場合
                     ch.Legend.Top = plot_area.InsideTop + plot_area.InsideHeight - ch.Legend.Height - legent_top_space

@@ -175,12 +175,11 @@ series cfg (設定なしで自動的にNone) と 引数が None で preset の�
 必須引数:`start_range`, `paste_range`、 任意引数:`row` ,`col` が加わって、`ws`は必須引数に変わります。  
 戻り値はChartオブジェクトとなります。
 
-- `title`, `x_title`, `y_title`, `legend`には`False`で無効化を指定できます。  
+- `title`, `x_title`, `y_title`, `legend`は`False`で無効化を指定できます。  
   `True`は文字列分岐に入るためエラーとなります。
 
 -  `legend`の仕様  
-  `legend="TR+bw+fb"`のようにポジションとオプションを指定できます。
-   Options は 複数指定可能です。
+  `legend="TR+bw+fb"`のようにポジションとオプションを指定できます。オプションは複数指定可能です。
    ```
     Position:  
       Vertical  : T = Top,    B = Bottom  

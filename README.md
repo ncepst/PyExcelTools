@@ -179,7 +179,7 @@ series cfg (設定なしで自動的にNone) と 引数が None で preset の�
   `True`は文字列分岐に入るためエラーとなります。
 
 -  `legend`の仕様  
-  `legend="TR+bw+fb"`のようにポジションとオプションを指定できます。オプションは複数指定可能です。
+  `legend="TR+bw+fb"`のようにポジションとオプションを指定できます。順不同で複数指定可能です。
    ```
     Position:  
       Vertical  : T = Top,    B = Bottom  

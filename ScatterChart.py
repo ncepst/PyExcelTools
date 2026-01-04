@@ -230,12 +230,12 @@ def ScatterChart(ws,
     if title in (False, ""):
         ch.HasTitle = True
         ch.ChartTitle.Text = ""
+    elif title in (True, None):
+        ch.HasTitle = True
+        ch.ChartTitle.Text = "グラフタイトル"    
     else:
         ch.HasTitle = True
-        if title in (True, None):
-            ch.ChartTitle.Text = "グラフタイトル"
-        else:
-            ch.ChartTitle.Text = title
+        ch.ChartTitle.Text = title
 
     # 横軸のオプション
     x_axis = ch.Axes(AxisType.xlCategory)
@@ -269,12 +269,12 @@ def ScatterChart(ws,
     # 横軸のタイトル
     if x_title in (False, ""):
         x_axis.HasTitle = False
+    elif x_title in (True, None):
+        x_axis.HasTitle = True
+        x_axis.AxisTitle.Text = "x軸タイトル"
     else:
         x_axis.HasTitle = True
-        if x_title in (True, None):
-            x_axis.AxisTitle.Text = "x軸タイトル"
-        else:
-            x_axis.AxisTitle.Text = x_title
+        x_axis.AxisTitle.Text = x_title
 
     # 縦軸のオプション
     y_axis = ch.Axes(AxisType.xlValue)
@@ -308,12 +308,12 @@ def ScatterChart(ws,
     # 縦軸のタイトル
     if y_title in (False, ""):
         y_axis.HasTitle = False
+    elif y_title in (True, None):
+        y_axis.HasTitle = True
+        y_axis.AxisTitle.Text = "y軸タイトル"
     else:
         y_axis.HasTitle = True
-        if y_title in (True, None):
-            y_axis.AxisTitle.Text = "y軸タイトル"
-        else:
-            y_axis.AxisTitle.Text = y_title
+        y_axis.AxisTitle.Text = y_title
         
     if chart_type not in (None,""):
         if chart_type == "bar":
@@ -649,19 +649,19 @@ def ScatterChart(ws,
         # 凡例設定
         if  legend in (None, ""):
             pass
-        elif legend == False:
+        elif legend is False:
             ch.HasLegend = False
         else:
             ch.HasLegend = True
-            if legend == "auto":
+            if legend_font_size not in (None, ""):
+                ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
+            if legend_width_inc!=0:
+                ch.Legend.Width  += legend_width_inc
+            if legend_height_inc!=0:
+                ch.Legend.Height += legend_height_inc
+            if legend is True:
                 pass
             else:
-                if legend_font_size not in (None, ""):
-                    ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
-                if legend_width_inc!=0:
-                    ch.Legend.Width  += legend_width_inc
-                if legend_height_inc!=0:
-                    ch.Legend.Height += legend_height_inc
                 if "T" in legend:   # 大文字のTを含む場合
                     ch.Legend.Top = plot_area.InsideTop + legent_top_space
                 elif "B" in legend: # 大文字のBを含む場合

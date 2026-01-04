@@ -205,9 +205,12 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
     ch = chart.api[1]
 
     # グラフタイトル
-    if title == False:
+    if title is False:
         ch.HasTitle = True
         ch.ChartTitle.Text = ""
+    elif title is True:
+        ch.HasTitle = True
+        ch.ChartTitle.Text = "グラフタイトル"    
     elif title not in (None, ""):
         ch.HasTitle = True
         ch.ChartTitle.Text = title
@@ -242,8 +245,11 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
         x_axis.ScaleType = 1 if x_log == True else 0
 
     # 横軸のタイトル
-    if x_title == False:
+    if x_title is False:
         x_axis.HasTitle = False
+    elif x_title is True:
+        x_axis.HasTitle = True
+        x_axis.AxisTitle.Text = "x軸タイトル"
     elif x_title not in (None, ""):
         x_axis.HasTitle = True
         x_axis.AxisTitle.Text = x_title
@@ -278,11 +284,15 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
         y_axis.ScaleType = 1 if y_log == True else 0
 
     # 縦軸のタイトル
-    if y_title == False:
+    if y_title is False:
         y_axis.HasTitle = False
+    elif y_title is True:
+        y_axis.HasTitle = True
+        y_axis.AxisTitle.Text = "y軸タイトル"
     elif y_title not in (None, ""):
         y_axis.HasTitle = True
-        y_axis.AxisTitle.Text = y_title   
+        y_axis.AxisTitle.Text = y_title
+        
     if chart_type not in (None,""):
         if chart_type == "bar":
             chart_type = "column_clustered"
@@ -616,19 +626,19 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
         # 凡例設定
         if  legend in (None, ""):
             pass
-        elif legend == False:
+        elif legend is False:
             ch.HasLegend = False
         else:
             ch.HasLegend = True
-            if legend == "auto":
+            if legend_font_size not in (None, ""):
+                ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
+            if legend_width_inc!=0:
+                ch.Legend.Width  += legend_width_inc
+            if legend_height_inc!=0:
+                ch.Legend.Height += legend_height_inc
+            if legend is True:
                 pass
             else:
-                if legend_font_size not in (None, ""):
-                    ch.Legend.Format.TextFrame2.TextRange.Font.Size = legend_font_size
-                if legend_width_inc!=0:
-                    ch.Legend.Width  += legend_width_inc
-                if legend_height_inc!=0:
-                    ch.Legend.Height += legend_height_inc
                 if "T" in legend:   # 大文字のTを含む場合
                     ch.Legend.Top = plot_area.InsideTop + legent_top_space
                 elif "B" in legend: # 大文字のBを含む場合

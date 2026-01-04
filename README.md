@@ -178,12 +178,13 @@ series cfg (設定なしで自動的にNone) と 引数が None で preset の�
 - `title`, `x_title`, `y_title`, `legend`は`False`で無効化を指定できます。  
   `True`は文字列分岐に入るためエラーとなります。
 
--  `legend`の仕様  
-  `legend="TR+bw+fb"`のようにポジションとオプションを指定できます。順不同で複数指定可能です。
+- `legend`の仕様   
+  `legend="TR+bw+fb"`のようにポジションとオプションを指定できます。順不同で複数指定可能です。  
+  `legend="right"`では、プロットエリアの右に凡例を配置します。
    ```
-    Position:  
+    Position:  (プロットエリア基準)
       Vertical  : T = Top,    B = Bottom  
-      Horizontal: L = Left,   R = Right,   C = Center  
+      Horizontal: L = Left,   R = Right,   C = Center 
   
     Options:  
       bw : background white (背景を白)  

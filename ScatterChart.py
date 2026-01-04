@@ -90,6 +90,8 @@ PRESET = {
         "major_grid_color": RGB(0, 0, 0),
         "axis_line_color": RGB(0, 0, 0),
     },
+    "no_change":{
+    },
 }
 # std を excel2021 ベースで上書き
 PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
@@ -245,8 +247,10 @@ def ScatterChart(ws,
         x_axis.MaximumScaleIsAuto = True
     elif x_max not in (None, ""):
         x_axis.MaximumScale = x_max  # 最大値
-    x_axis.HasMajorGridlines = p.get("x_major_grid", True)
-    x_axis.MajorTickMark = p.get("x_major_tickmark", constants.xlTickMarkNone)
+    if p.get("x_major_grid") is not None:
+        x_axis.HasMajorGridlines = p.get("x_major_grid")
+    if p.get("x_major_tickmark") is not None:
+        x_axis.MajorTickMark = p.get("x_major_tickmark")
     if p.get("x_minor_grid") is not None:
         x_axis.HasMinorGridlines = p.get("x_minor_grid")
     if p.get("x_minor_tickmark") is not None:
@@ -282,8 +286,10 @@ def ScatterChart(ws,
         y_axis.MaximumScaleIsAuto = True
     elif y_max not in (None, ""):
         y_axis.MaximumScale = y_max
-    y_axis.HasMajorGridlines = p.get("y_major_grid", True)
-    y_axis.MajorTickMark = p.get("y_major_tickmark", constants.xlTickMarkNone)
+    if p.get("y_major_grid") is not None:
+        y_axis.HasMajorGridlines = p.get("y_major_grid")
+    if p.get("y_major_tickmark") is not None:
+        y_axis.MajorTickMark = p.get("y_major_tickmark")
     if p.get("y_minor_grid") is not None:
         y_axis.HasMinorGridlines = p.get("y_minor_grid")
     if p.get("y_minor_tickmark") is not None:
@@ -386,9 +392,11 @@ def ScatterChart(ws,
             elif style not in (None, ""):
                 style_i = style
             else:
-                style_i = p.get("style","line+marker") or ""
+                style_i = p.get("style") or None
                          
-            if "marker" in style_i:
+            if style_i is None:
+                pass 
+            elif "marker" in style_i:
                 if cfg.get("marker") not in (None, ""):
                     marker_i = cfg["marker"]
                 elif marker not in (None, ""):
@@ -401,7 +409,10 @@ def ScatterChart(ws,
                 series.MarkerSize = cfg.get("size",p.get("markersize"))                       # マーカーサイズ
             else:
                 series.MarkerStyle = constants.xlMarkerStyleNone
-            if "line" in style_i:
+            
+            if style_i is None:
+                pass
+            elif "line" in style_i:
                 series.Format.Line.Visible = True
                 series.Format.Line.Weight = cfg.get("weight", p.get("line_weight"))  # 線の太さ(pt)
             elif isinstance(style_i, str) and ("dash" in style_i or "--" in style_i):
@@ -485,37 +496,38 @@ def ScatterChart(ws,
     
     # フォーマットの設定 -------------------------------------------------
     try:
+        # タイトルの設定
         if ch.HasTitle:
-            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Bold = p.get("title_font_bold", False)
-            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Name = p.get("title_font_name", "Aptos Narrow 本文")
+            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Bold = p.get("title_font_bold")
+            ch.ChartTitle.Format.TextFrame2.TextRange.Font.Name = p.get("title_font_name")
             if title_font_color not in (None, ""):
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = title_font_color
             else:
-                ch.ChartTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = p.get("title_font_color", RGB(89,89,89))
+                ch.ChartTitle.Format.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = p.get("title_font_color")
             if title_font_size not in (None, ""):
                 ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = title_font_size
             else:
-                ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = p.get("title_font_size", 14)
+                ch.ChartTitle.Format.TextFrame2.TextRange.Font.Size = p.get("title_font_size")
     except Exception as e:
-        print("タイトル設定でエラー:",e)
+        print("タイトルの設定でエラー:",e)
         
     try:  
-        # グリッド線の設定（デフォルト: 薄いグレー)
+        # グリッド線の設定
         axes = [x_axis, y_axis]
         for ax in axes:
             if ax.HasMajorGridlines:
-                ax.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color", RGB(217, 217, 217))
-                ax.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight", 0.75)
+                ax.MajorGridlines.Format.Line.ForeColor.RGB = p.get("major_grid_color")
+                ax.MajorGridlines.Format.Line.Weight = p.get("major_grid_weight")
             if p.get("axis_line") is None:
                 pass
             elif p.get("axis_line") is True:
                 ax.Format.Line.Visible = True
-                ax.Format.Line.ForeColor.RGB = p.get("axis_line_color", RGB(191, 191, 191))
-                ax.Format.Line.Weight = p.get("axis_line_weight", 0.75)
+                ax.Format.Line.ForeColor.RGB = p.get("axis_line_color")
+                ax.Format.Line.Weight = p.get("axis_line_weight")
             elif p.get("axis_line") is False:
                 ax.Format.Line.Visible = False
     except Exception as e:
-        print("軸の設定でエラー:",e)
+        print("グリッド線の設定でエラー:",e)
         
     try:        
         # 副軸の設定
@@ -555,20 +567,19 @@ def ScatterChart(ws,
     except Exception as e:
         print("副軸の設定でエラー:",e)
     
-    try:         
+    try:
+        # 軸のフォント設定         
         for ax in axes:                
-            # 軸の設定
             tl_font = ax.TickLabels.Font
-            tl_font.Color = p.get("axis_tick_font_color", RGB(89,89,89))
-            tl_font.Size = p.get("axis_tick_font_size", 9)
-            tl_font.Name = p.get("axis_tick_font_name","Aptos Narrow 本文")
-            # 軸タイトルがあるとき、軸タイトルを設定する
+            tl_font.Color = p.get("axis_tick_font_color")
+            tl_font.Size = p.get("axis_tick_font_size")
+            tl_font.Name = p.get("axis_tick_font_name")
             if ax.HasTitle:
                 ax_font = ax.AxisTitle.Format.TextFrame2.TextRange.Font
-                ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color", RGB(89,89,89))
-                ax_font.Bold = p.get("axis_title_font_bold", False)
-                ax_font.Size = p.get("axis_title_font_size", 10)
-                ax_font.Name = p.get("axis_title_font_name", "Aptos Narrow 本文")
+                ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color")
+                ax_font.Bold = p.get("axis_title_font_bold")
+                ax_font.Size = p.get("axis_title_font_size")
+                ax_font.Name = p.get("axis_title_font_name")
     except Exception as e:
         print("軸のフォント設定でエラー:",e)
         
@@ -582,17 +593,17 @@ def ScatterChart(ws,
             chart_area.Border.LineStyle = 0    # 枠なし
         elif frame_color not in (None, ""):
             chart_area.Format.Line.ForeColor.RGB = frame_color
-            chart_area.Format.Line.Weight = p.get("frame_weight",0.75)
+            chart_area.Format.Line.Weight = p.get("frame_weight")
         else:
-            chart_area.Format.Line.ForeColor.RGB = p.get("frame_color",RGB(217,217,217))  # 薄いグレー
-            chart_area.Format.Line.Weight = p.get("frame_weight",0.75)                    # 枠線の太さ(pt)
+            chart_area.Format.Line.ForeColor.RGB = p.get("frame_color")  # 薄いグレー
+            chart_area.Format.Line.Weight = p.get("frame_weight")        # 枠線の太さ(pt)
         
         # プロットエリアの枠設定
         if p.get("plot_area_frame") is not None:
-            plot_area.Format.Line.Visible = p.get("plot_area_frame", False)
+            plot_area.Format.Line.Visible = p.get("plot_area_frame")
             if p.get("plot_area_frame") is True:
-                plot_area.Format.Line.ForeColor.RGB = p.get("plot_area_frame_color", 0)
-                plot_area.Format.Line.Weight = p.get("plot_area_frame_weight", 1.0)
+                plot_area.Format.Line.ForeColor.RGB = p.get("plot_area_frame_color")
+                plot_area.Format.Line.Weight = p.get("plot_area_frame_weight")
 
         # 背景の透明化設定
         if transparent_bg is True:

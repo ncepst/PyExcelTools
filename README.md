@@ -216,7 +216,7 @@ series_list = [
 `from ModifyChart import MofifyChart, RGB, add_shape, add_line, template` のようにインポートして使います。  
 - `add_shape`: `chart`のプロットエリアに、帯(長方形)、注釈用のテキストボックスを追加します。  
 - `add_line` : `chart`のプロットエリアに、線もしくは破線を追加します。  
-- `template` : グラフテンプレート機能を利用します。(テンプレートとして保存した.crtxファイルを使います)
+- `template` : グラフテンプレート機能を利用します。(テンプレートとして保存した`.crtx`ファイルを使います)
 
 詳細な使い方は、`ModifyChart.py` の各関数定義の下にある docstring をご参照ください。
 

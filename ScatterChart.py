@@ -542,8 +542,10 @@ def ScatterChart(ws,
                 y2.MaximumScaleIsAuto = True
             elif y2_max not in (None, ""):
                 y2.MaximumScale = y2_max
-            y2.HasMajorGridlines = p.get("y2_major_grid",False)
-            y2.MajorTickMark = p.get("y2_major_tickmark", constants.xlTickMarkNone)
+            if p.get("y2_major_grid") is not None:
+                y2.HasMajorGridlines = p.get("y2_major_grid")
+            if p.get("y2_major_tickmark") is not None:
+                y2.MajorTickMark = p.get("y2_major_tickmark")
             if p.get("y2_minor_grid") is not None:
                 y2.HasMinorGridlines = p.get("y2_minor_grid")
             if p.get("y2_minor_tickmark") is not None:

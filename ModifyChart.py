@@ -775,8 +775,8 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     """
     プロットエリア内に基準線を描画する
 
-    x : 縦線（x軸の値）
-    y : 横線（y軸の値）
+    x : 縦線(x軸の値)
+    y : 横線(y軸の値)
     """
 
     if (x is None) == (y is None):
@@ -808,3 +808,12 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
     if dash:
         line.Line.DashStyle = 4
     return line
+
+def template(chart,user,name="グラフ 1"):  
+    """
+    グラフテンプレート機能を使う
+    user: ユーザー名
+    name: テンプレート名
+    """
+    ch = chart.api[1]
+    ch.ApplyChartTemplate(rf"C:\Users\{user}\AppData\Roaming\Microsoft\Templates\Charts\{name}.crtx")

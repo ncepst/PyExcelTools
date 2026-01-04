@@ -175,6 +175,23 @@ series cfg (設定なしで自動的にNone) と 引数が None で preset の�
 必須引数:`start_range`, `paste_range`、 任意引数:`row` ,`col` が加わって、`ws`は必須引数に変わります。  
 戻り値はChartオブジェクトとなります。
 
+- `title`, `x_title`, `y_title`, `legend`には`False`で無効化を指定できます。  
+  `True`は文字列分岐に入るためエラーとなります。
+
+-  `legend`の仕様  
+  `legend="TR+bw+fb"`のようにポジションとオプションを指定できます。
+   Options は 複数指定可能です。
+   ```
+    Position:  
+      Vertical  : T = Top,    B = Bottom  
+      Horizontal: L = Left,   R = Right,   C = Center  
+  
+    Options:  
+      bw : background white (背景を白)  
+      fb : frame black      (枠を黒)  
+      tb : text black       (テキストを黒)
+   ```
+   
 - `chart_type = "bar"` を指定すると、集合縦棒グラフ (`xlColumnClustered`) が表示されます。   
   ただしこの場合、内部処理でtry構文の例外が発生し、グリッド線の設定・軸のフォント設定には未対応です。
   

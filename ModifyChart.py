@@ -809,11 +809,31 @@ def add_line(chart, x=None, y=None, color=RGB(0, 0, 0), weight=1.5, dash=True):
         line.Line.DashStyle = 4
     return line
 
-def template(chart,user,name="グラフ 1"):  
+def template(chart,user,name="グラフ 1",
+             width_cm=None, height_cm=None, title=None, x_title=None, y_title=None):  
     """
     グラフテンプレート機能を使う
     user: ユーザー名
     name: テンプレート名
     """
+    if width_cm is not None:
+        chart.width = cm_to_pt(width_cm)
+    if height_cm is not None:
+        chart.height = cm_to_pt(height_cm)
+         
     ch = chart.api[1]
     ch.ApplyChartTemplate(rf"C:\Users\{user}\AppData\Roaming\Microsoft\Templates\Charts\{name}.crtx")
+    
+    if title is not None:
+        ch.HasTitle = True
+        ch.ChartTitle.Text = title
+           
+    if x_title is not None:
+        x_axis = ch.Axes(AxisType.xlCategory)
+        x_axis.HasTitle = True
+        x_axis.AxisTitle.Text = x_title
+        
+    if y_title is not None:
+        y_axis = ch.Axes(AxisType.xlValue)
+        y_axis.HasTitle = True
+        y_axis.AxisTitle.Text = y_title

@@ -538,8 +538,11 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 y2.TickLabels.NumberFormatLocal = y2_format
             if y2_log not in (None, ""):
                 y2.ScaleType = 1 if y2_log == True else 0
-            if y2_title == False:
+            if y2_title is False:
                 y2.HasTitle = False
+            elif y2_title is True:
+                y2.HasTitle = True
+                y2.AxisTitle.Text = "副軸タイトル"
             elif y2_title not in (None, ""):
                 y2.HasTitle = True
                 y2.AxisTitle.Text = y2_title
@@ -570,7 +573,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
         # 外枠の設定
         if frame_color is False:  # False:枠なし、0:黒枠
             chart_area.Border.LineStyle = 0    # 枠なし
-        elif frame_color not in (None, ""):
+        elif frame_color not in (None, True, ""):
             chart_area.Format.Line.ForeColor.RGB = frame_color
             chart_area.Format.Line.Weight = p.get("frame_weight")
         else:

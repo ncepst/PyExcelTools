@@ -560,12 +560,12 @@ def ScatterChart(ws,
                 y2.ScaleType = 1 if y2_log == True else 0
             if y2_title in (False, ""):
                 y2.HasTitle = False
+            elif y2_title in (True, None):
+                y2.HasTitle = True
+                y2.AxisTitle.Text = "副軸タイトル"
             else:
                 y2.HasTitle = True
-                if y2_title in (True, None):
-                    y2.AxisTitle.Text = "副軸タイトル"
-                else:
-                    y2.AxisTitle.Text = y2_title
+                y2.AxisTitle.Text = y2_title
     except Exception as e:
         print("副軸の設定でエラー:",e)
     
@@ -593,7 +593,7 @@ def ScatterChart(ws,
         # 外枠の設定
         if frame_color is False:  # False:枠なし、0:黒枠
             chart_area.Border.LineStyle = 0    # 枠なし
-        elif frame_color not in (None, ""):
+        elif frame_color not in (None, True, ""):
             chart_area.Format.Line.ForeColor.RGB = frame_color
             chart_area.Format.Line.Weight = p.get("frame_weight")
         else:

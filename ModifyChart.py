@@ -5,7 +5,8 @@
 概要: 既存のExcelグラフの書式設定を行うモジュールです
 使用法:
 from ModifyChart import ModifyChart, RGB
-ModifyChart(chart, preset="std", NS=2) のように呼び出して使用
+# chart に対して標準プリセット "std" を適用、系列数=2 を指定
+ModifyChart(chart, preset="std", NS=2)
 """
 from xlwings.constants import AxisType
 from win32com.client import constants
@@ -862,3 +863,4 @@ def template(chart,user,name="グラフ 1",
         y_axis.HasTitle = True
 
         y_axis.AxisTitle.Text = y_title
+

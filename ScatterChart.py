@@ -2,9 +2,7 @@
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
 """
-概要:
-新規の Excel グラフの作成と書式設定を簡単に行うモジュールです。
-
+概要: 新規Excelグラフの作成と書式設定を行うモジュールです
 使用法:
 from ScatterChart import ScatterChart, RGB
 ScatterChart(ws, start_range = "H3", paste_range = "A1")  のように呼び出して使用
@@ -684,4 +682,5 @@ def ScatterChart(ws,
     except Exception as e:
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
            
+
     return chart

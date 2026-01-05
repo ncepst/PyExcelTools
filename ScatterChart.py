@@ -6,7 +6,7 @@
 使用法:
 from ScatterChart import ScatterChart, RGB
 # ws の "H3" を起点とするデータから、標準プリセットで新規の散布図を作成し、"A1" を左上として貼り付け
-ScatterChart(ws, start_range="H3", paste_range="A1", preset="std")
+chart = ScatterChart(ws, start_range="H3", paste_range="A1", preset="std")
 """
 import xlwings as xw
 from xlwings.constants import AxisType
@@ -685,5 +685,6 @@ def ScatterChart(ws,
            
 
     return chart
+
 
 

@@ -5,7 +5,8 @@
 概要: 新規Excelグラフの作成と書式設定を行うモジュールです
 使用法:
 from ScatterChart import ScatterChart, RGB
-ScatterChart(ws, start_range = "H3", paste_range = "A1")  のように呼び出して使用
+# ws の "H3" を起点とするデータから、新規の散布図を作成し、"A1" を左上として貼り付け
+ScatterChart(ws, start_range = "H3", paste_range = "A1")
 """
 import xlwings as xw
 from xlwings.constants import AxisType
@@ -684,3 +685,4 @@ def ScatterChart(ws,
            
 
     return chart
+

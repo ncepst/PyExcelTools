@@ -2,7 +2,7 @@
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
 """
-概要: 既存のExcelグラフの書式設定を行うモジュールです
+既存のExcelグラフの書式設定を行うモジュールです
 
 使用法:
     from ModifyChart import ModifyChart, RGB
@@ -864,5 +864,6 @@ def template(chart,user,name="グラフ 1",
         y_axis.HasTitle = True
 
         y_axis.AxisTitle.Text = y_title
+
 
 

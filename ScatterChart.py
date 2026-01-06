@@ -684,10 +684,4 @@ def ScatterChart(ws,
     except Exception as e:
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
            
-
     return chart
-
-
-
-
-

@@ -862,5 +862,4 @@ def template(chart,user,name="グラフ 1",
     if y_title is not None:
         y_axis = ch.Axes(AxisType.xlValue)
         y_axis.HasTitle = True
-
         y_axis.AxisTitle.Text = y_title

@@ -2,7 +2,7 @@
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
 """
-新規Excelグラフの作成と書式設定を行うモジュールです
+新規Excelグラフ(散布図)の作成と書式設定を行うモジュールです
 
 使用法:
     from ScatterChart import ScatterChart, RGB

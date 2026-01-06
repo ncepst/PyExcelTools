@@ -2,7 +2,7 @@
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
 """
-既存のExcelグラフの書式設定を行うモジュールです
+既存のExcelグラフ(散布図)の書式設定を行うモジュールです
 
 使用法:
     from ModifyChart import ModifyChart, RGB

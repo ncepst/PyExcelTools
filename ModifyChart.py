@@ -864,6 +864,3 @@ def template(chart,user,name="グラフ 1",
         y_axis.HasTitle = True
 
         y_axis.AxisTitle.Text = y_title
-
-
-

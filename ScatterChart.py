@@ -2,7 +2,7 @@
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
 """
-概要: 新規Excelグラフの作成と書式設定を行うモジュールです
+新規Excelグラフの作成と書式設定を行うモジュールです
 
 使用法:
     from ScatterChart import ScatterChart, RGB
@@ -686,6 +686,7 @@ def ScatterChart(ws,
            
 
     return chart
+
 
 
 

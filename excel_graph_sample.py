@@ -96,7 +96,7 @@ chart.set_source_data(ws.range(f'{start_range}:{target_range}'))
 # グラフのチャート名 (エクセル画面左上の表示で確認できる)
 chart.name = name
 
-# ChartObject(枠) → api[0]、Chart本体 → api[1]
+# Chart本体 → api[1]
 ch = chart.api[1]
 
 # グラフタイトル

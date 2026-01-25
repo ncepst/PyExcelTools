@@ -41,6 +41,7 @@ PRESET = {
         "axis_tick_font_color": RGB(89, 89, 89),
         "axis_tick_font_size": 9,
         "axis_tick_font_name": "Aptos Narrow 本文",
+        "axis_tick_font_bold": False,
         "axis_line": True,
         "axis_line_color": RGB(191, 191, 191),
         "axis_line_weight": 0.75,        
@@ -87,8 +88,22 @@ PRESET = {
         "y_major_tickmark": constants.xlTickMarkInside,
     },
     "grid":{
+        "title_font_name": "Arial",
+        "axis_title_font_name": "Arial",
+        "axis_tick_font_name": "Arial",
+        "title_font_bold": True,
+        "axis_title_font_bold": True,
+        "axis_tick_font_bold": True,
         "major_grid_color": RGB(0, 0, 0),
         "axis_line_color": RGB(0, 0, 0),
+        "x_major_tickmark": constants.xlTickMarkOutside,
+        "y_major_tickmark": constants.xlTickMarkOutside,
+        "frame_weight": 1,
+        "major_grid_weight": 1,
+        "axis_line_weight": 1,
+        "axis_title_font_size": 12,
+        "axis_tick_font_size": 12,
+        "title_font_size": 14,
     },
     "no_change":{
     },
@@ -576,6 +591,7 @@ def ScatterChart(ws,
             tl_font.Color = p.get("axis_tick_font_color")
             tl_font.Size = p.get("axis_tick_font_size")
             tl_font.Name = p.get("axis_tick_font_name")
+            tl_font.Bold = p.get("axis_tick_font_bold")
             if ax.HasTitle:
                 ax_font = ax.AxisTitle.Format.TextFrame2.TextRange.Font
                 ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color")
@@ -685,3 +701,4 @@ def ScatterChart(ws,
         print("凡例 もしくは プロットエリアの調整でエラー:",e)
            
     return chart
+

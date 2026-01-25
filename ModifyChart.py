@@ -632,7 +632,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             ch.HasLegend = False
         
         # プロットエリアの調整
-        debug = 0
+        debug = False
         if plot_area_space in ("absolute","abs"):
 
             def fit_inside(chart, L=0, T=0, R=0, B=0, it=6, tol=0.8):
@@ -686,6 +686,17 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                     if abs(dB) > tol:
                         pl.Height = max(float(pl.Height) + dB, 10.0)
 
+                if debug:
+                    print(
+                        f"PlotArea\n"
+                        f"Outer (sheet): "
+                        f"Left={pl.Left:.1f}, Top={pl.Top:.1f}, "
+                        f"Width={pl.Width:.1f}, Height={pl.Height:.1f} \n"
+                        f"Inside (chart): "
+                        f"Left={pl.InsideLeft:.1f}, Top={pl.InsideTop:.1f}, "
+                        f"Width={pl.InsideWidth:.1f}, Height={pl.InsideHeight:.1f}"
+                    )
+
             fit_inside(chart, L=y_title_space+42, T=title_space+35, R=right_space+20, B=x_title_space+40)
 
         else:  # relative / dafault
@@ -695,8 +706,13 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             height = plot_area.InsideHeight - title_space - x_title_space + height_inc
 
             if debug:
-                print("left:",left,", top:",top,", width:",width,", height:",height)
-            
+                print(
+                    f"PlotArea\n"
+                    f"Inside (chart): "
+                    f"Left={left:.1f}, Top={top:.1f}, "
+                    f"Width={width:.1f}, Height={height:.1f}"
+                )
+
             plot_area.InsideLeft   = left
             plot_area.InsideTop    = top
             plot_area.InsideWidth  = width 
@@ -940,3 +956,4 @@ def template(chart,user,name="グラフ 1",
         y_axis.HasTitle = True
 
         y_axis.AxisTitle.Text = y_title
+

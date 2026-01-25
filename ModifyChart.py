@@ -87,8 +87,21 @@ PRESET = {
         "y_major_tickmark": constants.xlTickMarkInside,
     },
     "grid":{
+        "title_font_name": "Arial",
+        "axis_title_font_name": "Arial",
+        "axis_tick_font_name": "Arial",
+        "title_font_bold": True,
+        "axis_title_font_bold": True,
         "major_grid_color": RGB(0, 0, 0),
         "axis_line_color": RGB(0, 0, 0),
+        "x_major_tickmark": constants.xlTickMarkOutside,
+        "y_major_tickmark": constants.xlTickMarkOutside,
+        "frame_weight": 1,
+        "major_grid_weight": 1,
+        "axis_line_weight": 1,
+        "axis_title_font_size": 12,
+        "axis_tick_font_size": 12,
+        "title_font_size": 14,
     },
     "no_change":{
     },
@@ -863,3 +876,4 @@ def template(chart,user,name="グラフ 1",
         y_axis = ch.Axes(AxisType.xlValue)
         y_axis.HasTitle = True
         y_axis.AxisTitle.Text = y_title
+

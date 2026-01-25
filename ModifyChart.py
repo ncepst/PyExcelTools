@@ -2,11 +2,11 @@
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
 """
-概要: 
-    既存のExcelグラフの書式設定を行うモジュールです
+既存のExcelグラフの書式設定を行うモジュールです
+
 使用法:
     from ModifyChart import ModifyChart, RGB
-    # chart に対して標準プリセット "std" を適用、系列数=2 を指定
+    # chart に対して標準プリセット "std" の書式設定を適用、系列数=2 を指定
     ModifyChart(chart, preset="std", NS=2)
 """
 from xlwings.constants import AxisType

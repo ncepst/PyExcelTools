@@ -2,11 +2,11 @@
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
 """
-既存のExcelグラフ(散布図)の書式設定を行うモジュールです
-
+概要: 
+    既存のExcelグラフの書式設定を行うモジュールです
 使用法:
     from ModifyChart import ModifyChart, RGB
-    # chart に対して標準プリセット "std" の書式設定を適用、系列数=2 を指定
+    # chart に対して標準プリセット "std" を適用、系列数=2 を指定
     ModifyChart(chart, preset="std", NS=2)
 """
 from xlwings.constants import AxisType
@@ -41,6 +41,7 @@ PRESET = {
         "axis_tick_font_color": RGB(89, 89, 89),
         "axis_tick_font_size": 9,
         "axis_tick_font_name": "Aptos Narrow 本文",
+        "axis_tick_font_bold": False,
         "axis_line": True,
         "axis_line_color": RGB(191, 191, 191),
         "axis_line_weight": 0.75,    
@@ -92,6 +93,7 @@ PRESET = {
         "axis_tick_font_name": "Arial",
         "title_font_bold": True,
         "axis_title_font_bold": True,
+        "axis_tick_font_bold": True,
         "major_grid_color": RGB(0, 0, 0),
         "axis_line_color": RGB(0, 0, 0),
         "x_major_tickmark": constants.xlTickMarkOutside,
@@ -569,6 +571,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
             tl_font.Color = p.get("axis_tick_font_color")
             tl_font.Size = p.get("axis_tick_font_size")
             tl_font.Name = p.get("axis_tick_font_name")
+            tl_font.Bold = p.get("axis_tick_font_bold")
             if ax.HasTitle:
                 ax_font = ax.AxisTitle.Format.TextFrame2.TextRange.Font
                 ax_font.Fill.ForeColor.RGB = p.get("axis_title_font_color")
@@ -629,15 +632,72 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
         
         # プロットエリアの調整
         if plot_area_space in ("absolute","abs"):
-            plot_area.InsideLeft   = chart_area.Left + y_title_space
-            plot_area.InsideTop    = chart_area.Top + title_space
-            plot_area.InsideWidth  = chart_area.Width - y_title_space + width_inc
-            plot_area.InsideHeight = chart_area.Height - title_space - x_title_space + height_inc
+
+            def fit_inside(chart, L=0, T=0, R=0, B=0, it=6, tol=0.8):
+                ch = chart.api[1]
+                co, ca, pl = ch.Parent, ch.ChartArea, ch.PlotArea
+                pl.Position = constants.xlChartElementPositionCustom
+
+                tgtL = float(co.Left) + float(L)
+                tgtT = float(co.Top)  + float(T)
+                tgtR = float(co.Left) + float(co.Width)  - float(R)
+                tgtB = float(co.Top)  + float(co.Height) - float(B)
+
+                for _ in range(it):
+                    # 現在の Inside（シート基準）を読む
+                    curL = float(ca.Left) + float(pl.InsideLeft)
+                    curT = float(ca.Top)  + float(pl.InsideTop)
+                    curR = curL + float(pl.InsideWidth)
+                    curB = curT + float(pl.InsideHeight)
+
+                    # --- 左（右端固定で合わせる）---
+                    dL = tgtL - curL
+                    if abs(dL) > tol:
+                        # 右端（外形の Right）を維持するように、Left を動かし Width を逆側に補正
+                        right_outer = float(pl.Left) + float(pl.Width)
+                        new_left = float(pl.Left) + dL
+                        new_width = max(right_outer - new_left, 10.0)
+                        pl.Left, pl.Width = new_left, new_width
+
+                        # Inside 再読込（安定させるため）
+                        curL = float(ca.Left) + float(pl.InsideLeft)
+
+                    # --- 右（Left 固定で合わせる）---
+                    curR = float(ca.Left) + float(pl.InsideLeft) + float(pl.InsideWidth)
+                    dR = tgtR - curR
+                    if abs(dR) > tol:
+                        # Left 外形は固定、Width だけ増減
+                        pl.Width = max(float(pl.Width) + dR, 10.0)
+
+                    # --- 上（下端固定で合わせる）---
+                    curT = float(ca.Top) + float(pl.InsideTop)
+                    dT = tgtT - curT
+                    if abs(dT) > tol:
+                        bottom_outer = float(pl.Top) + float(pl.Height)
+                        new_top = float(pl.Top) + dT
+                        new_height = max(bottom_outer - new_top, 10.0)
+                        pl.Top, pl.Height = new_top, new_height
+
+                    # --- 下（Top 固定で合わせる）---
+                    curB = float(ca.Top) + float(pl.InsideTop) + float(pl.InsideHeight)
+                    dB = tgtB - curB
+                    if abs(dB) > tol:
+                        pl.Height = max(float(pl.Height) + dB, 10.0)
+
+            fit_inside(chart, L=y_title_space+42, T=title_space+35, R=width_inc+20, B=x_title_space+40)
+
         else:  # relative / dafault
-            plot_area.InsideLeft   = plot_area.InsideLeft + y_title_space
-            plot_area.InsideTop    = plot_area.InsideTop + title_space
-            plot_area.InsideWidth  = plot_area.InsideWidth - y_title_space + width_inc
-            plot_area.InsideHeight = plot_area.InsideHeight - title_space - x_title_space + height_inc
+            left   = plot_area.InsideLeft + y_title_space
+            top    = plot_area.InsideTop + title_space
+            width  = plot_area.InsideWidth - y_title_space + width_inc
+            height = plot_area.InsideHeight - title_space - x_title_space + height_inc
+            
+            print("left:",left,"top:",top,"width:",width,"height:",height)
+            
+            plot_area.InsideLeft   = left
+            plot_area.InsideTop    = top
+            plot_area.InsideWidth  = width 
+            plot_area.InsideHeight = height
         
         # 凡例設定
         if  legend in (None, ""):
@@ -876,4 +936,3 @@ def template(chart,user,name="グラフ 1",
         y_axis = ch.Axes(AxisType.xlValue)
         y_axis.HasTitle = True
         y_axis.AxisTitle.Text = y_title
-

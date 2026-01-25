@@ -2,7 +2,7 @@
 # Copyright (c) 2025 ncepst
 # SPDX-License-Identifier: MIT
 """
-既存のExcelグラフ(散布図)の書式設定を行うモジュールです
+既存のExcelグラフの書式設定を行うモジュールです
 
 使用法:
     from ModifyChart import ModifyChart, RGB
@@ -179,6 +179,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 plot_area_space: str = "relative", # プロットエリア調整時の基準位置を"absolute"/"relative"で指定
                 width_inc = 0,                     # プロットエリアの幅増減(pt)
                 height_inc = 0,                    # プロットエリアの高さ増減(pt)
+                right_space = 0,                   # plot_area_space="abs"のときの右のスペース指定
                 ):
 
     p = PRESET.get(preset, PRESET["std"]) or {}
@@ -684,7 +685,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                     if abs(dB) > tol:
                         pl.Height = max(float(pl.Height) + dB, 10.0)
 
-            fit_inside(chart, L=y_title_space+42, T=title_space+35, R=width_inc+20, B=x_title_space+40)
+            fit_inside(chart, L=y_title_space+42, T=title_space+35, R=right_space+20, B=x_title_space+40)
 
         else:  # relative / dafault
             left   = plot_area.InsideLeft + y_title_space
@@ -935,5 +936,4 @@ def template(chart,user,name="グラフ 1",
     if y_title is not None:
         y_axis = ch.Axes(AxisType.xlValue)
         y_axis.HasTitle = True
-
         y_axis.AxisTitle.Text = y_title

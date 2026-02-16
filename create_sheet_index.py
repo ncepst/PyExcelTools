@@ -11,8 +11,9 @@ def RGB(r, g, b):
 
 def create_sheet_index():
     # pathは適宜変更してください-------------------------------
-    wb = xw.Book(r"C:\Users\*****\Desktop\test.xlsx")
+    # wb = xw.Book(r"C:\Users\*****\Desktop\test.xlsx")
     # -------------------------------------------------------
+    wb = xw.books.active
     
     idx_name = "目次"
 
@@ -91,3 +92,4 @@ def create_sheet_index():
 if __name__ == "__main__":
 
     create_sheet_index()
+

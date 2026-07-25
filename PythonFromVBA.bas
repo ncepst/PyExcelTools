@@ -50,6 +50,7 @@ Sub グラフ作成_自動判定()
     Set rngStart = Selection.Cells(1, 1)
 
     ' 連続データ範囲を自動判定
+    If IsEmpty(rngStart.offset(1, 0).Value) Then Exit Sub
     lastRow = rngStart.End(xlDown).Row
     lastCol = rngStart.End(xlToRight).Column
     Set rng = ws.Range(rngStart, ws.Cells(lastRow, lastCol))

@@ -65,7 +65,7 @@ Pythonスクリプトは Excelマクロから実行することもでき、
 グラフの書式設定の項目のうち、用途ごとに指定が必要な項目が関数の引数としてリスト化されています。  
 `ScatterChart.py`は必須引数が`ws, start_range, paste_range`の3つ、  
 `ModifyChart.py`は必須引数が`chart`の1つのみで、  
-残りの54個の任意引数により、設定項目を指定します。
+残りの55個の任意引数により、設定項目を指定します。
 
 また、`PRESET`は **dict形式** で関数外に定義されており、  
 外側の辞書のキー`"excel2021"`に、Excel 2021 の散布図の書式設定が格納されています。  
@@ -163,6 +163,7 @@ def ModifyChart(chart,                        # ExcelのChartオブジェクト
                 plot_area_space: str = "relative", # プロットエリア調整時の基準位置を"absolute"/"relative"で指定
                 width_inc = 0,                     # プロットエリアの幅増減(pt)
                 height_inc = 0,                    # プロットエリアの高さ増減(pt)
+                right_space = 0,                   # plot_area_space="abs"のときの右のスペース指定
                 ):
 ```
 - 型ヒントには `Python 3.10 以降`の記法を使用しています。 `ModifyChart.py`のみ型ヒントを使用しました。

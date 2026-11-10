@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ncepst-pyexceltools"
+version = "0.1.0"
+description = "Create and format native Excel charts using xlwings on Windows"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "ncepst"}]
+dependencies = ["xlwings", "pywin32; sys_platform == 'win32'"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3",
+  "Topic :: Office/Business",
+]
+
+[project.urls]
+Repository = "https://github.com/ncepst/PyExcelTools"
+Issues = "https://github.com/ncepst/PyExcelTools/issues"
+
+[tool.setuptools]
+packages = ["pyexceltools"]
+py-modules = ["ScatterChart", "ModifyChart", "create_sheet_index"]

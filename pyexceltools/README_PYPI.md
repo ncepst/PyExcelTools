@@ -7,13 +7,13 @@
 
 ## インストール方法と基本的な使い方
 
-インストール方法：
+### インストール方法
 
 ```powershell
 pip install ncepst-pyexceltools
 ```
 
-最新版への更新：
+### 最新版への更新
 
 ```powershell
 pip install --upgrade ncepst-pyexceltools

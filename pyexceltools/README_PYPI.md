@@ -8,13 +8,13 @@
 ## インストール方法と基本的な使い方
 
 ```powershell
-python -m pip install ncepst-pyexceltools
+pip install ncepst-pyexceltools
 ```
 
 最新版への更新：
 
 ```powershell
-python -m pip install --upgrade ncepst-pyexceltools
+pip install --upgrade ncepst-pyexceltools
 ```
 
 ### 散布図を作成する

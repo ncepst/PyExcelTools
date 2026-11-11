@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ncepst-pyexceltools"
 version = "0.1.2"
 description = "Create and format native Excel charts using xlwings on Windows"
-readme = "README_PYPI.md"
+readme = "pyexceltools/README_PYPI.md"
 requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE"]

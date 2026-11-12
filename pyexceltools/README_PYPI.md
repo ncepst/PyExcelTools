@@ -129,6 +129,7 @@ import time
 
 # 計測開始
 t1 = time.time()
+
 try:
     wb = xw.books.active
     ws = wb.sheets.active

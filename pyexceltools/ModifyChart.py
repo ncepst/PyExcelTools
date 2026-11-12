@@ -11,7 +11,7 @@
 """
 from xlwings.constants import AxisType
 from win32com.client import constants
-from typing import Literal
+from typing import Literal, Any
 # 型ヒントには Python 3.10 以降の記法を使用しています
 
 # RGB値をExcel用の整数に変換するヘルパー関数
@@ -125,23 +125,23 @@ marker_map = {
 
 # False:無効化, None: 変更なし もしくは デフォルト値
 # 優先順位 series cfg > 引数 > preset
-def ModifyChart(chart = "active",             # ExcelのChartオブジェクト
+def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
                 ws = None,                    # None (系列ごとにRange指定する場合のみWorksheetオブジェクトを指定)
                 preset = "std",               # プリセットスタイル名
                 width_cm = None,              # グラフ幅(cm), Noneで変更なし
                 height_cm = None,             # グラフ高さ(cm), Noneで変更なし
                 name = None,                  # グラフ名変更, Noneで変更なし
-                title: str|bool|None = None,  # タイトル文字列, Falseで無効化, Noneで変更なし
+                title: Literal[None, False, "タイトル"] = None,  # タイトル文字列, Falseで無効化, Noneで変更なし
                 title_font_color = None,      # タイトルフォント色(RGB)
                 title_font_size = None,       # タイトルフォントサイズ
                 title_space = +0,             # タイトルとグラフの間隔(pt)
-                NS :int = 1,                  # データ系列数
+                NS: int = 1,                  # データ系列数
                 series_list: list[dict]|None = None,  # 各系列の設定
-                style :Literal[None, "line+marker", "line", "marker", "dash", "dash+marker"] = None, # 線＋マーカーのスタイル
-                smooth : bool = None,         # Trueで曲線、Falseで折れ線
-                marker : Literal["C", "S", "D", "T", "N"] = None,  # マーカー種類: "C":●, "S":■, "D":◆, "T":▲, "N":なし
+                style: Literal[None, "line+marker", "line", "marker", "dash", "dash+marker"] = None, # 線＋マーカーのスタイル
+                smooth: bool = None,         # Trueで曲線、Falseで折れ線
+                marker: Literal["C", "S", "D", "T", "N"] = None,  # マーカー種類: "C":●, "S":■, "D":◆, "T":▲, "N":なし
                 alpha = None,                 # 線の透明度(0~1)
-                x_title: str|bool|None = None,# X軸タイトル文字列。Falseで無効化、Noneで変更なし
+                x_title: Literal[None, False, "X軸タイトル"] = None,  # X軸タイトル文字列。Falseで無効化、Noneで変更なし
                 x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス
                 x_min: float|str|None = None, # X軸最小値, "auto"で自動調整, Noneで変更なし
                 x_max: float|str|None = None, # X軸最大値, "auto"で自動調整, Noneで変更なし
@@ -150,7 +150,7 @@ def ModifyChart(chart = "active",             # ExcelのChartオブジェクト
                 x_cross = None,               # Y軸との交差位置, Noneで変更なし
                 x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など), Noneで変更なし
                 x_log: bool|None = None,      # Trueで対数表示, Noneで変更なし
-                y_title: str|bool|None = None,# Y軸タイトル, Noneで変更なし
+                y_title: Literal[None, False, "Y軸タイトル"] = None, # Y軸タイトル, Noneで変更なし
                 y_title_space = +0,           
                 y_min: float|str|None = None,  
                 y_max: float|str|None = None,  
@@ -159,14 +159,14 @@ def ModifyChart(chart = "active",             # ExcelのChartオブジェクト
                 y_cross = None,                    # X軸との交差位置, Noneで変更なし        
                 y_format = None,              
                 y_log: bool|None = None,       
-                y2_title: str|bool|None = None,    # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
+                y2_title: Literal[None, False, "副軸タイトル"]  = None, # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
                 y2_min: float|str|None = None,
                 y2_max: float|str|None = None,
                 y2_major: float|None = None,
                 y2_minor: float|None = None,
                 y2_format = None,
                 y2_log: bool|None = None,       
-                frame_color: Literal[False, 0, None] = None, # グラフ枠色 (False:枠なし, 0:黒枠, Noneでpreset)
+                frame_color: Literal[None, False, 0] = None, # グラフ枠色 (False:枠なし, 0:黒枠, Noneでpreset)
                 legend: Literal[False, None, "right", "TR+bw+fb", "BL+bw+fb"] = None,    # 凡例表示(False:非表示, Noneで変更なし, "right"で右側に表示) 
                 legend_font_size = None,           # 凡例のフォントサイズ, Noneで変更なし
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
@@ -174,7 +174,7 @@ def ModifyChart(chart = "active",             # ExcelのChartオブジェクト
                 legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御
                 legent_top_space = 0,              # 凡例の上端 = プロットエリアの上端を基準とした凡例位置制御
                 transparent_bg: bool|None = None,  # 背景を透明化する場合はTrue
-                chart_type = None,                 # "bar"で棒グラフに変更
+                chart_type: Literal[None, "bar"] = None,  # "bar"で棒グラフに変更
                 x_bold_line: float|None = None,    # x_bold_line=0でx=0が太線
                 y_bold_line: float|None = None,    # y_bold_line=0でy=0が太線
                 plot_area_space: Literal["relative", "absolute"] = "relative", # プロットエリア調整時の基準位置を"absolute"/"relative"で指定
@@ -182,93 +182,12 @@ def ModifyChart(chart = "active",             # ExcelのChartオブジェクト
                 height_inc = 0,                    # プロットエリアの高さ増減(pt)
                 right_space = 0,                   # plot_area_space="abs"のときの右のスペース指定
                 ):
-    """
-    chart = "active"              # ExcelのChartオブジェクト
-    ws = None,                    # None (系列ごとにRange指定する場合のみWorksheetオブジェクトを指定)
-    preset = "std",               # プリセットスタイル名
-    width_cm = None,              # グラフ幅(cm), Noneで変更なし
-    height_cm = None,             # グラフ高さ(cm), Noneで変更なし
-    name = None,                  # グラフ名変更, Noneで変更なし
-    title: str|bool|None = None,  # タイトル文字列, Falseで無効化, Noneで変更なし
-    title_font_color = None,      # タイトルフォント色(RGB)
-    title_font_size = None,       # タイトルフォントサイズ
-    title_space = +0,             # タイトルとグラフの間隔(pt)
-    NS = 1,                       # データ系列数
-    series_list: list[dict]|None = None,  # 各系列の設定
-    style = None,                 # 線＋マーカーのスタイル
-    smooth = None,                # Trueで曲線、Falseで折れ線
-    marker = None,                # マーカー種類: "C":●, "S":■, "D":◆, "T":▲, "N":なし
-    alpha = None,                 # 線の透明度(0~1)
-    x_title: str|bool|None = None,# X軸タイトル文字列。Falseで無効化、Noneで変更なし
-    x_title_space = +0,           # プロットエリアを下側に広げる場合はマイナス
-    x_min: float|str|None = None, # X軸最小値, "auto"で自動調整, Noneで変更なし
-    x_max: float|str|None = None, # X軸最大値, "auto"で自動調整, Noneで変更なし
-    x_major: float|None = None,   # X軸主目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
-    x_minor: float|None = None,   # X軸副目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
-    x_cross = None,               # Y軸との交差位置, Noneで変更なし
-    x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など), Noneで変更なし
-    x_log: bool|None = None,      # Trueで対数表示, Noneで変更なし
-    y_title: str|bool|None = None,# Y軸タイトル, Noneで変更なし
-    y_title_space = +0,           
-    y_min: float|str|None = None,  
-    y_max: float|str|None = None,  
-    y_major: float|None = None,    
-    y_minor: float|None = None,    
-    y_cross = None,                    # X軸との交差位置, Noneで変更なし        
-    y_format = None,              
-    y_log: bool|None = None,       
-    y2_title: str|bool|None = None,    # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
-    y2_min: float|str|None = None,
-    y2_max: float|str|None = None,
-    y2_major: float|None = None,
-    y2_minor: float|None = None,
-    y2_format = None,
-    y2_log: bool|None = None,       
-    frame_color: bool|int|None = None, # グラフ枠色 (False:枠なし, 0:黒枠, Noneでpreset)
-    legend: bool|str|None = None,      # 凡例表示(False:非表示, Noneで変更なし, "right"で右側に表示) 
-    legend_font_size = None,           # 凡例のフォントサイズ, Noneで変更なし
-    legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
-    legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
-    legend_right_space = 0,            # 凡例の右端 = プロットエリアの右端を基準とした凡例位置制御
-    legent_top_space = 0,              # 凡例の上端 = プロットエリアの上端を基準とした凡例位置制御
-    transparent_bg: bool|None = None,  # 背景を透明化する場合はTrue
-    chart_type = None,                 # "bar"で棒グラフに変更
-    x_bold_line: float|None = None,    # x_bold_line=0でx=0が太線
-    y_bold_line: float|None = None,    # y_bold_line=0でy=0が太線
-    plot_area_space: str = "relative", # プロットエリア調整時の基準位置を"absolute"/"relative"で指定
-    width_inc = 0,                     # プロットエリアの幅増減(pt)
-    height_inc = 0,                    # プロットエリアの高さ増減(pt)
-    right_space = 0,                   # plot_area_space="abs"のときの右のスペース指定
-    ):
-    
-    series_list = [
-    {
-        "name": "系列1",               # 系列名
-        "color": RGB(68,114,196),     # 色
-        "style": "line+marker",       # スタイル
-        "marker": "C",                # マーカー: "C":●, "S":■, "D":◆, "T":▲
-        "size": 5,                    # マーカーサイズ
-        "weight": 1.5,                # 線の幅 (pt)
-        "smooth": True,               # 曲線(True) or 折れ線(False)
-        "alpha": None,                # 線の透明度(0~1), デフォルト None
-        "axis": "primary",            # "y2"で副軸
-        "XValues":None,               # 系列のXの値(ExcelのRange指定)
-        "Values":None,                # 系列のYの値(ExcelのRange指定)
-        "sheet":None,                 # 系列のデータがあるシート名
-        "chart_type": None,           # グラフ種類の変更(デフォルトは散布部)
-        "trendline": None,            # 近似曲線
-        "trendline_name":None,        # 近似曲線の名前
-        "trendline_color":None,       # 近似曲線の色
-        "trendline_weight":None,      # 近似曲線の太さ
-        "trendline_style":None,       # 近似曲線のDashstyle(solid,dash)
-        "trendline_option": None,     # 近似曲線オプション("eq+r2")
-        "legend":None,                # 系列を凡例に入れるか選択
-        "data_label":None             # データラベルの表示
-    },
-    ]
-
-    Returns:
-        chart
+    """  
+    series_list = [{"name": "系列1", "color": RGB(68,114,196), "style": "line+marker", "marker": "C", 
+    "size": 5, "weight": 1.5, "smooth": True, "alpha": None, "axis": "primary" or "y2", "XValues":None, 
+    "Values":None, "sheet":None, "chart_type": None, "trendline": None, "trendline_name":None, 
+    "trendline_color":None, "trendline_weight":None, "trendline_style":None, "trendline_option": None, 
+    "legend":None, "data_label":None}]
     """
 
     p = PRESET.get(preset, PRESET["std"]) or {}

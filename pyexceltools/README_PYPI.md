@@ -123,7 +123,7 @@ print("処理時間:"+str(elapsed_time)+" s")
 ### 選択中のグラフを修正する
 
 ```python
-from pyexceltools import ModifyChart
+from pyexceltools import ModifyChart, RGB, add_shape, add_line, template
 import xlwings as xw
 import time
 

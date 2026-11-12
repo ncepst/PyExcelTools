@@ -255,7 +255,7 @@ chart2 = ScatterChart(....)
 
 ### ModifyChart関数の引数説明
 ```python
-def ModifyChart(chart: Any = "active",             # ExcelのChartオブジェクト
+def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
                 ws = None,                    # None (系列ごとにRange指定する場合のみWorksheetオブジェクトを指定)
                 preset = "std",               # プリセットスタイル名
                 width_cm = None,              # グラフ幅(cm), Noneで変更なし

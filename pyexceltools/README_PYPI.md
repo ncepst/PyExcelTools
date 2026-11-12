@@ -133,6 +133,7 @@ try:
     wb = xw.books.active
     ws = wb.sheets.active
     wb.app.screen_updating = False
+
     import random
     r = random.randint(0, 100)
 

@@ -18,7 +18,7 @@ dependencies = [
     "pywin32; sys_platform == 'win32'",
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Operating System :: Microsoft :: Windows",
     "Programming Language :: Python :: 3",
     "Topic :: Office/Business",

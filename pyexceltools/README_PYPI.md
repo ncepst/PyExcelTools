@@ -120,6 +120,38 @@ elapsed_time = round(t2-t1,3)
 print("処理時間:"+str(elapsed_time)+" s")
 ```
 
+### 選択中のグラフを修正する
+
+```python
+from pyexceltools import ModifyChart
+import xlwings as xw
+import time
+
+# 計測開始
+t1 = time.time()
+try:
+    wb = xw.books.active
+    ws = wb.sheets.active
+    wb.app.screen_updating = False
+    import random
+    r = random.randint(0, 100)
+
+    chart = ModifyChart(title=f"タイトル{r}", width_cm=12, height_cm=8, title_space=0, x_major=15,
+                        NS=1, plot_area_space="absolute", height_inc=0,width_inc=0)
+
+    wb.app.screen_updating = True
+
+except Exception as e:
+    print("Error:",e)
+
+finally:
+    wb.app.screen_updating = True
+    
+# 計測終了
+t2 = time.time()
+elapsed_time = round(t2-t1,3)
+print("処理時間:"+str(elapsed_time)+" s")
+```
 
 ## 背景
 Python から Excel グラフを作成する手段として、`openpyxl` や `xlwings` が利用できますが、    

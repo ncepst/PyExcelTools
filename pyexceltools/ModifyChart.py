@@ -229,7 +229,8 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
             print ("chart:",second_part)
             chart = ws.charts(second_part)
         else:
-            print("アクティブなグラフはありません")    
+            print("アクティブなグラフはありません")
+            return
       
     # グラフ全体のサイズ変更
     if width_cm not in (None, "", 0):

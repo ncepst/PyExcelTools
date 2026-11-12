@@ -215,7 +215,7 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
         if isinstance(c, str):
             cfg["color"] = COLOR_NAME_TO_RGB.get(c.lower(), None)
     
-    if chart == "active":
+    if isinstance(chart, str) and chart == "active":
         import xlwings as xw
         wb = xw.books.active
         ws = wb.sheets.active

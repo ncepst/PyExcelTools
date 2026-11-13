@@ -182,7 +182,7 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
                 height_inc = 0,                    # プロットエリアの高さ増減(pt)
                 right_space = 0,                   # plot_area_space="abs"のときの右のスペース指定
                 ):
-    """  
+    r"""
     C:\Users\*****\AppData\Local\Programs\Python\Python31*\Lib\site-packages\pyexceltools
     
     series_list = [{"name": "系列1", "color": RGB(68,114,196), "style": "line+marker", "marker": "C", 
@@ -190,7 +190,7 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
     "Values":None, "sheet":None, "chart_type": None, "trendline": None, "trendline_name":None, 
     "trendline_color":None, "trendline_weight":None, "trendline_style":None, "trendline_option": None, 
     "legend":None, "data_label":None}]
-    
+
     color = RGB(), "blue", "orange", "green", "yellow", "purple", "brown", "navy", "teal", "cyan", "magenta"
     """
 

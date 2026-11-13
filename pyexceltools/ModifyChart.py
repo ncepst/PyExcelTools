@@ -127,7 +127,7 @@ marker_map = {
 # 優先順位 series cfg > 引数 > preset
 def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
                 ws = None,                    # None (系列ごとにRange指定する場合のみWorksheetオブジェクトを指定)
-                preset = "std",               # プリセットスタイル名
+                preset: Literal["excel2021", "std", "no_grid", "grid", "no_change"] = "std",   # プリセットスタイル名
                 width_cm = None,              # グラフ幅(cm), Noneで変更なし
                 height_cm = None,             # グラフ高さ(cm), Noneで変更なし
                 name = None,                  # グラフ名変更, Noneで変更なし
@@ -148,8 +148,8 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
                 x_major: float|None = None,   # X軸主目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
                 x_minor: float|None = None,   # X軸副目盛間隔, Noneで変更なし, グリッド線表示設定はPRESET
                 x_cross = None,               # Y軸との交差位置, Noneで変更なし
-                x_format = None,              # X軸表示形式 ("0.00", "0.0E+00", "0%" など), Noneで変更なし
-                x_log: bool|None = None,      # Trueで対数表示, Noneで変更なし
+                x_format: Literal[None, "0", "0.0", "0.00"] = None,          # X軸表示形式 ("0.00", "0.0E+00", "0%" など), Noneで変更なし
+                x_log: Literal[None, True] = None,      # Trueで対数表示, Noneで変更なし
                 y_title: Literal[None, False, "Y軸タイトル"] = None, # Y軸タイトル, Noneで変更なし
                 y_title_space = +0,           
                 y_min: float|str|None = None,  
@@ -157,17 +157,17 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
                 y_major: float|None = None,    
                 y_minor: float|None = None,    
                 y_cross = None,                    # X軸との交差位置, Noneで変更なし        
-                y_format = None,              
-                y_log: bool|None = None,       
+                y_format: Literal[None, "0", "0.0", "0.00"] = None,              
+                y_log: Literal[None, True] = None,       
                 y2_title: Literal[None, False, "副軸タイトル"]  = None, # Y軸タイトル文字列, Falseで無効化, Noneで変更なし
                 y2_min: float|str|None = None,
                 y2_max: float|str|None = None,
                 y2_major: float|None = None,
                 y2_minor: float|None = None,
-                y2_format = None,
-                y2_log: bool|None = None,       
-                frame_color: Literal[None, False, 0] = None, # グラフ枠色 (False:枠なし, 0:黒枠, Noneでpreset)
-                legend: Literal[False, None, "right", "TR+bw+fb", "BL+bw+fb"] = None,    # 凡例表示(False:非表示, Noneで変更なし, "right"で右側に表示) 
+                y2_format: Literal[None, "0", "0.0", "0.00"] = None,
+                y2_log: Literal[None, True] = None,       
+                frame_color : Literal[None, False, 0] = None, # グラフ枠色 (False:枠なし, 0:黒枠, Noneでpreset)
+                legend: Literal[False, None, "right", "TR+bw+fb", "TC+bw+fb", "TL+bw+fb", "BL+bw+fb", "BC+bw+fb", "BR+bw+fb"] = None,    # 凡例表示(False:非表示, Noneで変更なし, "right"で右側に表示) 
                 legend_font_size = None,           # 凡例のフォントサイズ, Noneで変更なし
                 legend_width_inc = 0,              # 凡例ボックスの幅増減(pt)
                 legend_height_inc = 0,             # 凡例ボックスの高さ増減(pt)
@@ -183,11 +183,15 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
                 right_space = 0,                   # plot_area_space="abs"のときの右のスペース指定
                 ):
     """  
+    C:\Users\*****\AppData\Local\Programs\Python\Python31*\Lib\site-packages\pyexceltools
+    
     series_list = [{"name": "系列1", "color": RGB(68,114,196), "style": "line+marker", "marker": "C", 
     "size": 5, "weight": 1.5, "smooth": True, "alpha": None, "axis": "primary" or "y2", "XValues":None, 
     "Values":None, "sheet":None, "chart_type": None, "trendline": None, "trendline_name":None, 
     "trendline_color":None, "trendline_weight":None, "trendline_style":None, "trendline_option": None, 
     "legend":None, "data_label":None}]
+    
+    color = RGB(), "blue", "orange", "green", "yellow", "purple", "brown", "navy", "teal", "cyan", "magenta"
     """
 
     p = PRESET.get(preset, PRESET["std"]) or {}

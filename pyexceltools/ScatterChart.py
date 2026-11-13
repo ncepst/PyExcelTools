@@ -12,6 +12,7 @@
 import xlwings as xw
 from xlwings.constants import AxisType
 from win32com.client import constants
+from typing import Literal
 
 # RGB値をExcel用の整数に変換するヘルパー関数
 def RGB(r, g, b):
@@ -131,57 +132,68 @@ def ScatterChart(ws,
                  paste_range = "A1",
                  width_cm = 12.54,
                  height_cm = 7.54,
-                 preset = "std",
+                 preset: Literal["excel2021", "std", "no_grid", "grid"]= "std",
                  name = None,
-                 title = False,       # 無効化:False
+                 title: Literal[None, False, "タイトル"] = False,       # 無効化:False
                  title_font_color = None,
                  title_font_size = None,
                  title_space = +0,
-                 series_list = None,
-                 style= None,
+                 series_list: list[dict]|None = None,
+                 style: Literal[None, "line+marker", "line", "marker", "dash", "dash+marker"] = None,
                  smooth = None,
-                 marker = None,
+                 marker: Literal["C", "S", "D", "T", "N"] = None,
                  alpha = None,
-                 x_title = False,     # 無効化:False
+                 x_title: Literal[None, False, "X軸タイトル"] = False,     # 無効化:False
                  x_title_space = -15, # 下に広げる場合はマイナス
                  x_min = None,
                  x_max = None,
                  x_major = None,
                  x_minor = None,
                  x_cross = None,
-                 x_format = None,
-                 x_log = None,
-                 y_title = False,     # 無効化:False
+                 x_format: Literal[None, "0", "0.0", "0.00"]= None,
+                 x_log: Literal[None, True] = None,
+                 y_title: Literal[None, False, "Y軸タイトル"] = False,     # 無効化:False
                  y_title_space = +0,
                  y_min = None,
                  y_max = None,
                  y_major = None,
                  y_minor = None,
                  y_cross = None,
-                 y_format = None,
-                 y_log = None,
-                 y2_title = False,
+                 y_format: Literal[None, "0", "0.0", "0.00"] = None,
+                 y_log: Literal[None, True] = None,
+                 y2_title: Literal[None, False, "副軸タイトル"] = False,
                  y2_min = None,
                  y2_max = None,
                  y2_major = None,
                  y2_minor = None,
-                 y2_format = None,
-                 y2_log = None,
-                 frame_color = None,  # 枠なし:False, 黒枠:0
-                 legend = False,      # 無効化:False
+                 y2_format: Literal[None, "0", "0.0", "0.00"] = None,
+                 y2_log: Literal[None, True] = None,
+                 frame_color: Literal[None, False, 0] = None,    # 枠なし:False, 黒枠:0
+                 legend: Literal[False, None, "right", "TR+bw+fb", "TC+bw+fb", "TL+bw+fb", "BL+bw+fb", "BC+bw+fb", "BR+bw+fb"] = False,      # 無効化:False
                  legend_font_size = None,
                  legend_width_inc = 0,
                  legend_height_inc = 0,
                  legend_right_space = 0,
                  legent_top_space = 0,
                  transparent_bg = None,
-                 chart_type = None, 
+                 chart_type: Literal[None, "bar"] = None, 
                  x_bold_line = None,
                  y_bold_line = None,
-                 plot_area_space = "relative",  # プロットエリア調整時の基準位置を"absolute"/"relative"で指定
+                 plot_area_space: Literal["relative", "absolute"] = "relative",  # プロットエリア調整時の基準位置を"absolute"/"relative"で指定
                  width_inc = 0,
                  height_inc = 0,
                  ):
+    """
+    C:\Users\*****\AppData\Local\Programs\Python\Python31*\Lib\site-packages\pyexceltools
+    
+    series_list = [{"name": "系列1", "color": RGB(68,114,196), "style": "line+marker", "marker": "C", 
+    "size": 5, "weight": 1.5, "smooth": True, "alpha": None, "axis": "primary" or "y2", "XValues":None, 
+    "Values":None, "sheet":None, "chart_type": None, "trendline": None, "trendline_name":None, 
+    "trendline_color":None, "trendline_weight":None, "trendline_style":None, "trendline_option": None, 
+    "legend":None, "data_label":None}]
+    
+    color = RGB(), "blue", "orange", "green", "yellow", "purple", "brown", "navy", "teal", "cyan", "magenta"
+    """
     
     p = PRESET.get(preset, PRESET["std"]) or {}
     

@@ -132,7 +132,7 @@ def ScatterChart(ws,
                  paste_range = "A1",
                  width_cm = 12.54,
                  height_cm = 7.54,
-                 preset: Literal["excel2021", "std", "no_grid", "grid"]= "std",
+                 preset: Literal["excel2021", "std", "no_grid", "grid", "no_change"]= "std",
                  name = None,
                  title: Literal[None, False, "タイトル"] = False,       # 無効化:False
                  title_font_color = None,

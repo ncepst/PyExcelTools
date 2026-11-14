@@ -192,6 +192,10 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
     "legend":None, "data_label":None}]
 
     color = RGB(), "blue", "orange", "green", "yellow", "purple", "brown", "navy", "teal", "cyan", "magenta"
+
+    trendline = 1, 2, 3~6, "exp", "log", "pow", "mov"
+    
+    trendline_option = "eq", "r2"
     """
 
     p = PRESET.get(preset, PRESET["std"]) or {}

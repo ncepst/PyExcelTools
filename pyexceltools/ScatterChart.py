@@ -169,7 +169,7 @@ def ScatterChart(ws,
                  y2_format: Literal[None, "0", "0.0", "0.00", "0.0E+00", "0%", "#,##0"] = None,
                  y2_log: Literal[None, True] = None,
                  frame_color: Literal[None, False, 0] = None,    # 枠なし:False, 黒枠:0
-                 legend: Literal[False, None, "right", "TR+bw+fb", "TC+bw+fb", "TL+bw+fb", "BL+bw+fb", "BC+bw+fb", "BR+bw+fb", "tb"] = False,      # 無効化:False
+                 legend: Literal[False, None, "right", "TR+bw+fb", "TC+bw+fb", "TL+bw+fb", "BL+bw+fb", "BC+bw+fb", "BR+bw+fb"] = False,      # 無効化:False
                  legend_font_size = None,
                  legend_width_inc = 0,
                  legend_height_inc = 0,

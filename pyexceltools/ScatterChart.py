@@ -194,7 +194,7 @@ def ScatterChart(ws,
     
     color = RGB(), "blue", "orange", "green", "yellow", "purple", "brown", "navy", "teal", "cyan", "magenta"
 
-    trendline = 1, 2, 3, "exp", "log", "pow", "mov"
+    trendline = 1, 2, 3~6, "exp", "log", "pow", "mov"
     
     trendline_option = "eq", "r2"
     """

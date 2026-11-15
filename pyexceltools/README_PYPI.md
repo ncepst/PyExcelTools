@@ -182,7 +182,7 @@ BatchModifyChartsにおいては、`NS=None`（既定）で各グラフの系列
 Windowsのパスは `r"..."` と書くと、バックスラッシュ（`\`）をそのまま指定できます。  
 
 ```python
-from pyexceltools.BatchModifyCharts import BatchModifyCharts
+from pyexceltools import BatchModifyCharts
 
 saved = BatchModifyCharts(
     target="dir",

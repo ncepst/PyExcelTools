@@ -167,64 +167,57 @@ Python から Excel グラフを作成する手段として、`openpyxl` や `xl
 また、Excel グラフの体裁を細かく調整するには多数のパラメータ指定が必要となり、  
 手軽に自動化プログラムへ組み込むことが難しいという問題もありました。
 
-そこで本リポジトリでは、  
-**グラフ作成だけでなく書式設定までを含めて自動化プログラムに組み込めること**を目的とし、  
-繰り返し利用可能な汎用関数としてコードを作成しました。  
+そこで、**グラフ作成だけでなく書式設定までを含めて自動化プログラムに組み込めること**を目的として、  
+繰り返し利用可能な汎用関数としてコードを作成し、ライブラリとして公開しました。  
 
 これにより、技術資料作成や解析用途における作業効率の向上を図っています。  
 
 ## 概要 
 
-### 記事とサンプルコード
-
-- Qiita に投稿した記事: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
-- サンプルコード: [excel_graph_sample.py](https://github.com/ncepst/PyExcelTools/blob/main/excel_graph_sample.py)  
-
-上記記事を発展させ、グラフ作成とその書式設定を関数化したコードとして整理しています。  
 グラフ書式設定パラメータは`PRESET`で管理しています。
 
-### 構成ファイル
+`PRESET` を追加・修正する場合は、インストール先の
+`pyexceltools/ModifyChart.py` `pyexceltools/ScatterChart.py`内にある `PRESET` を編集してください。
 
-**グラフ作成**
-- [ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ScatterChart.py) — グラフ作成関数  
-- [Call_ScatterChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ScatterChart.py) — ScatterChart 関数の呼び出し例
+インストール先の例：
 
-**既存グラフの編集**
+```text
+C:\Users\ユーザー名\AppData\Local\Programs\Python\Python31*\Lib\site-packages\pyexceltools
+```
 
-- [ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/ModifyChart.py) — グラフ変更関数  
-- [Call_ModifyChart.py](https://github.com/ncepst/PyExcelTools/blob/main/Call_ModifyChart.py) — ModifyChart 関数の呼び出し例
+実際のインストール先は、次のコードで確認できます。
 
-**VBA連携**
+```python
+import pyexceltools
 
-- [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
+print(pyexceltools.__file__)
+```
 
-Pythonスクリプトは Excelマクロから実行することもでき、  
-マクロにショートカットキーを割り当てると便利です。  
-
-付属のVBAコードには、  
-● 自動判定の範囲 または 選択範囲 でグラフを作成するマクロ  
-● `Call_ModifyChart.py` を呼び出して選択中のグラフの体裁編集ができるマクロ    
-が含まれており、柔軟な運用が可能です。
+※ ライブラリを更新・再インストールすると、直接編集した内容が上書きされる場合があります。
 
 ---
 
 ## グラフ書式設定の指定方法
 
 グラフの書式設定の項目のうち、用途ごとに指定が必要な項目が関数の引数としてリスト化されています。  
-`ScatterChart.py`は必須引数が`ws, start_range, paste_range`の3つ、  
-`ModifyChart.py`は必須引数が`chart`の1つのみで、  
-残りの55個の任意引数により、設定項目を指定します。
+`ScatterChart` は `ws`・`start_range`・`paste_range` が必須引数です。
+`ModifyChart` は引数を省略すると、アクティブなグラフを対象にします。
+グラフオブジェクトを `chart` に直接指定することもできます。
+その他の任意引数で、書式などを設定します。
 
 また、`PRESET`は **dict形式** で関数外に定義されており、  
 外側の辞書のキー`"excel2021"`に、Excel 2021 の散布図の書式設定が格納されています。  
 各グラフ設定パラメータはネスト(入れ子)辞書として管理されており、必要に応じて上書き・変更が可能です。
+
 ```python
-"std": {
-        "title_font_color": RGB(0,0,0),
-        "axis_title_font_color":RGB(0,0,0), 
-        "axis_tick_font_color": RGB(0,0,0),
-    }
-PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
+from pyexceltools.ModifyChart import PRESET
+
+PRESET["std"] = {
+    **PRESET["excel2021"],
+    "title_font_color": RGB(0, 0, 0),
+    "axis_title_font_color": RGB(0, 0, 0),
+    "axis_tick_font_color": RGB(0, 0, 0),
+}
 ```
 上記のようにベースとなる設定を維持したまま一部を上書きすることで、  
 詳細な書式設定を簡単に保存できます。  
@@ -234,7 +227,9 @@ PRESET["std"] = {**PRESET["excel2021"], **PRESET["std"]}
 以下では、グリッド線の表示設定を一時的に False に変更しています。  
 呼び出し側での変更は その Python セッション内で (スクリプトが終了するまで) 有効となります。
 ```python
-from ScatterChart import ScatterChart, PRESET
+from pyexceltools import ScatterChart
+from pyexceltools.ScatterChart import PRESET
+
 PRESET["std"]["x_major_grid"] = False
 chart1 = ScatterChart(....)
 
@@ -245,12 +240,12 @@ chart2 = ScatterChart(....)
 任意引数のうち、系列ごとの書式設定は `series_list = [{"name":"系列1"},{"name":"系列2"}, ...]`  
 で指定します。各系列は **dict形式** で定義し、系列をまとめてリスト`series_list`に格納します。
 
-`ModifyChart.py`を`series_list = None` で実行する場合には、  
+`ModifyChart`を`series_list = None` で実行する場合には、  
 処理する系列数を関数の引数`NS`で指定してください。  
-デフォルト引数では`NS=1`となっています。  
-また、必須引数である`chart`を得るためのコードは`Call_ModifyChart.py`に記載しています。
+デフォルト引数では`NS=1`となっています。
+`BatchModifyCharts`については`NS`の自動取得に対応しています。
 
-一方、`ScatterChart.py`では、`row` と `col` の値から`NS`が自動計算されます。  
+一方、`ScatterChart`では、`row` と `col` の値から`NS`が自動計算されます。  
 `row` や `col` が `None` の場合は、`start_range`の入力値から`.end('down').row` 等を使って自動取得されます。   
 `paste_range`ではグラフを貼り付ける左上の座標として、どのセルの左上を基準にするのかを指定します。
 
@@ -314,7 +309,7 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
                 right_space = 0,                   # plot_area_space="abs"のときの右のスペース指定
                 ):
 ```
-- 型ヒントには `Python 3.10 以降`の記法を使用しています。 `ModifyChart.py`のみ型ヒントを使用しました。
+- 型ヒントには `Python 3.10 以降`の記法を使用しています。
   
 - `smooth`, `alpha`, `line_weight`, `marker` については、series cfg と PRESET にも同様の項目があり、  
 優先順位としては、`series cfg > 引数 > preset` となります。  
@@ -379,7 +374,7 @@ series_list = [
 ### サブ関数
 `ModifyChart.py`には、`add_shape`, `add_line` , `template`の3つの関数が、  
 メイン関数`ModifyChart` とは独立に定義されており、  
-`from ModifyChart import MofifyChart, RGB, add_shape, add_line, template` のようにインポートして使います。  
+`from pyexceltools import ModifyChart, RGB, add_shape, add_line, template` のようにインポートして使います。  
 - `add_shape`: `chart`のプロットエリアに、帯(長方形)、注釈用のテキストボックスを追加します。  
 - `add_line` : `chart`のプロットエリアに、線もしくは破線を追加します。  
 - `template` : グラフテンプレート機能を利用します。(テンプレートとして保存した`.crtx`ファイルを使います)
@@ -471,6 +466,106 @@ COLOR_NAME_TO_RGB = {
               "magenta": RGB(255,0,255),
               }
 ```
+
+## 複数グラフの一括変更
+
+```python
+import xlwings as xw
+from pyexceltools import BatchModifyCharts
+
+# アクティブシートの埋め込みグラフを変更
+charts = BatchModifyCharts(target="sheet", preset="std", width_cm=12)
+print(f"{len(charts)} 個のグラフを処理しました")
+
+# Ctrlを押しながら外枠を複数選択したグラフだけを変更
+BatchModifyCharts(target="selected", preset="excel2021")
+
+# アクティブブックの全ワークシートを対象に変更
+BatchModifyCharts(target="book", preset="no_grid", legend_font_size=12)
+
+```
+
+BatchModifyChartsにおいては、`NS=None`（既定）で各グラフの系列数を自動取得します。
+
+## フォルダ内のExcelファイルを一括変更
+
+`target="dir"` を指定し、`directory` に対象フォルダのパスを渡します。
+以下のパスは、ご自身のフォルダに置き換えてください。
+Windowsのパスは `r"..."` と書くと、バックスラッシュ（`\`）をそのまま指定できます。
+
+```python
+from pyexceltools.BatchModifyCharts import BatchModifyCharts
+
+saved = BatchModifyCharts(
+    target="dir",
+    directory=r"C:\Users\ユーザー名\Documents\測定結果",
+    recursive=False,  # True: サブフォルダも対象
+    preset="grid",
+    width_cm=12,
+)
+
+for path in saved:
+    print("保存:", path)
+```
+
+`recursive=False`（既定）では指定フォルダ直下だけを処理します。
+サブフォルダ内のファイルも対象にする場合は `recursive=True` を指定します。
+
+実行すると対象ファイルの一覧と、次の確認を表示します。
+
+```text
+上記ファイルの全てにグラフの書式設定を適用しますか？[yes/N] :
+```
+
+`yes` と入力すると実行します。`Yes`・`YES` も使用できます。
+Enterのみ、`N`、`y` など、それ以外の入力ではファイルを開かず中止します。
+
+**dirモードは対象ファイルを上書き保存します。**
+
+対象は `.xlsx`・`.xlsm`・`.xlsb`・`.xls` の全ワークシート内の埋め込みグラフです。
+`~$` で始まる一時ファイルを除外し、グラフがないブックは保存しません。
+
+専用のExcelを起動し、マクロ・イベント・リンク更新を無効にして処理します。
+ファイルは処理後に閉じます。
+戻り値は保存したファイルの絶対パス（Path）のリストです。
+
+エラーが発生した場合は対象パスを示して停止し、そのファイルは保存しません。
+先に保存されたファイルの変更は残ります。
+
+## シート目次の作成・更新
+
+`create_sheet_index()` は、アクティブなExcelブックの先頭に「目次」シートを作成し、
+各シートへのリンクと、各シートから「目次へ戻る」リンクを追加します。
+対象のブックをExcelでアクティブにしてから実行してください。
+
+```python
+from pyexceltools import create_sheet_index
+
+create_sheet_index()
+```
+
+**既存の「目次」シートは削除して作り直します。**
+各シートの1行目に「目次へ戻る」リンク用の行を挿入します。
+同名のリンクが既に1行目にあるシートには、行を追加しません。
+1行目以外に「目次へ戻る」リンクがある場合は、見つかったリンクの行全体を削除してから1行目に追加します。
+その行の他のデータも削除対象になるため、実行前に内容を確認してください。
+処理後に完了ダイアログを表示します。上書き保存は行わないため、必要に応じてExcelで保存してください。
+
+### 関連リンク
+
+- Qiita 投稿記事: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
+
+**VBA連携**
+
+- [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
+
+Pythonスクリプトは Excelマクロから実行することもでき、  
+マクロにショートカットキーを割り当てると便利です。  
+
+付属のVBAコードには、  
+● 自動判定の範囲 または 選択範囲 でグラフを作成するマクロ
+も含まれており、柔軟な運用が可能です。
+
 ## License
 MIT License  
 Copyright (c) 2025 ncepst

@@ -155,7 +155,7 @@ elapsed_time = round(t2-t1,3)
 print("処理時間:"+str(elapsed_time)+" s")
 ```
 
-## 複数グラフの一括変更
+### 複数グラフの一括変更
 
 ```python
 import xlwings as xw
@@ -175,7 +175,7 @@ BatchModifyCharts(target="book", preset="no_grid", legend_font_size=12)
 
 BatchModifyChartsにおいては、`NS=None`（既定）で各グラフの系列数を自動取得します。
 
-## フォルダ内のExcelファイルを一括変更
+### フォルダ内のExcelファイルを一括変更
 
 `target="dir"` を指定し、`directory` に対象フォルダのパスを渡します。
 以下のパスは、ご自身のフォルダに置き換えてください。
@@ -220,7 +220,7 @@ Enterのみ、`N`、`y` など、それ以外の入力ではファイルを開�
 エラーが発生した場合は対象パスを示して停止し、そのファイルは保存しません。  
 先に保存されたファイルの変更は残ります。
 
-## シート目次の作成・更新
+### シート目次の作成・更新
 
 `create_sheet_index()` は、アクティブなExcelブックの先頭に「目次」シートを作成し、
 各シートへのリンクと、各シートから「目次へ戻る」リンクを追加します。
@@ -278,8 +278,6 @@ print(pyexceltools.__file__)
 ```
 
 ※ ライブラリを更新・再インストールすると、直接編集した内容が上書きされる場合があります。
-
----
 
 ## グラフ書式設定の指定方法
 
@@ -553,14 +551,15 @@ COLOR_NAME_TO_RGB = {
 
 ## 関連リンク
 
-- Qiita 投稿記事: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
+**Qiita 投稿記事**
+
+[Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
 
 **VBA連携**
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 
 Pythonスクリプトは Excelマクロから実行することもでき、マクロにショートカットキーを割り当てると便利です。  
-
 付属のVBAコードには、自動判定の範囲 または 選択範囲 でグラフを作成するマクロも含まれており、柔軟な運用が可能です。
 
 ## License

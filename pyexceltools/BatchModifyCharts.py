@@ -201,7 +201,7 @@ def BatchModifyCharts(
         ]
         jobs = [(sheet, sheet.charts[name]) for name in names]
         
-    else:
+    else: # "sheet", "book" の場合
         if ws is not None:
             sheets = [ws]
         else:

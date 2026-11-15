@@ -205,12 +205,12 @@ for path in saved:
 上記ファイルの全てにグラフの書式設定を適用しますか？[yes/N] :
 ```
 
-`yes` と入力すると実行します。`Yes`, `YES` も使用できます。  
+`yes` と入力すると実行します。`Yes`、`YES` も使用できます。  
 Enterのみ、`N`、`y` など、それ以外の入力ではファイルを開かず中止します。
 
 **dirモードは対象ファイルを上書き保存します。**
 
-対象は `.xlsx`, `.xlsm`, `.xlsb`, `.xls` の全ワークシート内の埋め込みグラフです。  
+対象は `.xlsx`、`.xlsm`、`.xlsb`、`.xls` の全ワークシート内の埋め込みグラフです。  
 `~$` で始まる一時ファイルを除外し、グラフがないブックは保存しません。
 
 専用のExcelを起動し、マクロ・イベント・リンク更新を無効にして処理します。  
@@ -282,7 +282,7 @@ print(pyexceltools.__file__)
 ## グラフ書式設定の指定方法
 
 グラフの書式設定の項目のうち、用途ごとに指定が必要な項目が関数の引数としてリスト化されています。  
-`ScatterChart` は `ws`, `start_range`, `paste_range` が必須引数です。
+`ScatterChart` は `ws`、`start_range`、`paste_range` が必須引数です。
 `ModifyChart` は引数を省略すると、アクティブなグラフを対象にします。
 グラフオブジェクトを `chart` に直接指定することもできます。
 その他の任意引数で、書式などを設定します。
@@ -398,10 +398,10 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
 series cfg (設定なしで自動的にNone) と 引数が None で preset の設定が適用されます。
  
 - `ScatterChart`関数の場合には、上記の引数: `NS`, `chart`の代わりに、  
-必須引数:`start_range`, `paste_range`、 任意引数:`row` ,`col` が加わって、`ws`は必須引数に変わります。  
+必須引数:`start_range`、`paste_range`、 任意引数:`row`、`col` が加わって、`ws`は必須引数に変わります。  
 戻り値はChartオブジェクトとなります。
 
-- `title`, `x_title`, `y_title`,`y2_title`, `legend`には文字列を入力できる他に、`False`で無効化を指定できます。  
+- `title`、`x_title`、`y_title`、`y2_title`、`legend`には文字列を入力できる他に、`False`で無効化を指定できます。  
   `frame_color`には整数(RGB値)を入力できる他に、`False`で外枠の無効化を指定できます。  
 
 - `legend`の仕様   
@@ -454,7 +454,7 @@ series_list = [
 ]
 ```
 ### サブ関数
-`ModifyChart.py`には、`add_shape`, `add_line` , `template`の3つの関数が、  
+`ModifyChart.py`には、`add_shape`、`add_line`、`template`の3つの関数が、  
 メイン関数`ModifyChart` とは独立に定義されており、  
 `from pyexceltools import ModifyChart, RGB, add_shape, add_line, template` のようにインポートして使います。  
 - `add_shape`: `chart`のプロットエリアに、帯(長方形)、注釈用のテキストボックスを追加します。  
@@ -527,7 +527,7 @@ PRESET = {
 - マーカーの種類(`"C","S","D","T","N"`)は頭文字に由来します。
   (matplotlibの`"o","s","^"`などは使えません)  
 - スタイル(`style`)は、以下の指定に対応しています。  
- `"line+marker"`,`"line"`(ラインのみ),`"marker"`(マーカーのみ), `"dash"`(破線), `"dash+marker"`など    
+ `"line+marker"`、`"line"`(ラインのみ)、`"marker"`(マーカーのみ)、`"dash"`(破線)、`"dash+marker"`など    
   また、`matplotlib`由来の表記`"--"`や`"-."`も使用可能です。  
   (破線は上記2種類のみ対応しています)  
 - 関数の引数が多いため、同じ引数を二度渡さないよう注意してください。  

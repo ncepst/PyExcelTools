@@ -155,6 +155,90 @@ elapsed_time = round(t2-t1,3)
 print("処理時間:"+str(elapsed_time)+" s")
 ```
 
+## 複数グラフの一括変更
+
+```python
+import xlwings as xw
+from pyexceltools import BatchModifyCharts
+
+# アクティブシートの埋め込みグラフを変更
+charts = BatchModifyCharts(target="sheet", preset="std", width_cm=12)
+print(f"{len(charts)} 個のグラフを処理しました")
+
+# Ctrlを押しながら外枠を複数選択したグラフだけを変更
+BatchModifyCharts(target="selected", preset="excel2021")
+
+# アクティブブックの全ワークシートを対象に変更
+BatchModifyCharts(target="book", preset="no_grid", legend_font_size=12)
+
+```
+
+BatchModifyChartsにおいては、`NS=None`（既定）で各グラフの系列数を自動取得します。
+
+## フォルダ内のExcelファイルを一括変更
+
+`target="dir"` を指定し、`directory` に対象フォルダのパスを渡します。
+以下のパスは、ご自身のフォルダに置き換えてください。
+Windowsのパスは `r"..."` と書くと、バックスラッシュ（`\`）をそのまま指定できます。
+
+```python
+from pyexceltools.BatchModifyCharts import BatchModifyCharts
+
+saved = BatchModifyCharts(
+    target="dir",
+    directory=r"C:\Users\ユーザー名\Documents\測定結果",
+    recursive=False,  # True: サブフォルダも対象
+    preset="grid",
+    width_cm=12,
+)
+
+for path in saved:
+    print("保存:", path)
+```
+
+`recursive=False`（既定）では指定フォルダ直下だけを処理します。  
+サブフォルダ内のファイルも対象にする場合は `recursive=True` を指定します。
+
+実行すると対象ファイルの一覧と、次の確認を表示します。
+
+```text
+上記ファイルの全てにグラフの書式設定を適用しますか？[yes/N] :
+```
+
+`yes` と入力すると実行します。`Yes`・`YES` も使用できます。  
+Enterのみ、`N`、`y` など、それ以外の入力ではファイルを開かず中止します。
+
+**dirモードは対象ファイルを上書き保存します。**
+
+対象は `.xlsx`・`.xlsm`・`.xlsb`・`.xls` の全ワークシート内の埋め込みグラフです。  
+`~$` で始まる一時ファイルを除外し、グラフがないブックは保存しません。
+
+専用のExcelを起動し、マクロ・イベント・リンク更新を無効にして処理します。  
+ファイルは処理後に閉じます。  
+戻り値は保存したファイルの絶対パス（Path）のリストです。
+
+エラーが発生した場合は対象パスを示して停止し、そのファイルは保存しません。  
+先に保存されたファイルの変更は残ります。
+
+## シート目次の作成・更新
+
+`create_sheet_index()` は、アクティブなExcelブックの先頭に「目次」シートを作成し、
+各シートへのリンクと、各シートから「目次へ戻る」リンクを追加します。
+対象のブックをExcelでアクティブにしてから実行してください。
+
+```python
+from pyexceltools import create_sheet_index
+
+create_sheet_index()
+```
+
+**既存の「目次」シートは削除して作り直します。**
+各シートの1行目に「目次へ戻る」リンク用の行を挿入します。
+同名のリンクが既に1行目にあるシートには、行を追加しません。
+1行目以外に「目次へ戻る」リンクがある場合は、見つかったリンクの行全体を削除してから1行目に追加します。
+その行の他のデータも削除対象になるため、実行前に内容を確認してください。
+処理後に完了ダイアログを表示します。上書き保存は行わないため、必要に応じてExcelで保存してください。
+
 ## 背景
 Python から Excel グラフを作成する手段として、`openpyxl` や `xlwings` が利用できますが、    
 以下のような課題を感じていました。
@@ -467,91 +551,7 @@ COLOR_NAME_TO_RGB = {
               }
 ```
 
-## 複数グラフの一括変更
-
-```python
-import xlwings as xw
-from pyexceltools import BatchModifyCharts
-
-# アクティブシートの埋め込みグラフを変更
-charts = BatchModifyCharts(target="sheet", preset="std", width_cm=12)
-print(f"{len(charts)} 個のグラフを処理しました")
-
-# Ctrlを押しながら外枠を複数選択したグラフだけを変更
-BatchModifyCharts(target="selected", preset="excel2021")
-
-# アクティブブックの全ワークシートを対象に変更
-BatchModifyCharts(target="book", preset="no_grid", legend_font_size=12)
-
-```
-
-BatchModifyChartsにおいては、`NS=None`（既定）で各グラフの系列数を自動取得します。
-
-## フォルダ内のExcelファイルを一括変更
-
-`target="dir"` を指定し、`directory` に対象フォルダのパスを渡します。
-以下のパスは、ご自身のフォルダに置き換えてください。
-Windowsのパスは `r"..."` と書くと、バックスラッシュ（`\`）をそのまま指定できます。
-
-```python
-from pyexceltools.BatchModifyCharts import BatchModifyCharts
-
-saved = BatchModifyCharts(
-    target="dir",
-    directory=r"C:\Users\ユーザー名\Documents\測定結果",
-    recursive=False,  # True: サブフォルダも対象
-    preset="grid",
-    width_cm=12,
-)
-
-for path in saved:
-    print("保存:", path)
-```
-
-`recursive=False`（既定）では指定フォルダ直下だけを処理します。
-サブフォルダ内のファイルも対象にする場合は `recursive=True` を指定します。
-
-実行すると対象ファイルの一覧と、次の確認を表示します。
-
-```text
-上記ファイルの全てにグラフの書式設定を適用しますか？[yes/N] :
-```
-
-`yes` と入力すると実行します。`Yes`・`YES` も使用できます。
-Enterのみ、`N`、`y` など、それ以外の入力ではファイルを開かず中止します。
-
-**dirモードは対象ファイルを上書き保存します。**
-
-対象は `.xlsx`・`.xlsm`・`.xlsb`・`.xls` の全ワークシート内の埋め込みグラフです。
-`~$` で始まる一時ファイルを除外し、グラフがないブックは保存しません。
-
-専用のExcelを起動し、マクロ・イベント・リンク更新を無効にして処理します。
-ファイルは処理後に閉じます。
-戻り値は保存したファイルの絶対パス（Path）のリストです。
-
-エラーが発生した場合は対象パスを示して停止し、そのファイルは保存しません。
-先に保存されたファイルの変更は残ります。
-
-## シート目次の作成・更新
-
-`create_sheet_index()` は、アクティブなExcelブックの先頭に「目次」シートを作成し、
-各シートへのリンクと、各シートから「目次へ戻る」リンクを追加します。
-対象のブックをExcelでアクティブにしてから実行してください。
-
-```python
-from pyexceltools import create_sheet_index
-
-create_sheet_index()
-```
-
-**既存の「目次」シートは削除して作り直します。**
-各シートの1行目に「目次へ戻る」リンク用の行を挿入します。
-同名のリンクが既に1行目にあるシートには、行を追加しません。
-1行目以外に「目次へ戻る」リンクがある場合は、見つかったリンクの行全体を削除してから1行目に追加します。
-その行の他のデータも削除対象になるため、実行前に内容を確認してください。
-処理後に完了ダイアログを表示します。上書き保存は行わないため、必要に応じてExcelで保存してください。
-
-### 関連リンク
+## 関連リンク
 
 - Qiita 投稿記事: [Python xlwings でエクセルグラフの体裁調整を自動化](https://qiita.com/ncepst/items/54c63974242bb9e18c23)
 
@@ -559,12 +559,9 @@ create_sheet_index()
 
 - [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 
-Pythonスクリプトは Excelマクロから実行することもでき、  
-マクロにショートカットキーを割り当てると便利です。  
+Pythonスクリプトは Excelマクロから実行することもでき、マクロにショートカットキーを割り当てると便利です。  
 
-付属のVBAコードには、  
-● 自動判定の範囲 または 選択範囲 でグラフを作成するマクロ
-も含まれており、柔軟な運用が可能です。
+付属のVBAコードには、自動判定の範囲 または 選択範囲 でグラフを作成するマクロも含まれており、柔軟な運用が可能です。
 
 ## License
 MIT License  

@@ -201,7 +201,7 @@ def BatchModifyCharts(
         ]
         jobs = [(sheet, sheet.charts[name]) for name in names]
         
-    else: # "sheet", "book" の場合
+    else:  # "sheet", "book" の場合
         if ws is not None:
             sheets = [ws]
         else:
@@ -227,4 +227,5 @@ def BatchModifyCharts(
         # ModifyChart が series_list を変更するため、グラフごとにコピーする。
         ModifyChart(chart=chart, ws=sheet, **options)
         modified.append(chart)
+        
     return modified

@@ -10,13 +10,13 @@
 ### インストール方法
 
 ```powershell
-pip install ncepst-pyexceltools
+pip install ncepst-exceltools
 ```
 
 ### 最新版への更新
 
 ```powershell
-pip install --upgrade ncepst-pyexceltools
+pip install --upgrade ncepst-exceltools
 ```
 
 ### 散布図を作成する
@@ -28,7 +28,7 @@ from win32com.client import constants
 import numpy as np
 import time
 import os
-from pyexceltools import ScatterChart, RGB
+from exceltools import ScatterChart, RGB
 
 # 計測開始
 t1 = time.time()
@@ -123,7 +123,7 @@ print("処理時間:"+str(elapsed_time)+" s")
 ### 選択中のグラフを修正する
 
 ```python
-from pyexceltools import ModifyChart, RGB, add_shape, add_line, template
+from exceltools import ModifyChart, RGB, add_shape, add_line, template
 import xlwings as xw
 import time
 
@@ -161,7 +161,7 @@ print("処理時間:"+str(elapsed_time)+" s")
 
 ```python
 import xlwings as xw
-from pyexceltools import BatchModifyCharts
+from exceltools import BatchModifyCharts
 
 # アクティブシートの埋め込みグラフを変更
 charts = BatchModifyCharts(target="sheet", preset="std", width_cm=12)
@@ -187,7 +187,7 @@ BatchModifyChartsにおいては、`NS=None`（既定）で各グラフの系列
 Windowsのパスは `r"..."` と書くと、バックスラッシュ（`\`）をそのまま指定できます。  
 
 ```python
-from pyexceltools import BatchModifyCharts
+from exceltools import BatchModifyCharts
 
 saved = BatchModifyCharts(
     target="dir",
@@ -232,7 +232,7 @@ Enterのみ、`N`、`y` など、それ以外の入力ではファイルを開�
 対象のブックをExcelでアクティブにしてから実行してください。  
 
 ```python
-from pyexceltools import create_sheet_index
+from exceltools import create_sheet_index
 
 create_sheet_index()
 ```
@@ -271,15 +271,15 @@ Python から Excel グラフを作成する手段として、`openpyxl` や `xl
 インストール先の例：
 
 ```text
-C:\Users\ユーザー名\AppData\Local\Programs\Python\Python31*\Lib\site-packages\pyexceltools
+C:\Users\ユーザー名\AppData\Local\Programs\Python\Python31*\Lib\site-packages\exceltools
 ```
 
 実際のインストール先は、次のコードで確認できます。
 
 ```python
-import pyexceltools
+import exceltools
 
-print(pyexceltools.__file__)
+print(exceltools.__file__)
 ```
 
 ※ ライブラリを更新・再インストールすると、直接編集した内容が上書きされる場合があります。
@@ -297,8 +297,8 @@ print(pyexceltools.__file__)
 各グラフ設定パラメータはネスト(入れ子)辞書として管理されており、必要に応じて上書き・変更が可能です。
 
 ```python
-from pyexceltools import ModifyChart, RGB
-from pyexceltools.ModifyChart import PRESET
+from exceltools import ModifyChart, RGB
+from exceltools.ModifyChart import PRESET
 
 PRESET["std"] = {
     **PRESET["excel2021"],
@@ -317,8 +317,8 @@ PRESET["std"] = {
 以下は設定変更の例です。`....` の部分には、必要な引数を指定してください。
 
 ```python
-from pyexceltools import ScatterChart
-from pyexceltools.ScatterChart import PRESET
+from exceltools import ScatterChart
+from exceltools.ScatterChart import PRESET
 
 PRESET["std"]["x_major_grid"] = False
 chart1 = ScatterChart(....)
@@ -467,7 +467,7 @@ series_list = [
 ### サブ関数
 `ModifyChart.py`には、`add_shape`、`add_line`、`template`の3つの関数が、  
 メイン関数`ModifyChart` とは独立に定義されており、  
-`from pyexceltools import ModifyChart, RGB, add_shape, add_line, template` のようにインポートして使います。  
+`from exceltools import ModifyChart, RGB, add_shape, add_line, template` のようにインポートして使います。  
 - `add_shape`: `chart`のプロットエリアに、帯(長方形)、注釈用のテキストボックスを追加します。  
 - `add_line` : `chart`のプロットエリアに、線もしくは破線を追加します。  
 - `template` : グラフテンプレート機能を利用します。(テンプレートとして保存した`.crtx`ファイルを使います)

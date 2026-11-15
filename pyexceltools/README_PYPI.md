@@ -176,6 +176,9 @@ BatchModifyCharts(target="book", preset="no_grid", legend_font_size=12)
 ```
 
 BatchModifyChartsにおいては、`NS=None`（既定）で各グラフの系列数を自動取得します。  
+`sheet`、`book`、`selected` モードでは、変更後のブックを自動保存しません。  
+必要に応じてExcelで保存してください。  
+`dir` モードのみ、処理後に上書き保存します。
 
 ### フォルダ内のExcelファイルを一括変更
 

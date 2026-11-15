@@ -183,7 +183,7 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
                 right_space = 0,                   # plot_area_space="abs"のときの右のスペース指定
                 ):
     r"""
-    C:\Users\*****\AppData\Local\Programs\Python\Python31*\Lib\site-packages\pyexceltools
+    C:\Users\*****\AppData\Local\Programs\Python\Python31*\Lib\site-packages\exceltools
     
     series_list = [{"name": "系列1", "color": RGB(68,114,196), "style": "line+marker", "marker": "C", 
     "size": 5, "weight": 1.5, "smooth": True, "alpha": None, "axis": "primary" or "y2", "XValues":None, 

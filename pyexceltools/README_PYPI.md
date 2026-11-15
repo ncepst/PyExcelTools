@@ -261,7 +261,7 @@ Python から Excel グラフを作成する手段として、`openpyxl` や `xl
 グラフ書式設定パラメータは`PRESET`で管理しています。
 
 `PRESET` を追加・修正する場合は、インストール先の
-`pyexceltools/ModifyChart.py` `pyexceltools/ScatterChart.py`内にある `PRESET` を編集してください。
+`ModifyChart.py` `ScatterChart.py`内にある `PRESET` を編集してください。
 
 インストール先の例：
 
@@ -557,7 +557,7 @@ COLOR_NAME_TO_RGB = {
 
 **VBA連携**
 
-- [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
+[PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 
 Pythonスクリプトは Excelマクロから実行することもでき、マクロにショートカットキーを割り当てると便利です。  
 付属のVBAコードには、自動判定の範囲 または 選択範囲 でグラフを作成するマクロも含まれており、柔軟な運用が可能です。

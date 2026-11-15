@@ -184,7 +184,7 @@ def ScatterChart(ws,
                  height_inc = 0,
                  ):
     r"""
-    C:\Users\*****\AppData\Local\Programs\Python\Python31*\Lib\site-packages\pyexceltools
+    C:\Users\*****\AppData\Local\Programs\Python\Python31*\Lib\site-packages\exceltools
     
     series_list = [{"name": "系列1", "color": RGB(68,114,196), "style": "line+marker", "marker": "C", 
     "size": 5, "weight": 1.5, "smooth": True, "alpha": None, "axis": "primary" or "y2", "XValues":None, 

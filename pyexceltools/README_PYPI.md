@@ -310,7 +310,9 @@ PRESET["std"] = {
 
 呼び出し側でも、PRESETの更新が可能で、  
 以下では、グリッド線の表示設定を一時的に False に変更しています。  
-呼び出し側での変更は その Python セッション内で (スクリプトが終了するまで) 有効となります。
+呼び出し側での変更は その Python セッション内で (スクリプトが終了するまで) 有効となります。  
+以下は設定変更の例です。`....` の部分には、必要な引数を指定してください。
+
 ```python
 from pyexceltools import ScatterChart
 from pyexceltools.ScatterChart import PRESET

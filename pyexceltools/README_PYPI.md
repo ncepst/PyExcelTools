@@ -130,6 +130,7 @@ import time
 # 計測開始
 t1 = time.time()
 
+wb = None
 try:
     wb = xw.books.active
     ws = wb.sheets.active
@@ -147,7 +148,8 @@ except Exception as e:
     print("Error:",e)
 
 finally:
-    wb.app.screen_updating = True
+    if wb is not None:
+        wb.app.screen_updating = True
     
 # 計測終了
 t2 = time.time()
@@ -292,6 +294,7 @@ print(pyexceltools.__file__)
 各グラフ設定パラメータはネスト(入れ子)辞書として管理されており、必要に応じて上書き・変更が可能です。
 
 ```python
+from pyexceltools import ModifyChart, RGB
 from pyexceltools.ModifyChart import PRESET
 
 PRESET["std"] = {
@@ -302,7 +305,7 @@ PRESET["std"] = {
 }
 ```
 上記のようにベースとなる設定を維持したまま一部を上書きすることで、  
-詳細な書式設定を簡単に保存できます。  
+詳細な書式設定を定義できます。  
 関数の引数で`preset`を指定することができ、デフォルト引数では`preset="std"`が適用されます。
 
 呼び出し側でも、PRESETの更新が可能で、  
@@ -393,9 +396,12 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
 ```
 - 型ヒントには `Python 3.10 以降`の記法を使用しています。
   
-- `smooth`、`alpha`、`line_weight`、`marker` については、series cfg と PRESET にも同様の項目があり、  
-優先順位としては、`series cfg > 引数 > preset` となります。  
-series cfg (設定なしで自動的にNone) と 引数が None で preset の設定が適用されます。
+- `smooth`、`alpha`、`marker` の優先順位は、`series_list` の各系列の設定 > 関数の引数 > `PRESET` です。
+  各系列や関数の引数で指定しない場合(Noneの場合)は、`PRESET` の設定を使用します。
+
+- 線の太さは、`series_list` の各系列の `weight` で指定できます。
+  指定しない場合は、`PRESET` の `line_weight` を使用します。
+  `line_weight` は関数の引数ではありません。
  
 - `ScatterChart`関数の場合には、上記の引数: `NS`、`chart`の代わりに、  
 必須引数:`start_range`、`paste_range`、 任意引数:`row`、`col` が加わって、`ws`は必須引数に変わります。  
@@ -441,7 +447,7 @@ series_list = [
         "XValues":None,               # 系列のXの値(ExcelのRange指定)
         "Values":None,                # 系列のYの値(ExcelのRange指定)
         "sheet":None,                 # 系列のデータがあるシート名
-        "chart_type": None,           # グラフ種類の変更(デフォルトは散布部)
+        "chart_type": None,           # グラフ種類の変更(デフォルトは散布図)
         "trendline": None,            # 近似曲線
         "trendline_name":None,        # 近似曲線の名前
         "trendline_color":None,       # 近似曲線の色

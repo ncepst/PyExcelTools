@@ -282,7 +282,7 @@ print(pyexceltools.__file__)
 ## グラフ書式設定の指定方法
 
 グラフの書式設定の項目のうち、用途ごとに指定が必要な項目が関数の引数としてリスト化されています。  
-`ScatterChart` は `ws`・`start_range`・`paste_range` が必須引数です。
+`ScatterChart` は `ws`, `start_range`, `paste_range` が必須引数です。
 `ModifyChart` は引数を省略すると、アクティブなグラフを対象にします。
 グラフオブジェクトを `chart` に直接指定することもできます。
 その他の任意引数で、書式などを設定します。
@@ -560,7 +560,7 @@ COLOR_NAME_TO_RGB = {
 [PythonFromVBA.bas](https://github.com/ncepst/PyExcelTools/blob/main/PythonFromVBA.bas)
 
 Pythonスクリプトは Excelマクロから実行することもでき、マクロにショートカットキーを割り当てると便利です。  
-付属のVBAコードには、自動判定の範囲 または 選択範囲 でグラフを作成するマクロも含まれており、柔軟な運用が可能です。
+VBAコードには、自動判定の範囲 または 選択範囲 でグラフを作成するマクロも含まれており、柔軟な運用が可能です。
 
 ## License
 MIT License  

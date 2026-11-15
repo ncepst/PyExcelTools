@@ -261,7 +261,7 @@ Python から Excel グラフを作成する手段として、`openpyxl` や `xl
 グラフ書式設定パラメータは`PRESET`で管理しています。
 
 `PRESET` を追加・修正する場合は、インストール先の
-`ModifyChart.py` `ScatterChart.py`内にある `PRESET` を編集してください。
+`ModifyChart.py`、`ScatterChart.py`内にある `PRESET` を編集してください。
 
 インストール先の例：
 
@@ -393,11 +393,11 @@ def ModifyChart(chart: Any = "active",        # ExcelのChartオブジェクト
 ```
 - 型ヒントには `Python 3.10 以降`の記法を使用しています。
   
-- `smooth`, `alpha`, `line_weight`, `marker` については、series cfg と PRESET にも同様の項目があり、  
+- `smooth`、`alpha`、`line_weight`、`marker` については、series cfg と PRESET にも同様の項目があり、  
 優先順位としては、`series cfg > 引数 > preset` となります。  
 series cfg (設定なしで自動的にNone) と 引数が None で preset の設定が適用されます。
  
-- `ScatterChart`関数の場合には、上記の引数: `NS`, `chart`の代わりに、  
+- `ScatterChart`関数の場合には、上記の引数: `NS`、`chart`の代わりに、  
 必須引数:`start_range`、`paste_range`、 任意引数:`row`、`col` が加わって、`ws`は必須引数に変わります。  
 戻り値はChartオブジェクトとなります。
 

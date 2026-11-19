@@ -76,7 +76,7 @@ def BatchModifyCharts(
     target : {"sheet", "book", "selected", "dir"}
         "sheet": ws のグラフ、"book": wb の全ワークシートのグラフ。
         "selected": アクティブなExcelで選択中のグラフのみ。
-        Ctrlを押しながらグラフの外枠をクリックして複数選択してください。
+        Ctrlを押しながらグラフをクリックして複数(1つ以上)選択してください。
         このモードでは ws・wb を指定できません。
         省略した対象は、アクティブなブック・シートから取得します。
     ws : xlwings.Sheet, optional
@@ -191,7 +191,7 @@ def BatchModifyCharts(
             shapes = app.api.Selection.ShapeRange
         except Exception as exc:
             raise ValueError(
-                "グラフの外枠を選択してください。複数選択はCtrlを押しながらクリックします。"
+                "Ctrlを押しながらグラフを選択してください。"
             ) from exc
         # ModifyChart による選択解除・名前変更の前に対象を固定する。
         names = [

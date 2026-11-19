@@ -796,7 +796,9 @@ def add_shape(chart, x_start=None, x_end=None, y_start=None, y_end=None,
               left=None,  width=None, top=None, height=None, delta_width=0, delta_height=0, 
               color=RGB(0,0,255), alpha=0.8, frame_color=None, white_box=None,
               text=None, font_color=RGB(0,0,0), font_name="Calibri", font_size=10,
-              font_bold=True, alignment=None, auto_size=None,
+              font_bold=True,
+              alignment: Literal["left", "center", "right", "top", "middle", "bottom", None] = None, 
+              auto_size=None,
               right=None, bottom=None):
     """
     優先順位  帯の指定(x_start, x_end) > 位置の指定(left, right) の両者指定 > left or right と width 

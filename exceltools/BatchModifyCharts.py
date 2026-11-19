@@ -191,7 +191,7 @@ def BatchModifyCharts(
             shapes = app.api.Selection.ShapeRange
         except Exception as exc:
             raise ValueError(
-                "Ctrlを押しながらグラフを選択してください。"
+                "Ctrlを押しながらグラフを選択してください。(複数可)"
             ) from exc
         # ModifyChart による選択解除・名前変更の前に対象を固定する。
         names = [

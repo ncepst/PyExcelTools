@@ -2,9 +2,14 @@ Attribute VB_Name = "PythonFromVBA"
 ' 標準モジュールにインポートします
 ' Python実行には xlwings アドインがインストールされている必要があります
 ' VScodeターミナルに xlwings addin install を入力するとインストールできます
-' ツールの参照設定でxlwingsにチェックを入れてください
 ' 環境変数に変数名: PYTHONPATH  変数値:C:\Users\*****\Pythonを追加してください
 ' マクロのオプションから、ショートカットキーが設定できます
+
+' ツールの参照設定でxlwingsにチェックを入れる代わりに以下ラッパー関数を定義します。
+' 参照設定する場合のエクセル起動時の警告「現在このブックは他のブックから参照されているため、閉じることはできません。」を回避するため。
+Public Sub RunPython(ByVal PythonCode As String)
+    Application.Run "xlwings.xlam!RunPython", PythonCode
+End Sub
 
 Sub Run_CallModifyChart()
 '

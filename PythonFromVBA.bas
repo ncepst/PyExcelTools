@@ -6,7 +6,7 @@ Attribute VB_Name = "PythonFromVBA"
 ' マクロのオプションから、ショートカットキーが設定できます
 
 ' ツールの参照設定でxlwingsにチェックを入れる代わりに以下ラッパー関数を定義します。
-' 参照設定する場合のエクセル起動時の警告「現在このブックは他のブックから参照されているため、閉じることはできません。」を回避するため。
+' 参照設定した場合のエクセル起動時の警告「現在このブックは他のブックから参照されているため、閉じることはできません。」を回避できる。
 Public Sub RunPython(ByVal PythonCode As String)
     Application.Run "xlwings.xlam!RunPython", PythonCode
 End Sub

@@ -8,7 +8,7 @@ from .ModifyChart import ModifyChart
 
 
 def BatchModifyCharts(
-    target: Literal["sheet", "book", "selected", "dir"] = "sheet",
+    target: Literal["sheet", "book", "selected", "dir"] = "selected",
     *,
     ws: Any = None,
     wb: Any = None,
